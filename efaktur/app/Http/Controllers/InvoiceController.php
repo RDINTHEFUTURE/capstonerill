@@ -105,30 +105,45 @@ class InvoiceController extends Controller
             $invoice->update(['qr_payload' => $payload]);
         }
 
-        // Perbaikan QR:
-        // Payload QR sebelumnya disimpan base64(JSON) dan langsung dipakai sebagai input QR.
-        // Ubah agar QR berisi JSON UTF-8 plain (tanpa base64) supaya lebih kompatibel
-        // dengan pembaca QR yang mengharapkan teks JSON.
-        $decoded = json_decode(base64_decode($payload, true), true);
-        if (is_array($decoded)) {
-            $payloadForQr = json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        // Harusnya qr_payload = base64(JSON). Tapi untuk keamanan (data lama / perubahan),
+        // kita deteksi apakah payload adalah base64(JSON) atau sudah plain JSON.
+        $payloadForQr = $payload;
+
+        $base64Decoded = base64_decode($payload, true);
+        if ($base64Decoded !== false) {
+            $asJson = json_decode($base64Decoded, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($asJson)) {
+                $payloadForQr = json_encode($asJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
         } else {
-            // jika format payload tidak base64, fallback langsung
-            $payloadForQr = $payload;
+            // fallback: cek apakah $payload itu plain JSON
+            $asJson = json_decode($payload, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($asJson)) {
+                $payloadForQr = json_encode($asJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
         }
 
-        $qrCode = QrCode::create($payloadForQr)
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->setSize(280)
-            ->setMargin(10);
+        // endroid/qr-code versi terpasang (lihat vendor/endroid/qr-code/src/QrCode.php)
+        // QrCode dibuat via constructor tanpa setter fluent (class bersifat readonly).
+        $qrCode = new QrCode(
+            data: $payloadForQr,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::High,
+            size: 280,
+            margin: 10,
+        );
+
+
+
 
         $writer = new PngWriter();
         $result = $writer->write($qrCode);
 
         return response($result->getString(), 200)
             ->header('Content-Type', 'image/png');
+
     }
+
 
     private function buildQrPayload(array $data): string
     {
