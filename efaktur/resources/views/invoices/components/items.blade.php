@@ -4,13 +4,19 @@
     $items = $oldItems ?? [];
 @endphp
 
+    <style>
+        .item-row { min-width: 0; }
+        .item-row > div { min-width: 0; }
+        .item-row input, .item-row textarea { min-width: 0; width: 100%; box-sizing: border-box; }
+    </style>
+
     <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:16px;overflow-x:auto;">
     <h3 style="margin:0 0 12px;">Produk</h3>
 
-    <div id="items-container" style="width:100%; overflow-x:hidden;">
+    <div id="items-container" style="width:100%; overflow-x:hidden; min-width:0;">
         @if (count($items) === 0)
             @php($i = 0)
-            <div class="item-row" style="display:grid;grid-template-columns: 2fr 1fr 1.5fr 1.5fr 0.8fr;gap:10px;align-items:end;margin-bottom:10px;">
+            <div class="item-row" style="display:grid;grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,0.8fr);gap:10px;align-items:end;margin-bottom:10px;min-width:0;">
                 <div>
                     <label>Nama Produk</label>
                     <input type="text" name="items[0][nama_produk]" class="item-nama" value="" maxlength="255" required>
@@ -35,8 +41,8 @@
             </div>
         @else
             @foreach ($items as $idx => $it)
-                <div class="item-row" style="display:grid;grid-template-columns: 2fr 1fr 1.5fr 1.5fr 0.8fr;gap:10px;align-items:end;margin-bottom:10px;">
-                    <div>
+                <div class="item-row" style="display:grid;grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,0.8fr);gap:10px;align-items:end;margin-bottom:10px;min-width:0;">
+                    <div style="min-width:0;">
                         <label>Nama Produk</label>
                         <input type="text" name="items[{{ $idx }}][nama_produk]" class="item-nama" value="{{ $it['nama_produk'] ?? '' }}" maxlength="255" required>
                     </div>

@@ -9,7 +9,7 @@
     <input type="date" name="tanggal" value="{{ old('tanggal', $invoice?->tanggal?->format('Y-m-d')) }}" required>
     @error('tanggal') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Penjual</h3>
+    <h3 class="section-title">Penjual</h3>
 
     <label>NPWP Penjual</label>
     <input name="npwp_penjual" value="{{ old('npwp_penjual', $invoice?->npwp_penjual) }}" maxlength="32">
@@ -23,7 +23,7 @@
     <textarea name="alamat_penjual" rows="3" maxlength="255">{{ old('alamat_penjual', $invoice?->alamat_penjual) }}</textarea>
     @error('alamat_penjual') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Pembeli</h3>
+    <h3 class="section-title">Pembeli</h3>
 
     <label>NPWP Pembeli</label>
     <input name="npwp_pembeli" value="{{ old('npwp_pembeli', $invoice?->npwp_pembeli) }}" maxlength="32">
@@ -59,16 +59,6 @@
     <label>Mata Uang (currency)</label>
     <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
-
-
-    <style>
-        /* Benahi overflow: pastikan kolom grid items muat di dalam card */
-        #items-container { max-width: 100%; width:100%; }
-        .item-row input { width: 100%; box-sizing: border-box; }
-        .item-row { grid-template-columns: 2.2fr 1.1fr 1.6fr 1.6fr 1fr !important; }
-        /* paksa grid item untuk tidak “keluar” */
-        .item-row > div { min-width: 0; }
-    </style>
 
 
     <script>
