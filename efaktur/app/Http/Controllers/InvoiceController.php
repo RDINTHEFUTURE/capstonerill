@@ -95,7 +95,7 @@ class InvoiceController extends Controller
         if (!$payload) {
             $payload = $this->buildQrPayload([
                 'nomor' => $invoice->nomor,
-                'tanggal' => $invoice->tanggal->format('Y-m-d'),
+                'tanggal' => $invoice->tanggal?->format('Y-m-d'),
                 'npwp' => $invoice->npwp,
                 'nama' => $invoice->nama,
                 'alamat' => $invoice->alamat,
@@ -105,33 +105,23 @@ class InvoiceController extends Controller
             $invoice->update(['qr_payload' => $payload]);
         }
 
-        // Harusnya qr_payload = base64(JSON). Tapi untuk keamanan (data lama / perubahan),
-        // kita deteksi apakah payload adalah base64(JSON) atau sudah plain JSON.
-        $payloadForQr = $payload;
 
-        $base64Decoded = base64_decode($payload, true);
-        if ($base64Decoded !== false) {
-            $asJson = json_decode($base64Decoded, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($asJson)) {
-                $payloadForQr = json_encode($asJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            }
-        } else {
-            // fallback: cek apakah $payload itu plain JSON
-            $asJson = json_decode($payload, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($asJson)) {
-                $payloadForQr = json_encode($asJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            }
-        }
+
+        // QR akan diarahkan ke PDF faktur.
+        // Jadi isi QR adalah URL PDF invoice ini, bukan JSON payload.
+        $fakturUrl = route('invoices.pdf', $invoice);
+
 
         // endroid/qr-code versi terpasang (lihat vendor/endroid/qr-code/src/QrCode.php)
         // QrCode dibuat via constructor tanpa setter fluent (class bersifat readonly).
         $qrCode = new QrCode(
-            data: $payloadForQr,
+            data: $fakturUrl,
             encoding: new Encoding('UTF-8'),
             errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::High,
             size: 280,
             margin: 10,
         );
+
 
 
 

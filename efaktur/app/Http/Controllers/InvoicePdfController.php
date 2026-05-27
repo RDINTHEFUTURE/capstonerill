@@ -3,17 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-use Illuminate\Http\Request;
-use PDF;
+use Barryvdh\DomPDF\DomPDF;
+
 
 class InvoicePdfController extends Controller
 {
     public function show(Invoice $invoice)
     {
-        $pdf = PDF::loadView('invoices.pdf', compact('invoice'))
-            ->setPaper('a4', 'portrait');
+        $pdf = app('dompdf.wrapper')
+            ->loadView('invoices.cetakfaktur', compact('invoice'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('isRemoteEnabled', true);
 
-        return $pdf->download('faktur-{$invoice->nomor}.pdf');
+
+
+
+        return $pdf->download('faktur-' . $invoice->nomor . '.pdf');
     }
 }
+
+
+
 
