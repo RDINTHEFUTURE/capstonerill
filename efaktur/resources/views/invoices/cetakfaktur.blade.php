@@ -195,7 +195,7 @@
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                     <div style="font-weight:bold; font-size:10px;">[ QR CODE E-FAKTUR ]</div>
                     <img
-                        src="{{ route('invoices.qr', $invoice) }}"
+                        src="data:image/png;base64,{{ $qrBase64 }}"
                         alt="QR Invoice"
                         style="width: 76px; height: 76px; object-fit: contain; border: none;"
                     >
