@@ -38,7 +38,7 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
-    @include('invoices.components.items', ['oldItems' => old('items', [])])
+    @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? [])])
 
 
     {{-- total tetap dihitung backend, tapi input ini dipakai untuk menampilkan angka (opsional) --}}
