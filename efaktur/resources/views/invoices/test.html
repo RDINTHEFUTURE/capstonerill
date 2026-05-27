@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faktur Penjualan</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f6fa;
+            color: #333;
+        }
+
+        .invoice-card {
+            background: #fff;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Layout Grid menggunakan Tabel Tradisional demi kompatibilitas Cetak/PDF */
+        .w-100 { width: 100%; }
+        .border-collapse { border-collapse: collapse; }
+        
+        .header-table td {
+            vertical-align: top;
+        }
+
+        .company-logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        .company-info, .client-info {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #7f8c8d;
+        }
+
+        .invoice-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2980b9;
+            text-align: right;
+            margin: 0 0 10px 0;
+        }
+
+        .meta-details {
+            font-size: 13px;
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .meta-details span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 30px 0;
+        }
+
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #95a5a6;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .client-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+        }
+
+        /* Tabel Produk */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .items-table th {
+            background-color: #2980b9;
+            color: #ffffff;
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .items-table th.text-right, .items-table td.text-right {
+            text-align: right;
+        }
+
+        .items-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .items-table tr:nth-child(even) {
+            background-color: #f9fbfd;
+        }
+
+        /* Bagian Total */
+        .totals-table {
+            width: 350px;
+            margin-left: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .totals-table td {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        .totals-table tr.grand-total {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            font-size: 16px;
+            color: #2980b9;
+            border-top: 2px solid #2980b9;
+        }
+
+        /* Catatan Kaki */
+        .invoice-footer {
+            margin-top: 50px;
+            font-size: 12px;
+            color: #95a5a6;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Aturan Cetak / Save ke PDF */
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .invoice-card {
+                padding: 0;
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .items-table th {
+                background-color: #2980b9 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-card">
+    <table class="w-100 border-collapse header-table">
+        <tr>
+            <td>
+                <div class="company-logo">Nama Perusahaan Anda</div>
+                <div class="company-info">
+                    Jl. Protokol No. 123, Jakarta Pusat<br>
+                    Email: info@perusahaan.com<br>
+                    Telp: (021) 555-1234
+                </div>
+            </td>
+            <td>
+                <h1 class="invoice-title">FAKTUR</h1>
+                <div class="meta-details">
+                    No. Faktur: <span>#INV-2026-001</span><br>
+                    Tanggal Terbit: <span>27 Mei 2026</span><br>
+                    Jatuh Tempo: <span>10 Juni 2026</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <table class="w-100 border-collapse header-table">
+        <tr>
+            <td>
+                <div class="section-title">Tagihan Kepada:</div>
+                <h3 class="client-name">PT Sukses Mandiri</h3>
+                <div class="client-info">
+                    UP: Bapak Ahmad Subarjo<br>
+                    Jl. Jenderal Sudirman Kav. 21, Jakarta<br>
+                    Email: finance@suksesmandiri.co.id
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 40%;">Deskripsi Item</th>
+                <th style="width: 15%; text-align: right;">Harga Satuan</th>
+                <th style="width: 15%; text-align: right;">Kuantitas</th>
+                <th style="width: 30%; text-align: right;">Total Harga</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Layanan Pengembangan Software (Sistem Akuntansi Custom)</td>
+                <td class="text-right">Rp 15.000.000</td>
+                <td class="text-right">1</td>
+                <td class="text-right">Rp 15.000.000</td>
+            </tr>
+            <tr>
+                <td>Pelatihan Penggunaan Sistem (User Training)</td>
+                <td class="text-right">Rp 2.500.000</td>
+                <td class="text-right">2</td>
+                <td class="text-right">Rp 5.000.000</td>
+            </tr>
+            <tr>
+                <td>Biaya Maintenance Tahunan (1 Tahun Pertama)</td>
+                <td class="text-right">Rp 3.500.000</td>
+                <td class="text-right">1</td>
+                <td class="text-right">Rp 3.500.000</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="totals-table">
+        <tr>
+            <td style="color: #7f8c8d;">Subtotal</td>
+            <td class="text-right" style="font-weight: bold;">Rp 23.500.000</td>
+        </tr>
+        <tr>
+            <td style="color: #7f8c8d;">PPN (11%)</td>
+            <td class="text-right" style="font-weight: bold;">Rp 2.585.000</td>
+        </tr>
+        <tr class="grand-total">
+            <td>Total Tagihan</td>
+            <td class="text-right">Rp 26.085.000</td>
+        </tr>
+    </table>
+
+    <div class="divider" style="margin-top: 40px;"></div>
+
+    <div class="invoice-footer">
+        <p><strong>Informasi Pembayaran:</strong> Bank Mandiri KCP Jakarta — No. Rekening: 123-456-7890 a/n Nama Perusahaan Anda</p>
+        <p>Terima kasih atas kepercayaan dan kerja sama bisnis Anda!</p>
+    </div>
+</div>
+
+</body>
+</html>

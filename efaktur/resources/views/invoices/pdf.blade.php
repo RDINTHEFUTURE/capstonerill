@@ -91,19 +91,25 @@
 </head>
 <body>
     <div class="faktur-container">
-        <div class="title">FAKTUR PAJAK</div>
+        <div class="title">FAKTUR PENJUALAN</div>
 
         <table>
             <tr>
-                <td style="width: 30%; font-weight: bold;">Kode & Nomor Seri Faktur Pajak:</td>
-                <td style="width: 70%; font-weight: bold;">{{ '010.000-26.' . str_pad(($invoice->nomor ?? ''), 8, '0', STR_PAD_LEFT) }}</td>
+                <td style="width: 30%; font-weight: bold;">Nomor Invoice:</td>
+                <td style="width: 70%; font-weight: bold;">{{ $invoice->nomor ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td style="width: 30%; font-weight: bold;">Tanggal:</td>
+                <td style="width: 70%; font-weight: bold;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</td>
             </tr>
         </table>
 
+
         <table>
             <tr>
-                <th colspan="2">PENGUSAHA KENA PAJAK</th>
+                <th colspan="2">PENJUAL</th>
             </tr>
+
             <tr>
                 <td style="width: 30%;">Nama:</td>
                 <td style="width: 70%;">{{ $invoice->nama ?? '-' }}</td>
@@ -120,8 +126,9 @@
 
         <table>
             <tr>
-                <th colspan="2">PEMBELI BARANG KENA PAJAK / PENERIMA JASA KENA PAJAK</th>
+                <th colspan="2">PEMBELI</th>
             </tr>
+
             <tr>
                 <td style="width: 30%;">Nama:</td>
                 <td style="width: 70%;">{{ $invoice->nama ?? '-' }}</td>
@@ -140,8 +147,9 @@
             <thead>
                 <tr>
                     <th style="width: 5%;">No.</th>
-                    <th style="width: 55%;">Nama Barang Kena Pajak / Jasa Kena Pajak</th>
-                    <th style="width: 40%;">Harga Jual/Penggantian/Uang Muka/Termijn (Rp)</th>
+                    <th style="width: 55%;">Uraian</th>
+                    <th style="width: 40%;">Harga (Rp)</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -177,23 +185,18 @@
                 <td class="text-right">0</td>
             </tr>
             <tr>
-                <td>Dasar Pengenaan Pajak (DPP)</td>
+                <td style="font-weight: bold;">Total</td>
                 <td class="text-right" style="font-weight: bold;">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
             </tr>
-            <tr>
-                <td><strong>PPN = 11% x Dasar Pengenaan Pajak</strong></td>
-                <td class="text-right" style="font-weight: bold;">{{ number_format((float)$invoice->total * 0.11, 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td>PPNBM (Pajak Penjualan Atas Barang Mewah)</td>
-                <td class="text-right">0</td>
+
             </tr>
         </table>
 
         <div class="footer-section">
             <div class="qr-code">
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <div style="font-weight:bold; font-size:10px;">[ QR CODE E-FAKTUR ]</div>
+                    <div style="font-weight:bold; font-size:10px;">[ QR CODE INVOICE ]</div>
+
                     <img
                         src="{{ route('invoices.qr', $invoice) }}"
                         alt="QR Invoice"
