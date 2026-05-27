@@ -190,7 +190,7 @@
 
             <div class="ttd-box">
                 <div style="margin-bottom: 6px;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
-                <div>Admin Supplier Perusahaan,</div>
+                <div>{{ $invoice->role_penandatangan ?? 'Role Penandatangan' }},</div>
 
 
                 <br><br><br>
@@ -203,4 +203,3 @@
     </div>
 </body>
 </html>
-

@@ -84,7 +84,7 @@ class InvoiceController extends Controller
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
-            'admin_supplier_perusahaan' => $validated['role_penandatangan'] ?? null,
+            'role_penandatangan' => $validated['role_penandatangan'] ?? null,
 
 
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
@@ -175,7 +175,7 @@ class InvoiceController extends Controller
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
-            'admin_supplier_perusahaan' => $validated['role_penandatangan'] ?? null,
+            'role_penandatangan' => $validated['role_penandatangan'] ?? null,
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
 
             'nama_penjual' => $validated['nama_penjual'] ?? null,

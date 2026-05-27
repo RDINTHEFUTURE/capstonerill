@@ -192,7 +192,7 @@
 
             <div class="ttd-box">
                 <div style="margin-bottom: 6px;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
-                <div>{{ $invoice->admin_supplier_perusahaan ?? 'Admin Supplier Perusahaan' }},</div>
+                <div>{{ $invoice->role_penandatangan ?? 'Admin Supplier Perusahaan' }},</div>
 
                 <br><br><br>
                 <div style="text-decoration: underline; font-weight: bold;">{{ $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
