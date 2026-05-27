@@ -29,6 +29,9 @@ class InvoiceController extends Controller
             'tanggal' => ['required', 'date'],
 
             'pejabat' => ['nullable', 'string', 'max:255'],
+            'role_penandatangan' => ['nullable', 'string', 'max:255'],
+
+
 
 
             // Seller
@@ -81,6 +84,8 @@ class InvoiceController extends Controller
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
+            'admin_supplier_perusahaan' => $validated['role_penandatangan'] ?? null,
+
 
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
             'nama_penjual' => $validated['nama_penjual'] ?? null,
@@ -170,7 +175,9 @@ class InvoiceController extends Controller
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
+            'admin_supplier_perusahaan' => $validated['role_penandatangan'] ?? null,
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
+
             'nama_penjual' => $validated['nama_penjual'] ?? null,
             'alamat_penjual' => $validated['alamat_penjual'] ?? null,
             'npwp_pembeli' => $validated['npwp_pembeli'] ?? null,

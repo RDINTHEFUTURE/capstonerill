@@ -46,9 +46,13 @@
     <input name="total" id="invoice-total" type="number" step="0.01" value="{{ old('total', $invoice?->total ?? 0) }}" required readonly>
     @error('total') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Direktur / Pejabat yang Ditunjuk</h3>
+    <!-- <h3 style="margin:16px 0 8px;">Role Penandatangan</h3> -->
 
-    <label>Nama Pejabat</label>
+    <label>Role Penandatangan (contoh: Admin)</label>
+    <input name="role_penandatangan" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
+    @error('role_penandatangan') <div class="error">{{ $message }}</div> @enderror
+
+    <label>Nama Penandatangan (contoh: Budi)</label>
     <input name="pejabat" value="{{ old('pejabat', $invoice?->pejabat ?? '') }}" maxlength="255">
     @error('pejabat') <div class="error">{{ $message }}</div> @enderror
 

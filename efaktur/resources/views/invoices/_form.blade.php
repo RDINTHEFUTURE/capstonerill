@@ -36,9 +36,10 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
-    <h3 style="margin:16px 0 8px;">Direktur / Pejabat yang Ditunjuk</h3>
+    <h3 style="margin:16px 0 8px;">Admin Supplier Perusahaan</h3>
 
-    <label>Nama Pejabat</label>
+    <label>Nama penandatangan</label>
+
     <input name="pejabat" value="{{ old('pejabat', $invoice?->pejabat ?? '') }}" maxlength="255">
     @error('pejabat') <div class="error">{{ $message }}</div> @enderror
 

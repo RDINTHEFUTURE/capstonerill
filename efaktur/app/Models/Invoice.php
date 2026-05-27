@@ -30,7 +30,9 @@ class Invoice extends Model
 
         // Direktur / Pejabat
         'pejabat',
+        'admin_supplier_perusahaan',
     ];
+
 
 
 
