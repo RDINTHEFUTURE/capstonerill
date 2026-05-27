@@ -4,10 +4,10 @@
     $items = $oldItems ?? [];
 @endphp
 
-<div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:16px;">
+    <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:16px;overflow-x:auto;">
     <h3 style="margin:0 0 12px;">Produk</h3>
 
-    <div id="items-container">
+    <div id="items-container" style="width:100%; overflow-x:hidden;">
         @if (count($items) === 0)
             @php($i = 0)
             <div class="item-row" style="display:grid;grid-template-columns: 2fr 1fr 1.5fr 1.5fr 0.8fr;gap:10px;align-items:end;margin-bottom:10px;">

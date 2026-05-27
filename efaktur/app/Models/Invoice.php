@@ -27,7 +27,11 @@ class Invoice extends Model
         'total',
         'currency',
         'qr_payload',
+
+        // Direktur / Pejabat
+        'pejabat',
     ];
+
 
 
     protected $casts = [

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample E-Faktur Pajak</title>
+    <title>Sample Faktur Penjualan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -194,7 +194,7 @@
                 <div style="margin-bottom: 6px;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
                 <div>Direktur / Pejabat yang Ditunjuk,</div>
                 <br><br><br>
-                <div style="text-decoration: underline; font-weight: bold;">BUDI SANTOSO</div>
+                <div style="text-decoration: underline; font-weight: bold;">{{ $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
             </div>
         </div>
     </div>

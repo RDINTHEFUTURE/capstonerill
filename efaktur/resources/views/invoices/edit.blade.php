@@ -25,10 +25,13 @@
 
             <x-invoices.form :invoice="$invoice" />
 
-            <div class="actions">
-                <button class="btn" type="submit">Simpan Perubahan & Update QR</button>
-                <a class="btn btn-secondary" href="{{ route('invoices.show', $invoice) }}">Batal</a>
-            </div>
+            <div style="overflow:hidden;">
+
+                <div class="actions">
+                    <button class="btn" type="submit">Simpan Perubahan & Update QR</button>
+                    <a class="btn btn-secondary" href="{{ route('invoices.show', $invoice) }}">Batal</a>
+                </div>
+
         </form>
     </div>
 </body>

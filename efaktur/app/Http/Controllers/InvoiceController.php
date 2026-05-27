@@ -28,6 +28,9 @@ class InvoiceController extends Controller
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor'],
             'tanggal' => ['required', 'date'],
 
+            'pejabat' => ['nullable', 'string', 'max:255'],
+
+
             // Seller
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
             'nama_penjual' => ['nullable', 'string', 'max:255'],
@@ -77,6 +80,8 @@ class InvoiceController extends Controller
         $invoice = Invoice::create([
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
+            'pejabat' => $validated['pejabat'] ?? null,
+
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
             'nama_penjual' => $validated['nama_penjual'] ?? null,
             'alamat_penjual' => $validated['alamat_penjual'] ?? null,
@@ -111,6 +116,9 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor,' . $invoice->id],
             'tanggal' => ['required', 'date'],
+
+            'pejabat' => ['nullable', 'string', 'max:255'],
+
 
             // Seller
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
@@ -161,6 +169,7 @@ class InvoiceController extends Controller
         $invoice->update([
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
+            'pejabat' => $validated['pejabat'] ?? null,
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
             'nama_penjual' => $validated['nama_penjual'] ?? null,
             'alamat_penjual' => $validated['alamat_penjual'] ?? null,
@@ -171,6 +180,7 @@ class InvoiceController extends Controller
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
         ]);
+
 
         // refresh items
         $invoice->items()->delete();

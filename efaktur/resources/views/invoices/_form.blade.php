@@ -36,6 +36,13 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
+    <h3 style="margin:16px 0 8px;">Direktur / Pejabat yang Ditunjuk</h3>
+
+    <label>Nama Pejabat</label>
+    <input name="pejabat" value="{{ old('pejabat', $invoice?->pejabat ?? '') }}" maxlength="255">
+    @error('pejabat') <div class="error">{{ $message }}</div> @enderror
+
+
     <label>Total</label>
     <input name="total" type="number" step="0.01" value="{{ old('total', $invoice->total ?? '') }}" required>
     @error('total') <div class="error">{{ $message }}</div> @enderror
@@ -44,5 +51,6 @@
     <input name="currency" value="{{ old('currency', $invoice->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
 </div>
+
 
 
