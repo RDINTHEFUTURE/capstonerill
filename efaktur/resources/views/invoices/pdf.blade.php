@@ -149,50 +149,33 @@
             <thead>
                 <tr>
                     <th style="width: 5%;">No.</th>
-                    <th style="width: 55%;">Uraian</th>
-                    <th style="width: 40%;">Harga (Rp)</th>
-
+                    <th style="width: 45%;">Produk</th>
+                    <th style="width: 10%;">Qty</th>
+                    <th style="width: 20%;">Harga (Rp)</th>
+                    <th style="width: 20%;">Subtotal (Rp)</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="text-center">1</td>
-                    <td>{{ $invoice->nomor ? ('Invoice ' . $invoice->nomor) : '-' }}</td>
-                    <td class="text-right">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">2</td>
-                    <td>-</td>
-                    <td class="text-right">0</td>
-                </tr>
-                <tr>
-                    <td class="text-center">&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td class="text-right">&nbsp;</td>
-                </tr>
+                @php($items = $invoice->items ?? collect())
+                @foreach($items as $i => $item)
+                    <tr>
+                        <td class="text-center">{{ $i + 1 }}</td>
+                        <td>{{ $item->nama_produk ?? '-' }}</td>
+                        <td class="text-right">{{ $item->qty ?? 1 }}</td>
+                        <td class="text-right">{{ number_format((float)($item->harga ?? 0), 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format((float)($item->subtotal ?? 0), 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 
         <table>
             <tr>
-                <td style="width: 60%;">Harga Jual / Penggantian</td>
+                <td style="width: 60%;">Total</td>
                 <td style="width: 40%;" class="text-right">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
             </tr>
-            <tr>
-                <td>Dikurangi Potongan Harga</td>
-                <td class="text-right">0</td>
-            </tr>
-            <tr>
-                <td>Dikurangi Uang Muka yang telah diterima</td>
-                <td class="text-right">0</td>
-            </tr>
-            <tr>
-                <td style="font-weight: bold;">Total</td>
-                <td class="text-right" style="font-weight: bold;">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
-            </tr>
-
-            </tr>
         </table>
+
 
         <div class="footer-section">
             <div class="qr-code">

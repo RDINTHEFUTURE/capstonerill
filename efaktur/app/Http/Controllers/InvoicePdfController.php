@@ -15,6 +15,9 @@ class InvoicePdfController extends Controller
         // QR akan dirender sebagai data URI base64 supaya dompdf tidak melakukan request HTTP ke endpoint QR.
         $fakturUrl = route('invoices.pdf', $invoice);
 
+        // Eager load items agar tersedia di view.
+        $invoice->loadMissing('items');
+
         $qrCode = new QrCode(
             data: $fakturUrl,
             encoding: new Encoding('UTF-8'),
@@ -22,6 +25,7 @@ class InvoicePdfController extends Controller
             size: 280,
             margin: 10,
         );
+
 
         $writer = new PngWriter();
         $result = $writer->write($qrCode);

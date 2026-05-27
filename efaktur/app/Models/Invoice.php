@@ -13,6 +13,7 @@ class Invoice extends Model
         'nomor',
         'tanggal',
 
+
         // Identitas Penjual
         'npwp_penjual',
         'nama_penjual',
@@ -33,5 +34,11 @@ class Invoice extends Model
         'tanggal' => 'date',
         'total' => 'decimal:2',
     ];
+
+    public function items()
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
 }
+
 

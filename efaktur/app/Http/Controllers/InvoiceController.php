@@ -38,18 +38,59 @@ class InvoiceController extends Controller
             'nama_pembeli' => ['nullable', 'string', 'max:255'],
             'alamat_pembeli' => ['nullable', 'string', 'max:255'],
 
-            'total' => ['required', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
+
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.nama_produk' => ['required', 'string', 'max:255'],
+            'items.*.qty' => ['required', 'integer', 'min:1'],
+            'items.*.harga' => ['required', 'numeric', 'min:0'],
+            'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
         ]);
+
+        $total = 0.0;
+        $itemsData = [];
+        foreach ($validated['items'] as $item) {
+            $qty = (int) $item['qty'];
+            $harga = (float) $item['harga'];
+            $diskon = isset($item['diskon']) ? (float) $item['diskon'] : 0.0;
+
+            $subtotal = ($harga * $qty) - $diskon;
+            if ($subtotal < 0) {
+                $subtotal = 0;
+            }
+
+            $total += $subtotal;
+
+            $itemsData[] = [
+                'nama_produk' => $item['nama_produk'],
+                'qty' => $qty,
+                'harga' => $harga,
+                'diskon' => $diskon,
+                'subtotal' => $subtotal,
+            ];
+        }
+
+        $validated['total'] = $total;
 
         $payload = $this->buildQrPayload($validated);
 
         $invoice = Invoice::create([
-            ...$validated,
+            'nomor' => $validated['nomor'],
+            'tanggal' => $validated['tanggal'],
+            'npwp_penjual' => $validated['npwp_penjual'] ?? null,
+            'nama_penjual' => $validated['nama_penjual'] ?? null,
+            'alamat_penjual' => $validated['alamat_penjual'] ?? null,
+            'npwp_pembeli' => $validated['npwp_pembeli'] ?? null,
+            'nama_pembeli' => $validated['nama_pembeli'] ?? null,
+            'alamat_pembeli' => $validated['alamat_pembeli'] ?? null,
+            'total' => $validated['total'],
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
         ]);
 
+        foreach ($itemsData as $row) {
+            $invoice->items()->create($row);
+        }
 
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice tersimpan dan payload QR dibuat.');
@@ -81,22 +122,66 @@ class InvoiceController extends Controller
             'nama_pembeli' => ['nullable', 'string', 'max:255'],
             'alamat_pembeli' => ['nullable', 'string', 'max:255'],
 
-            'total' => ['required', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
+
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.nama_produk' => ['required', 'string', 'max:255'],
+            'items.*.qty' => ['required', 'integer', 'min:1'],
+            'items.*.harga' => ['required', 'numeric', 'min:0'],
+            'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
         ]);
 
+        $total = 0.0;
+        $itemsData = [];
+        foreach ($validated['items'] as $item) {
+            $qty = (int) $item['qty'];
+            $harga = (float) $item['harga'];
+            $diskon = isset($item['diskon']) ? (float) $item['diskon'] : 0.0;
+
+            $subtotal = ($harga * $qty) - $diskon;
+            if ($subtotal < 0) {
+                $subtotal = 0;
+            }
+
+            $total += $subtotal;
+
+            $itemsData[] = [
+                'nama_produk' => $item['nama_produk'],
+                'qty' => $qty,
+                'harga' => $harga,
+                'diskon' => $diskon,
+                'subtotal' => $subtotal,
+            ];
+        }
+
+        $validated['total'] = $total;
 
         $payload = $this->buildQrPayload($validated);
 
         $invoice->update([
-            ...$validated,
+            'nomor' => $validated['nomor'],
+            'tanggal' => $validated['tanggal'],
+            'npwp_penjual' => $validated['npwp_penjual'] ?? null,
+            'nama_penjual' => $validated['nama_penjual'] ?? null,
+            'alamat_penjual' => $validated['alamat_penjual'] ?? null,
+            'npwp_pembeli' => $validated['npwp_pembeli'] ?? null,
+            'nama_pembeli' => $validated['nama_pembeli'] ?? null,
+            'alamat_pembeli' => $validated['alamat_pembeli'] ?? null,
+            'total' => $validated['total'],
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
         ]);
 
+        // refresh items
+        $invoice->items()->delete();
+        foreach ($itemsData as $row) {
+            $invoice->items()->create($row);
+        }
+
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice diperbarui dan payload QR diupdate.');
     }
+
 
     public function destroy(Invoice $invoice)
     {

@@ -38,12 +38,105 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
+    @include('invoices.components.items', ['oldItems' => old('items', [])])
+
+
+    {{-- total tetap dihitung backend, tapi input ini dipakai untuk menampilkan angka (opsional) --}}
     <label>Total</label>
-    <input name="total" type="number" step="0.01" value="{{ old('total', $invoice?->total) }}" required>
+    <input name="total" id="invoice-total" type="number" step="0.01" value="{{ old('total', $invoice?->total ?? 0) }}" required readonly>
     @error('total') <div class="error">{{ $message }}</div> @enderror
 
     <label>Mata Uang (currency)</label>
     <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
+
+    <script>
+        (function(){
+            const container = document.getElementById('items-container');
+            if(!container) return;
+
+            function parseNumber(v){
+                const n = parseFloat(String(v ?? '').replace(/,/g,''));
+                return Number.isFinite(n) ? n : 0;
+            }
+
+            function updateRow(row){
+                const qtyEl = row.querySelector('.item-qty');
+                const hargaEl = row.querySelector('.item-harga');
+                const diskonEl = row.querySelector('.item-diskon');
+                const subtotalEl = row.querySelector('.item-subtotal');
+
+                const qty = parseNumber(qtyEl?.value);
+                const harga = parseNumber(hargaEl?.value);
+                const diskon = parseNumber(diskonEl?.value);
+
+                let subtotal = (harga * qty) - diskon;
+                if(subtotal < 0) subtotal = 0;
+
+                if(subtotalEl) subtotalEl.value = subtotal.toFixed(2);
+            }
+
+            function updateTotal(){
+                let total = 0;
+                container.querySelectorAll('.item-row').forEach(row => {
+                    const subtotal = parseNumber(row.querySelector('.item-subtotal')?.value);
+                    total += subtotal;
+                });
+                const totalEl = document.getElementById('invoice-total');
+                if(totalEl) totalEl.value = total.toFixed(2);
+            }
+
+            function bindRowEvents(row){
+                ['input','change'].forEach(evt => {
+                    row.querySelectorAll('input').forEach(inp => {
+                        inp.addEventListener(evt, () => {
+                            updateRow(row);
+                            updateTotal();
+                        });
+                    });
+                });
+            }
+
+            // bind
+            container.querySelectorAll('.item-row').forEach(row => {
+                bindRowEvents(row);
+                updateRow(row);
+            });
+            updateTotal();
+
+            // add item button: clone baris pertama
+
+            const addBtn = document.getElementById('add-item');
+            if(addBtn){
+                addBtn.addEventListener('click', () => {
+                    const rows = container.querySelectorAll('.item-row');
+                    if(!rows.length) return;
+                    const template = rows[0];
+                    const newIndex = rows.length;
+                    const clone = template.cloneNode(true);
+
+                    // reset values
+                    clone.querySelectorAll('input').forEach(inp => {
+                        if(inp.classList.contains('item-qty')) inp.value = 1;
+                        else if(inp.classList.contains('item-harga')) inp.value = 0;
+                        else if(inp.classList.contains('item-diskon')) inp.value = 0;
+                        else if(inp.classList.contains('item-subtotal')) inp.value = 0;
+
+                        const name = inp.getAttribute('name');
+                        if(name){
+                            inp.setAttribute('name', name.replace(/items\[\d+\]/, `items[${newIndex}]`));
+                        }
+                    });
+
+                    container.appendChild(clone);
+                    bindRowEvents(clone);
+                    updateRow(clone);
+                    updateTotal();
+                });
+            }
+
+        })();
+    </script>
 </div>
+
 
