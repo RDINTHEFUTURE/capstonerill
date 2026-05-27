@@ -40,7 +40,8 @@
             <tr>
                 <td>{{ $inv->nomor }}</td>
                 <td>{{ $inv->tanggal->format('Y-m-d') }}</td>
-                <td>{{ $inv->nama }}</td>
+                <td>{{ $inv->nama_penjual ?? '-' }}</td>
+
                 <td>{{ number_format((float)$inv->total, 2, ',', '.') }} {{ $inv->currency }}</td>
                 <td>
                     <a class="btn btn-secondary" href="{{ route('invoices.show', $inv) }}">Detail</a>

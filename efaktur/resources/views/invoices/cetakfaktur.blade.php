@@ -110,16 +110,17 @@
             </tr>
             <tr>
                 <td style="width: 30%;">Nama:</td>
-                <td style="width: 70%;">{{ $invoice->nama ?? '-' }}</td>
+                <td style="width: 70%;">{{ $invoice->nama_penjual ?? '-' }}</td>
             </tr>
             <tr>
                 <td>Alamat:</td>
-                <td>{{ $invoice->alamat ?? '-' }}</td>
+                <td>{{ $invoice->alamat_penjual ?? '-' }}</td>
             </tr>
             <tr>
                 <td>Identitas (NPWP):</td>
-                <td>{{ $invoice->npwp ?? '-' }}</td>
+                <td>{{ $invoice->npwp_penjual ?? '-' }}</td>
             </tr>
+
         </table>
 
         <table>
@@ -128,16 +129,17 @@
             </tr>
             <tr>
                 <td style="width: 30%;">Nama:</td>
-                <td style="width: 70%;">{{ $invoice->nama ?? '-' }}</td>
+                <td style="width: 70%;">{{ $invoice->nama_pembeli ?? '-' }}</td>
             </tr>
             <tr>
                 <td>Alamat:</td>
-                <td>{{ $invoice->alamat ?? '-' }}</td>
+                <td>{{ $invoice->alamat_pembeli ?? '-' }}</td>
             </tr>
             <tr>
                 <td>Identitas (NPWP / NIK):</td>
-                <td>{{ $invoice->npwp ?? '-' }}</td>
+                <td>{{ $invoice->npwp_pembeli ?? '-' }}</td>
             </tr>
+
         </table>
 
         <table>

@@ -38,9 +38,14 @@
         <div class="card">
             <div><span class="key">Nomor</span><div class="value">{{ $invoice->nomor }}</div></div>
             <div style="margin-top: 12px;"><span class="key">Tanggal</span><div class="value">{{ $invoice->tanggal->format('Y-m-d') }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">NPWP</span><div class="value">{{ $invoice->npwp }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Nama</span><div class="value">{{ $invoice->nama }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Alamat</span><div class="value">{{ $invoice->alamat }}</div></div>
+            <div style="margin-top: 12px;"><span class="key">NPWP Penjual</span><div class="value">{{ $invoice->npwp_penjual }}</div></div>
+            <div style="margin-top: 12px;"><span class="key">Nama Penjual</span><div class="value">{{ $invoice->nama_penjual }}</div></div>
+            <div style="margin-top: 12px;"><span class="key">Alamat Penjual</span><div class="value">{{ $invoice->alamat_penjual }}</div></div>
+
+            <div style="margin-top: 12px;"><span class="key">NPWP Pembeli</span><div class="value">{{ $invoice->npwp_pembeli }}</div></div>
+            <div style="margin-top: 12px;"><span class="key">Nama Pembeli</span><div class="value">{{ $invoice->nama_pembeli }}</div></div>
+            <div style="margin-top: 12px;"><span class="key">Alamat Pembeli</span><div class="value">{{ $invoice->alamat_pembeli }}</div></div>
+
             <div style="margin-top: 12px;"><span class="key">Total</span><div class="value">{{ number_format((float)$invoice->total, 2, ',', '.') }} {{ $invoice->currency }}</div></div>
 
             <div style="margin-top: 16px;">

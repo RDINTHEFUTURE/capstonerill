@@ -27,9 +27,17 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor'],
             'tanggal' => ['required', 'date'],
-            'npwp' => ['nullable', 'string', 'max:32'],
-            'nama' => ['nullable', 'string', 'max:255'],
-            'alamat' => ['nullable', 'string', 'max:255'],
+
+            // Seller
+            'npwp_penjual' => ['nullable', 'string', 'max:32'],
+            'nama_penjual' => ['nullable', 'string', 'max:255'],
+            'alamat_penjual' => ['nullable', 'string', 'max:255'],
+
+            // Buyer
+            'npwp_pembeli' => ['nullable', 'string', 'max:32'],
+            'nama_pembeli' => ['nullable', 'string', 'max:255'],
+            'alamat_pembeli' => ['nullable', 'string', 'max:255'],
+
             'total' => ['required', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
         ]);
@@ -41,6 +49,7 @@ class InvoiceController extends Controller
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
         ]);
+
 
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice tersimpan dan payload QR dibuat.');
@@ -61,12 +70,21 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor,' . $invoice->id],
             'tanggal' => ['required', 'date'],
-            'npwp' => ['nullable', 'string', 'max:32'],
-            'nama' => ['nullable', 'string', 'max:255'],
-            'alamat' => ['nullable', 'string', 'max:255'],
+
+            // Seller
+            'npwp_penjual' => ['nullable', 'string', 'max:32'],
+            'nama_penjual' => ['nullable', 'string', 'max:255'],
+            'alamat_penjual' => ['nullable', 'string', 'max:255'],
+
+            // Buyer
+            'npwp_pembeli' => ['nullable', 'string', 'max:32'],
+            'nama_pembeli' => ['nullable', 'string', 'max:255'],
+            'alamat_pembeli' => ['nullable', 'string', 'max:255'],
+
             'total' => ['required', 'numeric', 'min:0'],
             'currency' => ['nullable', 'string', 'max:3'],
         ]);
+
 
         $payload = $this->buildQrPayload($validated);
 
@@ -96,9 +114,14 @@ class InvoiceController extends Controller
             $payload = $this->buildQrPayload([
                 'nomor' => $invoice->nomor,
                 'tanggal' => $invoice->tanggal?->format('Y-m-d'),
-                'npwp' => $invoice->npwp,
-                'nama' => $invoice->nama,
-                'alamat' => $invoice->alamat,
+                'npwp_penjual' => $invoice->npwp_penjual,
+                'nama_penjual' => $invoice->nama_penjual,
+                'alamat_penjual' => $invoice->alamat_penjual,
+
+                'npwp_pembeli' => $invoice->npwp_pembeli,
+                'nama_pembeli' => $invoice->nama_pembeli,
+                'alamat_pembeli' => $invoice->alamat_pembeli,
+
                 'total' => $invoice->total,
                 'currency' => $invoice->currency,
             ]);
@@ -143,12 +166,21 @@ class InvoiceController extends Controller
             'app' => 'efaktur-laravel',
             'nomor' => $data['nomor'],
             'tanggal' => $data['tanggal'],
-            'npwp' => $data['npwp'] ?? null,
-            'nama' => $data['nama'] ?? null,
-            'alamat' => $data['alamat'] ?? null,
+
+            // Seller
+            'npwp_penjual' => $data['npwp_penjual'] ?? null,
+            'nama_penjual' => $data['nama_penjual'] ?? null,
+            'alamat_penjual' => $data['alamat_penjual'] ?? null,
+
+            // Buyer
+            'npwp_pembeli' => $data['npwp_pembeli'] ?? null,
+            'nama_pembeli' => $data['nama_pembeli'] ?? null,
+            'alamat_pembeli' => $data['alamat_pembeli'] ?? null,
+
             'total' => (float) $data['total'],
             'currency' => $data['currency'] ?? 'IDR',
         ];
+
 
         return base64_encode(
             json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)

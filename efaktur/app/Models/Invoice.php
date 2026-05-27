@@ -12,13 +12,22 @@ class Invoice extends Model
     protected $fillable = [
         'nomor',
         'tanggal',
-        'npwp',
-        'nama',
-        'alamat',
+
+        // Identitas Penjual
+        'npwp_penjual',
+        'nama_penjual',
+        'alamat_penjual',
+
+        // Identitas Pembeli
+        'npwp_pembeli',
+        'nama_pembeli',
+        'alamat_pembeli',
+
         'total',
         'currency',
         'qr_payload',
     ];
+
 
     protected $casts = [
         'tanggal' => 'date',
