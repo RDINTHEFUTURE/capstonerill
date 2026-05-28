@@ -60,6 +60,22 @@
     <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
 
+    <input type="hidden" name="signature_data" id="signature_data" value="{{ old('signature_data', $invoice?->signature_data) }}">
+    <input type="hidden" name="signature_changed" id="signature_changed" value="0">
+
+    <div id="signature-pad-wrapper">
+        <label>Signature Digital</label>
+        <div class="signature-card">
+            <canvas id="signature-canvas" width="280" height="140"></canvas>
+            <div class="signature-pad-actions">
+                <button type="button" class="btn btn-secondary" id="clear-signature">Clear Signature</button>
+            </div>
+            <div class="signature-pad-info">Gunakan mouse atau sentuhan untuk menggambar tanda tangan. Kosongkan jika tidak ingin merubah tanda tangan saat edit.</div>
+        </div>
+        <label style="margin-top: 12px;">Nama Penandatangan</label>
+        <input type="text" name="signature_name" id="signature_name" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
+        @error('signature_name') <div class="error">{{ $message }}</div> @enderror
+    </div>
 
     <style>
         /* Benahi overflow: pastikan kolom grid items muat di dalam card */
@@ -68,9 +84,47 @@
         .item-row { grid-template-columns: 2.2fr 1.1fr 1.6fr 1.6fr 1fr !important; }
         /* paksa grid item untuk tidak “keluar” */
         .item-row > div { min-width: 0; }
+
+        #signature-pad-wrapper {
+            width: 100%;
+            max-width: 320px;
+            margin-top: 18px;
+        }
+
+        .signature-card {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fff;
+            box-sizing: border-box;
+        }
+
+        #signature-canvas {
+            width: 100%;
+            max-width: 280px;
+            height: 140px;
+            border: 1px dashed #999;
+            display: block;
+            margin: 0 auto;
+            box-sizing: border-box;
+            background: #fff;
+            touch-action: none;
+        }
+
+        .signature-pad-actions {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .signature-pad-info {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.0/dist/signature_pad.umd.min.js"></script>
     <script>
         (function(){
             const container = document.getElementById('items-container');
@@ -157,6 +211,65 @@
                 });
             }
 
+        })();
+
+        (function(){
+            const canvas = document.getElementById('signature-canvas');
+            const hiddenInput = document.getElementById('signature_data');
+            const changedInput = document.getElementById('signature_changed');
+            const clearButton = document.getElementById('clear-signature');
+            const form = canvas.closest('form');
+            const existingSignature = {!! json_encode(old('signature_data', $invoice?->signature_data)) !!};
+
+            if(!canvas || !form) return;
+
+            const signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(17, 24, 39)',
+            });
+
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                const width = 280;
+                const height = 140;
+                const ctx = canvas.getContext('2d');
+
+                canvas.width = width * ratio;
+                canvas.height = height * ratio;
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.scale(ratio, ratio);
+
+                if (existingSignature && changedInput.value === '0') {
+                    signaturePad.clear();
+                    signaturePad.fromDataURL(existingSignature);
+                }
+            }
+
+            function markChanged() {
+                changedInput.value = '1';
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            canvas.addEventListener('pointerdown', markChanged);
+            clearButton.addEventListener('click', () => {
+                signaturePad.clear();
+                markChanged();
+            });
+
+            form.addEventListener('submit', () => {
+                if (changedInput.value === '1') {
+                    if (signaturePad.isEmpty()) {
+                        hiddenInput.value = '';
+                    } else {
+                        hiddenInput.value = signaturePad.toDataURL('image/png');
+                    }
+                } else {
+                    hiddenInput.value = '';
+                }
+            });
         })();
     </script>
 </div>

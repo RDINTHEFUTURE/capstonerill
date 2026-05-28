@@ -193,10 +193,14 @@
             <div class="ttd-box">
                 <div style="margin-bottom: 6px;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
                 <div>{{ $invoice->role_penandatangan ?? 'Admin Supplier Perusahaan' }},</div>
-
-                <br><br><br>
-                <div style="text-decoration: underline; font-weight: bold;">{{ $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
-
+                @if($invoice->signature_data)
+                    <div style="margin: 10px 0; display: flex; justify-content: center;">
+                        <img src="{{ $invoice->signature_data }}" alt="Tanda Tangan" style="max-width: 280px; width: 100%; height: auto; border: 1px solid #000;">
+                    </div>
+                @else
+                    <br><br><br>
+                @endif
+                <div style="text-decoration: underline; font-weight: bold;">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
             </div>
         </div>
     </div>
