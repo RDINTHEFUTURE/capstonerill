@@ -9,7 +9,7 @@
     <input type="date" name="tanggal" value="{{ old('tanggal', $invoice?->tanggal?->format('Y-m-d')) }}" required>
     @error('tanggal') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Penjual</h3>
+    <h3 class="section-title">Penjual</h3>
 
     <label>NPWP Penjual</label>
     <input name="npwp_penjual" value="{{ old('npwp_penjual', $invoice?->npwp_penjual) }}" maxlength="32">
@@ -23,7 +23,7 @@
     <textarea name="alamat_penjual" rows="3" maxlength="255">{{ old('alamat_penjual', $invoice?->alamat_penjual) }}</textarea>
     @error('alamat_penjual') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Pembeli</h3>
+    <h3 class="section-title">Pembeli</h3>
 
     <label>NPWP Pembeli</label>
     <input name="npwp_pembeli" value="{{ old('npwp_pembeli', $invoice?->npwp_pembeli) }}" maxlength="32">
@@ -68,69 +68,15 @@
             </div>
             <div class="signature-pad-info">Gunakan mouse atau sentuhan untuk menggambar tanda tangan. Kosongkan jika tidak ingin merubah tanda tangan saat edit.</div>
         </div>
-        <div id="signature-preview-wrapper" style="display: none; margin-top: 12px;">
+        <div id="signature-preview-wrapper" class="invoice-signature-preview-wrapper">
             <label>Preview Tanda Tangan</label>
-            <img id="signature-preview" src="" alt="Preview Tanda Tangan" style="display: block; max-width: 100%; border: 1px solid #d1d5db; border-radius: 8px; margin-top: 8px; height: auto;" />
+            <img id="signature-preview" src="" alt="Preview Tanda Tangan" class="invoice-signature-preview-image" />
         </div>
-        <label style="margin-top: 12px;">Nama Penandatangan</label>
+        <label class="signature-name-label">Nama Penandatangan</label>
         <input type="text" name="signature_name" id="signature_name" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
         @error('signature_name') <div class="error">{{ $message }}</div> @enderror
     </div>
 
-    <style>
-        /* Benahi overflow: pastikan kolom grid items muat di dalam card */
-        #items-container { max-width: 100%; width:100%; }
-        .item-row input { width: 100%; box-sizing: border-box; }
-        .item-row { grid-template-columns: 2.2fr 1.1fr 1.6fr 1.6fr 1fr !important; }
-        /* paksa grid item untuk tidak “keluar” */
-        .item-row > div { min-width: 0; }
-
-        #signature-pad-wrapper {
-            width: 100%;
-            max-width: 320px;
-            margin-top: 18px;
-        }
-
-        .signature-card {
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            background: #fff;
-            box-sizing: border-box;
-        }
-
-        #signature-canvas {
-            width: 100%;
-            max-width: 280px;
-            height: 140px;
-            border: 1px dashed #999;
-            display: block;
-            margin: 0 auto;
-            box-sizing: border-box;
-            background: #fff;
-            touch-action: none;
-        }
-
-        #signature-preview {
-            width: 100%;
-            display: block;
-            max-width: 280px;
-            height: auto;
-            object-fit: contain;
-        }
-
-        .signature-pad-actions {
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .signature-pad-info {
-            margin-top: 8px;
-            font-size: 12px;
-            color: #666;
-        }
-    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.0/dist/signature_pad.umd.min.js"></script>
     <script>

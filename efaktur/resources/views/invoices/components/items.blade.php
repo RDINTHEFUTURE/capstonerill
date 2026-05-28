@@ -4,19 +4,13 @@
     $items = $oldItems ?? [];
 @endphp
 
-    <style>
-        .item-row { min-width: 0; }
-        .item-row > div { min-width: 0; }
-        .item-row input, .item-row textarea { min-width: 0; width: 100%; box-sizing: border-box; }
-    </style>
+    <div class="card invoice-items-card">
+    <h3 class="section-title">Produk</h3>
 
-    <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:16px;overflow-x:auto;">
-    <h3 style="margin:0 0 12px;">Produk</h3>
-
-    <div id="items-container" style="width:100%; overflow-x:hidden; min-width:0;">
+    <div id="items-container" class="invoice-items-container">
         @if (count($items) === 0)
             @php($i = 0)
-            <div class="item-row" style="display:grid;grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,0.8fr);gap:10px;align-items:end;margin-bottom:10px;min-width:0;">
+            <div class="item-row invoice-item-row">
                 <div>
                     <label>Nama Produk</label>
                     <input type="text" name="items[0][nama_produk]" class="item-nama" value="" maxlength="255" required>
@@ -37,12 +31,12 @@
                     <label>Subtotal</label>
                     <input type="number" name="items[0][subtotal]" class="item-subtotal" value="0" readonly>
                 </div>
-                <div style="grid-column: 1 / -1; display:none;" class="item-debug"></div>
+                <div class="item-debug"></div>
             </div>
         @else
             @foreach ($items as $idx => $it)
-                <div class="item-row" style="display:grid;grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,0.8fr);gap:10px;align-items:end;margin-bottom:10px;min-width:0;">
-                    <div style="min-width:0;">
+                <div class="item-row invoice-item-row">
+                    <div>
                         <label>Nama Produk</label>
                         <input type="text" name="items[{{ $idx }}][nama_produk]" class="item-nama" value="{{ $it['nama_produk'] ?? '' }}" maxlength="255" required>
                     </div>
@@ -67,7 +61,7 @@
         @endif
     </div>
 
-    <button type="button" class="btn" id="add-item" style="margin-top:8px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">
+    <button type="button" class="btn invoice-btn-add" id="add-item">
         + Tambah Produk
     </button>
 </div>

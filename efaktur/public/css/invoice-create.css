@@ -1,0 +1,170 @@
+body.invoice-create-page {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    margin: 24px;
+    max-width: 1100px;
+    width: min(1100px, 100%);
+}
+
+.btn,
+button.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #6b7280;
+}
+
+.card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    max-width: 100%;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.section-title {
+    margin: 16px 0 8px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.error {
+    color: #b91c1c;
+    margin-top: 8px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.invoice-items-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    overflow-x: auto;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.invoice-items-container {
+    width: 100%;
+    overflow-x: hidden;
+    min-width: 0;
+}
+
+.invoice-item-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.5fr) minmax(0, 0.8fr);
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 10px;
+    min-width: 0;
+}
+
+.invoice-item-row > div {
+    min-width: 0;
+}
+
+.invoice-item-row input,
+.invoice-item-row textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.item-debug {
+    grid-column: 1 / -1;
+    display: none;
+}
+
+.invoice-btn-add {
+    margin-top: 8px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+#signature-pad-wrapper {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 18px;
+}
+
+.signature-card {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+#signature-canvas {
+    width: 100%;
+    max-width: 280px;
+    height: 140px;
+    border: 1px dashed #999;
+    display: block;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background: #fff;
+    touch-action: none;
+}
+
+.invoice-signature-preview-wrapper {
+    display: none;
+    margin-top: 12px;
+}
+
+.invoice-signature-preview-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    margin-top: 8px;
+    object-fit: contain;
+}
+
+.signature-pad-actions {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.signature-pad-info {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
+}

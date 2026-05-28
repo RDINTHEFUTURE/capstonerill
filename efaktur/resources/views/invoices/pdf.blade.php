@@ -4,155 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Faktur Penjualan</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #000;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .faktur-container {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 10mm;
-            margin: 0 auto;
-            background: #fff;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        .title {
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: -1px;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 6px;
-            vertical-align: top;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-
-        .footer-section {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .qr-code {
-            width: 100px;
-            height: 100px;
-            border: 1px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            text-align: center;
-        }
-
-        .ttd-box {
-            text-align: center;
-            width: 250px;
-        }
-
-        /* Print/PDF layout */
-        @media print {
-            body { background: none; padding: 0; }
-            .faktur-container {
-                border: none;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/invoice-pdf.css') }}">
 </head>
-<body>
-    <div class="faktur-container">
-        <div class="title">FAKTUR PENJUALAN</div>
+<body class="invoice-pdf-page">
+    <div class="invoice-faktur-container">
+        <div class="invoice-title">FAKTUR PENJUALAN</div>
 
-        <table>
+        <table class="invoice-summary-table">
             <tr>
-                <td style="width: 30%; font-weight: bold;">Nomor Invoice:</td>
-                <td style="width: 70%; font-weight: bold;">{{ $invoice->nomor ?? '-' }}</td>
+                <td class="invoice-label">Nomor Invoice:</td>
+                <td class="invoice-value">{{ $invoice->nomor ?? '-' }}</td>
             </tr>
             <tr>
-                <td style="width: 30%; font-weight: bold;">Tanggal:</td>
-                <td style="width: 70%; font-weight: bold;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</td>
+                <td class="invoice-label">Tanggal:</td>
+                <td class="invoice-value">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</td>
             </tr>
         </table>
 
 
-        <table>
+        <table class="invoice-table">
             <tr>
                 <th colspan="2">PENJUAL</th>
             </tr>
 
             <tr>
-                <td style="width: 30%;">Nama:</td>
-                <td style="width: 70%;">{{ $invoice->nama_penjual ?? '-' }}</td>
+                <td class="invoice-label">Nama:</td>
+                <td class="invoice-value">{{ $invoice->nama_penjual ?? '-' }}</td>
             </tr>
             <tr>
-                <td>Alamat:</td>
-                <td>{{ $invoice->alamat_penjual ?? '-' }}</td>
+                <td class="invoice-label">Alamat:</td>
+                <td class="invoice-value">{{ $invoice->alamat_penjual ?? '-' }}</td>
             </tr>
             <tr>
-                <td>NPWP:</td>
-                <td>{{ $invoice->npwp_penjual ?? '-' }}</td>
+                <td class="invoice-label">NPWP:</td>
+                <td class="invoice-value">{{ $invoice->npwp_penjual ?? '-' }}</td>
             </tr>
 
         </table>
 
-        <table>
+        <table class="invoice-table">
             <tr>
                 <th colspan="2">PEMBELI</th>
             </tr>
 
             <tr>
-                <td style="width: 30%;">Nama:</td>
-                <td style="width: 70%;">{{ $invoice->nama_pembeli ?? '-' }}</td>
+                <td class="invoice-label">Nama:</td>
+                <td class="invoice-value">{{ $invoice->nama_pembeli ?? '-' }}</td>
             </tr>
             <tr>
-                <td>Alamat:</td>
-                <td>{{ $invoice->alamat_pembeli ?? '-' }}</td>
+                <td class="invoice-label">Alamat:</td>
+                <td class="invoice-value">{{ $invoice->alamat_pembeli ?? '-' }}</td>
             </tr>
             <tr>
-                <td>NPWP / NIK:</td>
-                <td>{{ $invoice->npwp_pembeli ?? '-' }}</td>
+                <td class="invoice-label">NPWP / NIK:</td>
+                <td class="invoice-value">{{ $invoice->npwp_pembeli ?? '-' }}</td>
             </tr>
 
         </table>
 
-        <table>
+        <table class="invoice-table invoice-detail-table">
             <thead>
                 <tr>
-                    <th style="width: 5%;">No.</th>
-                    <th style="width: 45%;">Produk</th>
-                    <th style="width: 10%;">Qty</th>
-                    <th style="width: 20%;">Harga (Rp)</th>
-                    <th style="width: 20%;">Subtotal (Rp)</th>
+                    <th class="invoice-col-no">No.</th>
+                    <th class="invoice-col-product">Produk</th>
+                    <th class="invoice-col-qty">Qty</th>
+                    <th class="invoice-col-price">Harga (Rp)</th>
+                    <th class="invoice-col-subtotal">Subtotal (Rp)</th>
                 </tr>
             </thead>
             <tbody>
@@ -169,36 +86,31 @@
             </tbody>
         </table>
 
-        <table>
+        <table class="invoice-table">
             <tr>
-                <td style="width: 60%;">Total</td>
-                <td style="width: 40%;" class="text-right">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
+                <td class="invoice-label">Total</td>
+                <td class="invoice-value invoice-text-right">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
             </tr>
         </table>
 
 
-        <div class="footer-section">
-            <div class="qr-code">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <div style="font-weight:bold; font-size:10px;">[ QR CODE INVOICE ]</div>
-
-                    <img
-                        src="{{ route('invoices.qr', $invoice) }}"
-                        alt="QR Invoice"
-                        style="width: 76px; height: 76px; object-fit: contain; border: none;"
-                    >
+        <div class="invoice-footer-section">
+            <div class="invoice-qr-box invoice-qr-box-pdf">
+                <div class="invoice-qr-inner">
+                    <div class="invoice-qr-inner-label">[ QR CODE INVOICE ]</div>
+                    <img src="{{ route('invoices.qr', $invoice) }}" alt="QR Invoice">
                 </div>
             </div>
 
-            <div class="ttd-box">
-                <div style="margin-bottom: 6px;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
+            <div class="invoice-signature-box">
+                <div class="invoice-signature-date">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
                 <div>{{ $invoice->role_penandatangan ?? 'Admin Supplier Perusahaan' }},</div>
                 @if($invoice->signature_data)
-                    <div style="margin: 10px 0; display: flex; justify-content: center;">
-                        <img src="{{ $invoice->signature_data }}" alt="Tanda Tangan" style="max-width: 280px; width: 100%; height: auto; border: none; background: none; box-shadow: none;">
+                    <div class="invoice-signature-container">
+                        <img class="invoice-signature-image" src="{{ $invoice->signature_data }}" alt="Tanda Tangan">
                     </div>
                 @endif
-                <div style="text-decoration: underline; font-weight: bold;">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
+                <div class="invoice-signature-name">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
             </div>
         </div>
     </div>
