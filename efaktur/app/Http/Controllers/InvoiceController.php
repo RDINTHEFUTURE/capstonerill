@@ -121,7 +121,7 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor,' . $invoice->id],
             'tanggal' => ['required', 'date'],
-
+            'role_penandatangan' => ['nullable', 'string', 'max:255'],
             'pejabat' => ['nullable', 'string', 'max:255'],
 
 

@@ -48,7 +48,7 @@
 
     <!-- <h3 style="margin:16px 0 8px;">Role Penandatangan</h3> -->
 
-    <label>Role Penandatangan (contoh: Admin)</label>
+    <label>Pihak Penandatangan (contoh: Admin)</label>
     <input name="role_penandatangan" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
     @error('role_penandatangan') <div class="error">{{ $message }}</div> @enderror
 

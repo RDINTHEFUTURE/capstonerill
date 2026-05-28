@@ -10,6 +10,15 @@ use Endroid\QrCode\Encoding\Encoding;
 
 class InvoicePdfController extends Controller
 {
+    public function preview(Invoice $invoice)
+    {
+        $invoice->loadMissing('items');
+
+        return view('invoices.preview', [
+            'invoice' => $invoice,
+        ]);
+    }
+
     public function show(Invoice $invoice)
     {
         // QR akan dirender sebagai data URI base64 supaya dompdf tidak melakukan request HTTP ke endpoint QR.

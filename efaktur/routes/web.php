@@ -11,6 +11,7 @@ Route::resource('invoices', InvoiceController::class);
 Route::get('invoices/{invoice}/qr', [InvoiceController::class, 'qr'])->name('invoices.qr');
 
 use App\Http\Controllers\InvoicePdfController;
+Route::get('invoices/{invoice}/preview', [InvoicePdfController::class, 'preview'])->name('invoices.preview');
 Route::get('invoices/{invoice}/pdf', [InvoicePdfController::class, 'show'])->name('invoices.pdf');
 
 
