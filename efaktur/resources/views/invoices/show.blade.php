@@ -22,7 +22,6 @@
         <div style="display:flex; gap:10px; margin-top: 8px; flex-wrap: wrap;">
         <a class="btn btn-secondary" href="{{ route('invoices.index') }}">&larr; Kembali</a>
         <a class="btn" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
-        <a class="btn" href="{{ route('invoices.pdf', $invoice) }}">Cetak PDF</a>
         <a class="btn" href="{{ route('invoices.edit', $invoice) }}">Edit</a>
 
         <form method="POST" action="{{ route('invoices.destroy', $invoice) }}" onsubmit="return confirm('Hapus invoice ini?');" style="margin:0;">
