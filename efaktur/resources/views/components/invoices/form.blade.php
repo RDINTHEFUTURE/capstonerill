@@ -41,7 +41,7 @@
     @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? [])])
 
 
-    {{-- total tetap dihitung backend, tapi input ini dipakai untuk menampilkan angka (opsional) --}}
+    {{-- FIELD: total (backend-calculated) --}}
     <label>Total</label>
     <input name="total" id="invoice-total" type="number" step="0.01" value="{{ old('total', $invoice?->total ?? 0) }}" required readonly>
     @error('total') <div class="error">{{ $message }}</div> @enderror
