@@ -52,16 +52,12 @@
     <input name="role_penandatangan" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
     @error('role_penandatangan') <div class="error">{{ $message }}</div> @enderror
 
-    <label>Nama Penandatangan (contoh: Budi)</label>
-    <input name="pejabat" value="{{ old('pejabat', $invoice?->pejabat ?? '') }}" maxlength="255">
-    @error('pejabat') <div class="error">{{ $message }}</div> @enderror
 
     <label>Mata Uang (currency)</label>
     <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
 
     <input type="hidden" name="signature_data" id="signature_data" value="{{ old('signature_data', $invoice?->signature_data) }}">
-    <input type="hidden" name="signature_changed" id="signature_changed" value="0">
 
     <div id="signature-pad-wrapper">
         <label>Signature Digital</label>
@@ -71,6 +67,10 @@
                 <button type="button" class="btn btn-secondary" id="clear-signature">Clear Signature</button>
             </div>
             <div class="signature-pad-info">Gunakan mouse atau sentuhan untuk menggambar tanda tangan. Kosongkan jika tidak ingin merubah tanda tangan saat edit.</div>
+        </div>
+        <div id="signature-preview-wrapper" style="display: none; margin-top: 12px;">
+            <label>Preview Tanda Tangan</label>
+            <img id="signature-preview" src="" alt="Preview Tanda Tangan" style="display: block; max-width: 100%; border: 1px solid #d1d5db; border-radius: 8px; margin-top: 8px; height: auto;" />
         </div>
         <label style="margin-top: 12px;">Nama Penandatangan</label>
         <input type="text" name="signature_name" id="signature_name" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
@@ -110,6 +110,14 @@
             box-sizing: border-box;
             background: #fff;
             touch-action: none;
+        }
+
+        #signature-preview {
+            width: 100%;
+            display: block;
+            max-width: 280px;
+            height: auto;
+            object-fit: contain;
         }
 
         .signature-pad-actions {
@@ -216,12 +224,13 @@
         (function(){
             const canvas = document.getElementById('signature-canvas');
             const hiddenInput = document.getElementById('signature_data');
-            const changedInput = document.getElementById('signature_changed');
             const clearButton = document.getElementById('clear-signature');
-            const form = canvas.closest('form');
-            const existingSignature = {!! json_encode(old('signature_data', $invoice?->signature_data)) !!};
+            const previewWrapper = document.getElementById('signature-preview-wrapper');
+            const previewImage = document.getElementById('signature-preview');
+            const form = canvas?.closest('form');
+            const existingSignature = {!! json_encode(old('signature_data', $invoice?->signature_data)) !!} || '';
 
-            if(!canvas || !form) return;
+            if(!canvas || !form || !hiddenInput) return;
 
             const signaturePad = new SignaturePad(canvas, {
                 backgroundColor: 'rgba(255, 255, 255, 0)',
@@ -229,6 +238,7 @@
             });
 
             function resizeCanvas() {
+                const data = signaturePad.toDataURL();
                 const ratio = Math.max(window.devicePixelRatio || 1, 1);
                 const width = 280;
                 const height = 140;
@@ -240,34 +250,58 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.scale(ratio, ratio);
 
-                if (existingSignature && changedInput.value === '0') {
-                    signaturePad.clear();
-                    signaturePad.fromDataURL(existingSignature);
+                signaturePad.clear();
+                if (data && data !== 'data:,') {
+                    signaturePad.fromDataURL(data);
                 }
             }
 
-            function markChanged() {
-                changedInput.value = '1';
+            function updatePreview(data) {
+                if (!previewWrapper || !previewImage) return;
+                if (data) {
+                    previewImage.src = data;
+                    previewWrapper.style.display = 'block';
+                } else {
+                    previewImage.src = '';
+                    previewWrapper.style.display = 'none';
+                }
+            }
+
+            function setSignatureData(data) {
+                hiddenInput.value = data || '';
+                updatePreview(data);
+            }
+
+            function refreshSignatureData() {
+                if (signaturePad.isEmpty()) {
+                    setSignatureData('');
+                    return;
+                }
+                setSignatureData(signaturePad.toDataURL('image/png'));
             }
 
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
 
-            canvas.addEventListener('pointerdown', markChanged);
+            if (existingSignature) {
+                signaturePad.fromDataURL(existingSignature);
+                setSignatureData(existingSignature);
+            } else {
+                setSignatureData('');
+            }
+
+            canvas.addEventListener('pointerup', refreshSignatureData);
+            canvas.addEventListener('pointercancel', refreshSignatureData);
             clearButton.addEventListener('click', () => {
                 signaturePad.clear();
-                markChanged();
+                setSignatureData('');
             });
 
             form.addEventListener('submit', () => {
-                if (changedInput.value === '1') {
-                    if (signaturePad.isEmpty()) {
-                        hiddenInput.value = '';
-                    } else {
-                        hiddenInput.value = signaturePad.toDataURL('image/png');
-                    }
-                } else {
+                if (signaturePad.isEmpty()) {
                     hiddenInput.value = '';
+                } else {
+                    hiddenInput.value = signaturePad.toDataURL('image/png');
                 }
             });
         })();

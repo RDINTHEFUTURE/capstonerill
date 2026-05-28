@@ -13,6 +13,9 @@ class Invoice extends Model
         'nomor',
         'tanggal',
 
+        // Signature
+        'signature_data',
+        'signature_name',
 
         // Identitas Penjual
         'npwp_penjual',

@@ -30,15 +30,8 @@ class InvoiceController extends Controller
 
             'pejabat' => ['nullable', 'string', 'max:255'],
             'role_penandatangan' => ['nullable', 'string', 'max:255'],
-
-
-
-
-            // Seller
-            'npwp_penjual' => ['nullable', 'string', 'max:32'],
-            'nama_penjual' => ['nullable', 'string', 'max:255'],
-            'alamat_penjual' => ['nullable', 'string', 'max:255'],
-
+            'signature_name' => ['nullable', 'string', 'max:255'],
+            'signature_data' => ['nullable', 'string'],
             // Buyer
             'npwp_pembeli' => ['nullable', 'string', 'max:32'],
             'nama_pembeli' => ['nullable', 'string', 'max:255'],
@@ -85,7 +78,8 @@ class InvoiceController extends Controller
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
             'role_penandatangan' => $validated['role_penandatangan'] ?? null,
-
+            'signature_name' => $validated['signature_name'] ?? null,
+            'signature_data' => $validated['signature_data'] ? $validated['signature_data'] : null,
 
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
             'nama_penjual' => $validated['nama_penjual'] ?? null,
@@ -123,7 +117,8 @@ class InvoiceController extends Controller
             'tanggal' => ['required', 'date'],
             'role_penandatangan' => ['nullable', 'string', 'max:255'],
             'pejabat' => ['nullable', 'string', 'max:255'],
-
+            'signature_name' => ['nullable', 'string', 'max:255'],
+            'signature_data' => ['nullable', 'string'],
 
             // Seller
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
@@ -176,6 +171,8 @@ class InvoiceController extends Controller
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
             'role_penandatangan' => $validated['role_penandatangan'] ?? null,
+            'signature_name' => $validated['signature_name'] ?? null,
+            'signature_data' => $validated['signature_data'] ? $validated['signature_data'] : null,
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
 
             'nama_penjual' => $validated['nama_penjual'] ?? null,
