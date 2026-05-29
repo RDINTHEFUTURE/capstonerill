@@ -9,7 +9,7 @@
 <body class="invoice-preview-page">
     <div class="invoice-toolbar">
         <a class="btn btn-secondary" href="{{ route('invoices.show', $invoice) }}">&larr; Kembali</a>
-        <a class="btn" href="{{ route('invoices.pdf', $invoice) }}">Unduh PDF</a>
+        <a class="btn" href="{{ route('invoices.pdf', $invoice) }}" target="_blank" rel="noopener">Unduh PDF</a>
         <button class="btn" type="button" onclick="window.print()">PRINT</button>
     </div>
 
@@ -112,9 +112,9 @@
                 </div>
             </div>
 
-            <div class="note">
+            <!-- <div class="note">
                 Ini adalah preview faktur sebelum dicetak atau diunduh sebagai PDF.
-            </div>
+            </div> -->
         </div>
     </div>
 </body>

@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Faktur Penjualan</title>
-    <link rel="stylesheet" href="{{ asset('css/invoice-cetakfaktur.css') }}">
+    @php
+        $pdfCssPath = public_path('css/invoice-cetakfaktur.css');
+        $pdfCss = file_exists($pdfCssPath) ? file_get_contents($pdfCssPath) : '';
+    @endphp
+    <style>
+        {!! $pdfCss !!}
+    </style>
 </head>
 <body class="invoice-cetak-page">
     <div class="invoice-faktur-container">
