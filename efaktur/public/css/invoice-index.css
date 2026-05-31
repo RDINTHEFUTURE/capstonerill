@@ -59,3 +59,34 @@ button.btn {
 .pagination-container {
     margin-top: 16px;
 }
+
+/* --- Color contrast follow Mazer sidebar in light/dark mode --- */
+
+/* Light mode: make sure it stays dark/black text */
+body:not(.dark) .invoice-index-page-text,
+body:not(.dark) .invoice-index-page-text * {
+    color: #333 !important;
+}
+
+/* Dark mode: make sure it becomes light/white text */
+body.dark .invoice-index-page-text,
+body.dark .invoice-index-page-text * {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Table specifics: borders + header background */
+body.dark .table th,
+body.dark .table td,
+body.dark table th,
+body.dark table td {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.dark table thead th,
+body.dark th {
+    background: rgba(0, 0, 0, 0.25) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+

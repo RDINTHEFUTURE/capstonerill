@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
                 <a href="{{ route('invoices.index') }}" style="font-weight: bold; color: #333;">
-                    E-Faktur Penjualan
+                    <span class="sidebar-link" style="color: inherit;">E-Faktur Penjualan</span>
                 </a>
             </div>
             <div class="theme-toggle d-flex gap-2 align-items-center mt-2">

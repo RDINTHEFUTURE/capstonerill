@@ -38,8 +38,27 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
+
+    {{-- Ensure our dark-mode based CSS selectors update when the theme checkbox is toggled. --}}
+    <script>
+        (function () {
+            const checkbox = document.getElementById('toggle-dark');
+            if (!checkbox) return;
+
+            function syncTheme() {
+                // Mazer uses `body.dark` for dark mode.
+                document.body.classList.toggle('dark', checkbox.checked);
+            }
+
+            checkbox.addEventListener('change', syncTheme);
+            // initial sync (in case theme is restored before checkbox renders state)
+            syncTheme();
+        })();
+    </script>
+
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+
 
     @stack('scripts')
 
