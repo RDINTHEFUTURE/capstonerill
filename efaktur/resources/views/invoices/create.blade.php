@@ -1,26 +1,29 @@
-<!doctype html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buat Invoice</title>
-    <link rel="stylesheet" href="{{ asset('css/invoice-create.css') }}">
-</head>
-<body class="invoice-create-page">
-    <h1>Buat Invoice</h1>
+@extends('layouts.mazer')
 
-    <div class="card">
-        <form method="POST" action="{{ route('invoices.store') }}">
-            @csrf
+@section('title', 'Buat Invoice')
 
-            <x-invoices.form />
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/invoice-create.css') }}">
+@endpush
 
-            <div class="actions">
-                <button class="btn" type="submit">Simpan & Buat QR</button>
-                <a class="btn btn-secondary" href="{{ route('invoices.index') }}">Kembali</a>
-            </div>
-        </form>
+@section('content')
+    <div class="page-heading d-flex justify-content-between align-items-center">
+        <h3>Buat Invoice</h3>
+        <a class="btn btn-secondary" href="{{ route('invoices.index') }}">Kembali</a>
     </div>
-</body>
-</html>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <form method="POST" action="{{ route('invoices.store') }}">
+                @csrf
+
+                <x-invoices.form />
+
+                <div class="mt-3">
+                    <button class="btn btn-primary" type="submit">Simpan & Buat QR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
 
