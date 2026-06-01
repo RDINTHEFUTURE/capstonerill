@@ -1,0 +1,338 @@
+@extends('layouts.mazer')
+
+@section('content')
+
+<div style="width: 100%; display:flex; justify-content:center; padding: 24px;">
+  <div class="container" id="container">
+
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --accent-red: #dc2626;
+        --accent-red-hover: #b91c1c;
+        --background: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --radius: 16px;
+        --transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+
+      .container {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+        width: 768px;
+        max-width: 100%;
+        min-height: 480px;
+      }
+
+      .form-container {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        transition: var(--transition);
+        width: 50%;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .login-container {
+        left: 0;
+        z-index: 2;
+        opacity: 1;
+      }
+
+      .register-container {
+        left: 0;
+        opacity: 0;
+        z-index: 1;
+      }
+
+      /* Overlay */
+      .overlay-container {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: var(--transition);
+        z-index: 100;
+      }
+
+      .overlay {
+        background: var(--accent-red);
+        color: #ffffff;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: var(--transition);
+      }
+
+      .overlay-panel {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 40px;
+        text-align: center;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        transition: var(--transition);
+      }
+
+      .overlay-left {
+        transform: translateX(-20%);
+      }
+
+      .overlay-right {
+        right: 0;
+        transform: translateX(0);
+      }
+
+      /* State switching */
+      .container.active .login-container {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      .container.active .register-container {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 5;
+      }
+
+      .container.active .overlay-container {
+        transform: translateX(-100%);
+      }
+
+      .container.active .overlay {
+        transform: translateX(50%);
+      }
+
+      .container.active .overlay-left {
+        transform: translateX(0);
+      }
+
+      .container.active .overlay-right {
+        transform: translateX(20%);
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .overlay h1 {
+        color: #ffffff;
+      }
+
+      p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .overlay p {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-group label {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s;
+      }
+
+      .form-group input:focus {
+        border-color: var(--primary);
+      }
+
+      .forgot-link {
+        font-size: 13px;
+        color: var(--primary);
+        text-decoration: none;
+        margin-bottom: 20px;
+        display: inline-block;
+      }
+
+      .btn {
+        border-radius: 8px;
+        border: 1px solid var(--primary);
+        background-color: var(--primary);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 12px 24px;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: transform 80ms ease-in;
+      }
+
+      .btn:active {
+        transform: scale(0.95);
+      }
+
+      .btn.ghost {
+        background-color: transparent;
+        border-color: #ffffff;
+        color: #ffffff;
+        margin-top: 10px;
+      }
+
+      .btn.ghost:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .field-error {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: -6px;
+        margin-bottom: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .container { width: 380px; min-height: 520px; }
+        .overlay-container { display: none; }
+        .form-container { width: 100%; }
+        .container.active .register-container { transform: none; }
+      }
+    </style>
+
+    <!-- REGISTER VIEW -->
+    <div class="form-container register-container">
+      <form method="POST" action="{{ route('register') }}">
+        @csrf
+
+        <h1>Create Account</h1>
+        <p>Use your email to complete registration</p>
+
+        @error('name')
+          <div class="field-error">{{ $message }}</div>
+        @enderror
+        @error('email')
+          <div class="field-error">{{ $message }}</div>
+        @enderror
+        @error('password')
+          <div class="field-error">{{ $message }}</div>
+        @enderror
+
+        <div class="form-group">
+          <label>Name</label>
+          <input name="name" type="text" placeholder="John Doe" required value="{{ old('name') }}">
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input name="email" type="email" placeholder="name@domain.com" required value="{{ old('email') }}">
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input name="password" type="password" placeholder="••••••••" required>
+        </div>
+
+        <button class="btn" type="submit">Sign Up</button>
+      </form>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <div class="form-container login-container">
+      <form method="POST" action="{{ route('login.post') }}">
+        @csrf
+
+        <h1>Sign In</h1>
+        <p>Please enter your credential keys</p>
+
+        @error('email')
+          <div class="field-error">{{ $message }}</div>
+        @enderror
+        @error('password')
+          <div class="field-error">{{ $message }}</div>
+        @enderror
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input name="email" type="email" placeholder="name@domain.com" required value="{{ old('email') }}">
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input name="password" type="password" placeholder="••••••••" required>
+        </div>
+
+        <a href="#" class="forgot-link" onclick="event.preventDefault();">Forgot your password?</a>
+
+        <button class="btn" type="submit">Sign In</button>
+      </form>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Welcome Back!</h1>
+          <p>Already have an account? Keep connected with your personal info by signing in below</p>
+          <button class="btn ghost" id="signInBtn" type="button">Sign In</button>
+        </div>
+
+        <div class="overlay-panel overlay-right">
+          <h1>Hello, Friend!</h1>
+          <p>Don't have an account yet? Enter your personal details and start your journey with us</p>
+          <button class="btn ghost" id="signUpBtn" type="button">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const container = document.getElementById('container');
+  const signUpBtn = document.getElementById('signUpBtn');
+  const signInBtn = document.getElementById('signInBtn');
+
+  signUpBtn.addEventListener('click', () => {
+    container.classList.add('active');
+  });
+
+  signInBtn.addEventListener('click', () => {
+    container.classList.remove('active');
+  });
+</script>
+
+@endsection
+

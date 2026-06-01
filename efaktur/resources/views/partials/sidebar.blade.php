@@ -44,6 +44,26 @@
                     <span>Create Invoice</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: inline; width: 100%;">
+                    @csrf
+                    <button type="submit" class="sidebar-link" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </li>
         </ul>
     </div>
+    <script>
+        (function () {
+            var logoutForm = document.getElementById('logout-form');
+            if (!logoutForm) return;
+            logoutForm.addEventListener('submit', function (e) {
+                if (!confirm('Apakah Anda yakin ingin keluar?')) {
+                    e.preventDefault();
+                }
+            });
+        })();
+    </script>
 </div>

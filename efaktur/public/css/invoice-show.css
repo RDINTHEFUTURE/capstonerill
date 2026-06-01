@@ -50,6 +50,36 @@ button.btn {
     cursor: pointer;
 }
 
+/* --- Dark mode overrides for Detail Invoice (show) --- */
+body.dark body.invoice-show-page {
+    background: #0b0f19;
+}
+
+body.dark .invoice-show-page,
+body.dark .invoice-show-page .card {
+    background: #0b0f19;
+}
+
+body.dark .invoice-show-page .card {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.dark .invoice-show-page .key,
+body.dark .invoice-show-page .value {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.dark .invoice-show-page pre {
+    background: #0b0f19;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.dark .invoice-show-page .qr-note {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+
 .btn-secondary {
     background: #6b7280;
 }
