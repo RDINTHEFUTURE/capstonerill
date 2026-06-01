@@ -115,4 +115,25 @@ body.dark .btn-outline-secondary {
     cursor: pointer;
 }
 
+/* Logout action style - make it visually distinct and cautionary */
+.logout-action,
+button.logout-action {
+    color: #fff !important;
+    background: #c92a2a !important;
+    border: 1px solid #911111 !important;
+    box-shadow: 0 6px 16px rgba(201, 42, 42, 0.32);
+}
+
+.logout-action:hover,
+button.logout-action:hover {
+    background: #a11f1f !important;
+    border-color: #770f0f !important;
+}
+
+.logout-action:focus,
+button.logout-action:focus {
+    outline: 2px solid rgba(201, 42, 42, 0.5);
+    outline-offset: 2px;
+}
+
 /* End of centralized button and modal rules */
