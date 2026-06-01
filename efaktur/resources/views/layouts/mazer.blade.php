@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
 
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('css/invoice-buttons.css') }}">
 </head>
 <body>
 

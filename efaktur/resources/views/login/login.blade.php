@@ -212,7 +212,7 @@
         <p>Silakan masukkan akun Anda untuk melanjutkan</p>
         
         @if ($errors->any())
-          <div style="background-color: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; margin-bottom: 18px; font-size: 13px; color: #dc2626;">
+          <div class="alert alert-danger" role="alert">
             @foreach ($errors->all() as $error)
               <div>{{ $error }}</div>
             @endforeach
@@ -241,8 +241,8 @@
     </div>
 
     <div class="navy-panel">
-      <h1>Portal Enterprise</h1>
-      <p>Akses dasbor aman Anda. Kelola data, pantau performa, dan tingkatkan produktivitas dalam satu platform terintegrasi.</p>
+      <h1>E-Faktur Penjualan</h1>
+      <p>Kelola penerbitan E-Faktur penjualan Anda dengan mudah dan sesuai regulasi. Rekam transaksi, validasi secara otomatis, serta lacak status approval dalam satu portal terintegrasi.</p>
     </div>
 
   </div>

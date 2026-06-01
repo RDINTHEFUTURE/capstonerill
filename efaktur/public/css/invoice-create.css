@@ -11,25 +11,27 @@ button.btn {
     align-items: center;
     justify-content: center;
     padding: 10px 14px;
-    background: #2563eb;
-    color: #fff;
+    background: #435ebe;
+    color: #ffffff;
     text-decoration: none;
     border-radius: 8px;
     border: none;
     cursor: pointer;
 }
+/* Button overrides moved to public/css/invoice-buttons.css */
 
 .btn-secondary {
     background: #6b7280;
 }
 
 .card {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--bs-border-color);
     border-radius: 12px;
     padding: 16px;
     max-width: 100%;
-    background: #fff;
+    background: var(--bs-body-bg);
     box-sizing: border-box;
+    color: var(--bs-body-color);
 }
 
 .section-title {
@@ -40,6 +42,7 @@ label {
     display: block;
     margin-top: 10px;
     font-weight: 600;
+    color: var(--bs-body-color);
 }
 
 input,
@@ -48,14 +51,16 @@ select {
     width: 100%;
     padding: 10px;
     margin-top: 6px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--bs-border-color);
     border-radius: 8px;
     box-sizing: border-box;
     min-width: 0;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
 }
 
 .error {
-    color: #b91c1c;
+    color: #dc2626;
     margin-top: 8px;
 }
 
@@ -67,13 +72,14 @@ select {
 }
 
 .invoice-items-card {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--bs-border-color);
     border-radius: 12px;
     padding: 16px;
     margin-top: 16px;
     overflow-x: auto;
-    background: #fff;
+    background: var(--bs-body-bg);
     box-sizing: border-box;
+    color: var(--bs-body-color);
 }
 
 .invoice-items-container {

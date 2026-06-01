@@ -2,8 +2,8 @@ body.invoice-preview-page {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background: #f3f4f6;
-    color: #111;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
 }
 
 .invoice-toolbar {
@@ -22,8 +22,8 @@ button.btn {
     border-radius: 8px;
     border: none;
     text-decoration: none;
-    color: #fff;
-    background: #2563eb;
+    color: #ffffff;
+    background: #435ebe;
     cursor: pointer;
 }
 
@@ -37,12 +37,13 @@ button.btn {
 }
 
 .invoice-faktur-container {
-    background: #fff;
-    border: 1px solid #d1d5db;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
     padding: 18px;
     width: 100%;
     box-sizing: border-box;
+    color: var(--bs-body-color);
 }
 
 .invoice-title {
@@ -62,16 +63,18 @@ button.btn {
 
 .invoice-table th,
 .invoice-table td {
-    border: 1px solid #111;
+    border: 1px solid var(--bs-border-color);
     padding: 8px;
     vertical-align: top;
     text-align: left;
+    color: var(--bs-body-color);
 }
 
 .invoice-table th {
-    background: #f3f4f6;
+    background: var(--bs-tertiary-bg);
     font-weight: 700;
     text-align: center;
+    color: var(--bs-body-color);
 }
 
 .invoice-summary-table td,
@@ -190,3 +193,4 @@ button.btn {
         border-color: #000;
     }
 }
+/* Button overrides moved to public/css/invoice-buttons.css */

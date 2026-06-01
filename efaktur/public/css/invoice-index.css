@@ -3,6 +3,8 @@ body.invoice-index-page {
     margin: 24px;
 }
 
+/* Button overrides moved to public/css/invoice-buttons.css */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -11,13 +13,14 @@ table {
 
 th,
 td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--bs-border-color);
     padding: 10px;
     text-align: left;
+    color: var(--bs-body-color);
 }
 
 th {
-    background: #f6f6f6;
+    background: var(--bs-tertiary-bg);
 }
 
 .row {
@@ -32,8 +35,8 @@ button.btn {
     align-items: center;
     justify-content: center;
     padding: 10px 14px;
-    background: #2563eb;
-    color: #fff;
+    background: #435ebe;
+    color: #ffffff;
     text-decoration: none;
     border-radius: 8px;
     border: none;
@@ -60,18 +63,12 @@ button.btn {
     margin-top: 16px;
 }
 
-/* --- Color contrast follow Mazer sidebar in light/dark mode --- */
+/* --- Color contrast follows Bootstrap theme variables --- */
 
-/* Light mode: make sure it stays dark/black text */
-body:not(.dark) .invoice-index-page-text,
-body:not(.dark) .invoice-index-page-text * {
-    color: #333 !important;
-}
-
-/* Dark mode: make sure it becomes light/white text */
-body.dark .invoice-index-page-text,
-body.dark .invoice-index-page-text * {
-    color: rgba(255, 255, 255, 0.95) !important;
+/* Text color automatically follows theme via Bootstrap variables */
+.invoice-index-page-text,
+.invoice-index-page-text * {
+    color: var(--bs-body-color) !important;
 }
 
 /* Table specifics: borders + header background */

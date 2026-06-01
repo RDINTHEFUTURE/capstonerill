@@ -2,7 +2,7 @@
     <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
-                <a href="{{ route('invoices.index') }}" style="font-weight: bold; color: #333;">
+                <a href="{{ route('invoices.index') }}" style="font-weight: bold; color: var(--bs-body-color);">
                     <span class="sidebar-link" style="color: inherit;">E-Faktur Penjualan</span>
                 </a>
             </div>
@@ -55,13 +55,71 @@
             </li>
         </ul>
     </div>
+    <!-- Logout Confirmation Modal (Mazer-like) -->
+    <div id="logoutModal" class="modal" tabindex="-1" role="dialog" style="display:none;">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:420px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Logout</h5>
+                    <button type="button" class="close" aria-label="Close" id="logoutModalClose">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Apakah Anda yakin ingin keluar dari sesi ini?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="logoutCancel">Batal</button>
+                    <button type="button" class="btn btn-danger" id="logoutConfirm">Keluar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Simple modal backdrop & visibility to mimic Mazer/Bootstrap centered modal */
+        #logoutModal.modal { position: fixed; inset: 0; z-index: 1050; display: flex; align-items: center; justify-content: center; }
+        #logoutModal .modal-dialog { margin: 0; }
+        #logoutModal[style*="display:none"] { display: none !important; }
+        #logoutModal.show { display:flex !important; }
+        #logoutModal::before { content: ''; position: absolute; inset: 0; background: rgba(15,23,42,0.6); }
+        #logoutModal .modal-content { position: relative; z-index: 2; }
+    </style>
+
     <script>
         (function () {
             var logoutForm = document.getElementById('logout-form');
-            if (!logoutForm) return;
+            var modal = document.getElementById('logoutModal');
+            var btnClose = document.getElementById('logoutModalClose');
+            var btnCancel = document.getElementById('logoutCancel');
+            var btnConfirm = document.getElementById('logoutConfirm');
+            if (!logoutForm || !modal) return;
+
+            // Intercept form submit to show modal
             logoutForm.addEventListener('submit', function (e) {
-                if (!confirm('Apakah Anda yakin ingin keluar?')) {
-                    e.preventDefault();
+                e.preventDefault();
+                modal.classList.add('show');
+                modal.style.display = 'flex';
+            });
+
+            function hideModal() {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+
+            btnClose && btnClose.addEventListener('click', hideModal);
+            btnCancel && btnCancel.addEventListener('click', hideModal);
+
+            // On confirm, actually submit the form
+            btnConfirm && btnConfirm.addEventListener('click', function () {
+                // Remove the listener so we don't re-intercept
+                logoutForm.removeEventListener('submit', function(){});
+                // Submit the form
+                logoutForm.submit();
+            });
+
+            // Allow closing modal with Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('show')) {
+                    hideModal();
                 }
             });
         })();

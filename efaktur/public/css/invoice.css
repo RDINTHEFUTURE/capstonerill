@@ -3,10 +3,10 @@ body.invoice-preview-page,
 body.invoice-pdf-page,
 body.invoice-cetak-page {
     font-family: Arial, sans-serif;
-    color: #111;
+    color: var(--bs-body-color);
     margin: 0;
     padding: 0;
-    background: #f5f5f5;
+    background: var(--bs-body-bg);
 }
 
 .invoice-toolbar {
@@ -25,8 +25,8 @@ body.invoice-cetak-page {
     border-radius: 8px;
     border: none;
     text-decoration: none;
-    color: #fff;
-    background: #2563eb;
+    color: #ffffff;
+    background: #435ebe;
     cursor: pointer;
 }
 
@@ -43,8 +43,8 @@ body.invoice-cetak-page {
 }
 
 .invoice-faktur-container {
-    background: #fff;
-    border: 1px solid #d1d5db;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
     padding: 18px;
     width: 100%;
