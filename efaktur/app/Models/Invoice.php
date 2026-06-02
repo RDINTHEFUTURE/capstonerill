@@ -30,6 +30,7 @@ class Invoice extends Model
         'total',
         'currency',
         'qr_payload',
+        'qr_image',
 
         // Direktur / Pejabat
         'pejabat',

@@ -81,9 +81,14 @@
         <div class="col-md-4">
             <div class="card qr-wrap">
                 <div class="card-body text-center">
-                    <div class="qr-header">QR Code</div>
-                    <img src="{{ route('invoices.qr', $invoice) }}" alt="QR Invoice" width="280" height="280">
-                    <div class="qr-note mt-2">QR membuka PDF faktur ini.</div>
+                    <div class="qr-header">QR Stamp</div>
+                    @if(!empty($invoice->qr_image))
+                        <img src="{{ $invoice->qr_image }}" alt="QR Invoice" width="280" height="280">
+                        <div class="qr-note mt-2">QR dari DJP (diunggah oleh user).</div>
+                    @else
+                        <div class="qr-placeholder" style="width:280px; height:280px; margin: 0 auto;"></div>
+                        <div class="qr-note mt-2">QR belum diunggah — unggah saat membuat / mengedit invoice.</div>
+                    @endif
                 </div>
             </div>
         </div>

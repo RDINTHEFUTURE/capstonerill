@@ -35,6 +35,7 @@ class InvoiceController extends Controller
             'role_penandatangan' => ['nullable', 'string', 'max:255'],
             'signature_name' => ['nullable', 'string', 'max:255'],
             'signature_data' => ['nullable', 'string'],
+            'qr_image' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
             // Seller
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
             'nama_penjual' => ['nullable', 'string', 'max:255'],
@@ -83,7 +84,7 @@ class InvoiceController extends Controller
 
         $payload = $this->buildQrPayload($validated);
 
-        $invoice = Invoice::create([
+        $invoiceData = [
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
@@ -100,7 +101,18 @@ class InvoiceController extends Controller
             'total' => $validated['total'],
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
-        ]);
+        ];
+
+        // handle QR upload (DJP provided image)
+        if ($request->hasFile('qr_image')) {
+            $file = $request->file('qr_image');
+            $mime = $file->getMimeType();
+            $contents = file_get_contents($file->getRealPath());
+            $dataUri = 'data:' . $mime . ';base64,' . base64_encode($contents);
+            $invoiceData['qr_image'] = $dataUri;
+        }
+
+        $invoice = Invoice::create($invoiceData);
 
         foreach ($itemsData as $row) {
             $invoice->items()->create($row);
@@ -134,6 +146,7 @@ class InvoiceController extends Controller
             'pejabat' => ['nullable', 'string', 'max:255'],
             'signature_name' => ['nullable', 'string', 'max:255'],
             'signature_data' => ['nullable', 'string'],
+            'qr_image' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
 
             // Seller
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
@@ -183,7 +196,7 @@ class InvoiceController extends Controller
 
         $payload = $this->buildQrPayload($validated);
 
-        $invoice->update([
+        $invoiceData = [
             'nomor' => $validated['nomor'],
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
@@ -200,7 +213,17 @@ class InvoiceController extends Controller
             'total' => $validated['total'],
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
-        ]);
+        ];
+
+        if ($request->hasFile('qr_image')) {
+            $file = $request->file('qr_image');
+            $mime = $file->getMimeType();
+            $contents = file_get_contents($file->getRealPath());
+            $dataUri = 'data:' . $mime . ';base64,' . base64_encode($contents);
+            $invoiceData['qr_image'] = $dataUri;
+        }
+
+        $invoice->update($invoiceData);
 
 
         // refresh items
@@ -229,7 +252,7 @@ class InvoiceController extends Controller
         if (!$payload) {
             $payload = $this->buildQrPayload([
                 'nomor' => $invoice->nomor,
-                'tanggal' => $invoice->tanggal?->format('Y-m-d'),
+                'tanggal' => $invoice->tanggal ? $invoice->tanggal->format('Y-m-d') : null,
                 'npwp_penjual' => $invoice->npwp_penjual,
                 'nama_penjual' => $invoice->nama_penjual,
                 'alamat_penjual' => $invoice->alamat_penjual,
@@ -246,12 +269,23 @@ class InvoiceController extends Controller
 
 
 
-        // QR diarahkan ke PDF faktur agar hasil scan langsung membuka dokumen.
+        // Jika user sudah mengunggah QR (DJP), kembalikan file tersebut langsung.
+        if (!empty($invoice->qr_image)) {
+            $data = $invoice->qr_image;
+            if (str_starts_with($data, 'data:')) {
+                [$meta, $b64] = explode(',', $data, 2);
+                preg_match('/data:(.*);base64/', $meta, $m);
+                $mime = $m[1] ?? 'image/png';
+                $binary = base64_decode($b64);
+
+                return response($binary, 200)
+                    ->header('Content-Type', $mime);
+            }
+        }
+
+        // Fallback: generate QR that links to the PDF (legacy behavior).
         $fakturUrl = route('invoices.pdf', $invoice);
 
-
-        // endroid/qr-code versi terpasang (lihat vendor/endroid/qr-code/src/QrCode.php)
-        // QrCode dibuat via constructor tanpa setter fluent (class bersifat readonly).
         $qrCode = new QrCode(
             data: $fakturUrl,
             encoding: new Encoding('UTF-8'),
@@ -259,10 +293,6 @@ class InvoiceController extends Controller
             size: 280,
             margin: 10,
         );
-
-
-
-
 
         $writer = new PngWriter();
         $result = $writer->write($qrCode);

@@ -14,7 +14,7 @@
 
     <div class="card mt-3">
         <div class="card-body">
-            <form method="POST" action="{{ route('invoices.update', $invoice) }}">
+            <form method="POST" action="{{ route('invoices.update', $invoice) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 

@@ -59,6 +59,19 @@
 
     <input type="hidden" name="signature_data" id="signature_data" value="{{ old('signature_data', $invoice?->signature_data) }}">
 
+    <label>Upload QR Bukti Tanda Tangan Digital (DJP)</label>
+    <input type="file" name="qr_image" accept="image/png,image/jpeg">
+    <div class="mt-1" style="font-size:12px; color:#666;">Jika tidak diupload saat edit, QR sebelumnya akan tetap digunakan.</div>
+
+    @if(isset($invoice) && $invoice->qr_image)
+        <div style="margin-top:8px">
+            <label>Preview QR saat ini</label>
+            <div style="width:120px; height:120px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center;">
+                <img src="{{ $invoice->qr_image }}" alt="QR" style="max-width:100%; max-height:100%;" />
+            </div>
+        </div>
+    @endif
+
     <div id="signature-pad-wrapper">
         <label>Signature Digital</label>
         <div class="signature-card">

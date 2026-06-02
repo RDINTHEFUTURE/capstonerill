@@ -14,7 +14,7 @@
 
     <div class="card mt-3">
         <div class="card-body">
-            <form method="POST" action="{{ route('invoices.store') }}">
+            <form method="POST" action="{{ route('invoices.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 <x-invoices.form :chartOfAccounts="$chartOfAccounts" />

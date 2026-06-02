@@ -98,7 +98,11 @@
             <div class="invoice-qr-box invoice-qr-box-pdf">
                 <div class="invoice-qr-inner">
                     <div class="invoice-qr-inner-label">[ QR CODE INVOICE ]</div>
-                    <img src="{{ route('invoices.qr', $invoice) }}" alt="QR Invoice">
+                    @if(!empty($invoice->qr_image))
+                        <img src="{{ $invoice->qr_image }}" alt="QR Invoice" style="max-width:100%; max-height:100%;">
+                    @else
+                        <div class="qr-placeholder" style="width:120px; height:120px; margin: 0 auto;"></div>
+                    @endif
                 </div>
             </div>
 
