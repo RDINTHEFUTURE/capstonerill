@@ -32,6 +32,11 @@ class InvoiceController extends Controller
             'role_penandatangan' => ['nullable', 'string', 'max:255'],
             'signature_name' => ['nullable', 'string', 'max:255'],
             'signature_data' => ['nullable', 'string'],
+            // Seller
+            'npwp_penjual' => ['nullable', 'string', 'max:32'],
+            'nama_penjual' => ['nullable', 'string', 'max:255'],
+            'alamat_penjual' => ['nullable', 'string', 'max:255'],
+
             // Buyer
             'npwp_pembeli' => ['nullable', 'string', 'max:32'],
             'nama_pembeli' => ['nullable', 'string', 'max:255'],
@@ -79,7 +84,7 @@ class InvoiceController extends Controller
             'pejabat' => $validated['pejabat'] ?? null,
             'role_penandatangan' => $validated['role_penandatangan'] ?? null,
             'signature_name' => $validated['signature_name'] ?? null,
-            'signature_data' => $validated['signature_data'] ? $validated['signature_data'] : null,
+            'signature_data' => $validated['signature_data'] ?? null,
 
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
             'nama_penjual' => $validated['nama_penjual'] ?? null,
@@ -172,7 +177,7 @@ class InvoiceController extends Controller
             'pejabat' => $validated['pejabat'] ?? null,
             'role_penandatangan' => $validated['role_penandatangan'] ?? null,
             'signature_name' => $validated['signature_name'] ?? null,
-            'signature_data' => $validated['signature_data'] ? $validated['signature_data'] : null,
+            'signature_data' => $validated['signature_data'] ?? null,
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
 
             'nama_penjual' => $validated['nama_penjual'] ?? null,
@@ -229,8 +234,7 @@ class InvoiceController extends Controller
 
 
 
-        // QR akan diarahkan ke PDF faktur.
-        // Jadi isi QR adalah URL PDF invoice ini, bukan JSON payload.
+        // QR diarahkan ke PDF faktur agar hasil scan langsung membuka dokumen.
         $fakturUrl = route('invoices.pdf', $invoice);
 
 
@@ -286,4 +290,3 @@ class InvoiceController extends Controller
         );
     }
 }
-

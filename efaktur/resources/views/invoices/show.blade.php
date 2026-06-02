@@ -39,7 +39,7 @@
                     <div class="details-row"><span class="key">Total</span><div class="value">{{ number_format((float)$invoice->total, 2, ',', '.') }} {{ $invoice->currency }}</div></div>
 
                     <div class="details-section">
-                        <div class="key">Payload QR (base64 JSON)</div>
+                        <div class="key">Data faktur tersimpan (base64 JSON)</div>
                         <div class="details-value">
                             <pre>{{ $invoice->qr_payload }}</pre>
                         </div>
@@ -53,10 +53,9 @@
                 <div class="card-body text-center">
                     <div class="qr-header">QR Code</div>
                     <img src="{{ route('invoices.qr', $invoice) }}" alt="QR Invoice" width="280" height="280">
-                    <div class="qr-note mt-2">QR dibuat dari payload yang tersimpan di database.</div>
+                    <div class="qr-note mt-2">QR membuka PDF faktur ini.</div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-
