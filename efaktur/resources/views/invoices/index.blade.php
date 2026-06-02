@@ -49,9 +49,8 @@
             </div>
 
             <div class="mt-3">
-                {{ $invoices->links() }}
+                {{ $invoices->onEachSide(1)->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
 @endsection
-

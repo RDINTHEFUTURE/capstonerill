@@ -1,4 +1,4 @@
-@props(['invoice' => null])
+@props(['invoice' => null, 'chartOfAccounts' => collect()])
 
 <div>
     <label>Nomor</label>
@@ -38,7 +38,7 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
-    @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? [])])
+    @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? []), 'chartOfAccounts' => $chartOfAccounts])
 
 
     {{-- FIELD: total (backend-calculated) --}}
@@ -253,5 +253,4 @@
         })();
     </script>
 </div>
-
 

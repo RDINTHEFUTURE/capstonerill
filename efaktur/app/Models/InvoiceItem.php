@@ -11,6 +11,7 @@ class InvoiceItem extends Model
 
     protected $fillable = [
         'invoice_id',
+        'chart_of_account_no_new',
         'nama_produk',
         'qty',
         'harga',
@@ -25,9 +26,13 @@ class InvoiceItem extends Model
         'subtotal' => 'decimal:2',
     ];
 
+    public function chartOfAccount()
+    {
+        return $this->belongsTo(ChartOfAccount::class, 'chart_of_account_no_new', 'account_no_new');
+    }
+
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
     }
 }
-

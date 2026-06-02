@@ -46,6 +46,43 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="mb-3">Items</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Akun</th>
+                                    <th>Qty</th>
+                                    <th>Harga</th>
+                                    <th>Diskon</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($invoice->items as $item)
+                                    <tr>
+                                        <td>{{ $item->nama_produk }}</td>
+                                        <td>
+                                            {{ $item->chartOfAccount?->account_no_new }}
+                                            @if($item->chartOfAccount)
+                                                - {{ $item->chartOfAccount->account_name }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->qty }}</td>
+                                        <td>{{ number_format((float) $item->harga, 2, ',', '.') }}</td>
+                                        <td>{{ number_format((float) $item->diskon, 2, ',', '.') }}</td>
+                                        <td>{{ number_format((float) $item->subtotal, 2, ',', '.') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-4">

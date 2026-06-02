@@ -17,7 +17,7 @@
             <form method="POST" action="{{ route('invoices.store') }}">
                 @csrf
 
-                <x-invoices.form />
+                <x-invoices.form :chartOfAccounts="$chartOfAccounts" />
 
                 <div class="mt-3">
                     <button class="btn btn-primary" type="submit">Simpan & Buat QR</button>
@@ -26,4 +26,3 @@
         </div>
     </div>
 @endsection
-

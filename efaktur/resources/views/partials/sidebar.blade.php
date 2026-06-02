@@ -39,6 +39,12 @@
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="{{ route('chart-of-accounts.index') }}" class="sidebar-link">
+                    <i class="bi bi-list-columns-reverse"></i>
+                    <span>Chart of Accounts</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="{{ route('invoices.create') }}" class="sidebar-link">
                     <i class="bi bi-plus-circle"></i>
                     <span>Create Invoice</span>

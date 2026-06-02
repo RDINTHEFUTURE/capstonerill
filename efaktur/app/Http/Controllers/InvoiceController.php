@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChartOfAccount;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Endroid\QrCode\QrCode;
@@ -19,7 +20,9 @@ class InvoiceController extends Controller
 
     public function create()
     {
-        return view('invoices.create');
+        $chartOfAccounts = $this->chartOfAccounts();
+
+        return view('invoices.create', compact('chartOfAccounts'));
     }
 
     public function store(Request $request)
@@ -46,6 +49,7 @@ class InvoiceController extends Controller
 
             'items' => ['required', 'array', 'min:1'],
             'items.*.nama_produk' => ['required', 'string', 'max:255'],
+            'items.*.chart_of_account_no_new' => ['nullable', 'string', 'max:6', 'exists:chart_of_accounts,account_no_new'],
             'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.harga' => ['required', 'numeric', 'min:0'],
             'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
@@ -66,6 +70,7 @@ class InvoiceController extends Controller
             $total += $subtotal;
 
             $itemsData[] = [
+                'chart_of_account_no_new' => $item['chart_of_account_no_new'] ?? null,
                 'nama_produk' => $item['nama_produk'],
                 'qty' => $qty,
                 'harga' => $harga,
@@ -107,12 +112,17 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        $invoice->loadMissing('items.chartOfAccount');
+
         return view('invoices.show', compact('invoice'));
     }
 
     public function edit(Invoice $invoice)
     {
-        return view('invoices.edit', compact('invoice'));
+        $invoice->loadMissing('items.chartOfAccount');
+        $chartOfAccounts = $this->chartOfAccounts();
+
+        return view('invoices.edit', compact('invoice', 'chartOfAccounts'));
     }
 
     public function update(Request $request, Invoice $invoice)
@@ -139,6 +149,7 @@ class InvoiceController extends Controller
 
             'items' => ['required', 'array', 'min:1'],
             'items.*.nama_produk' => ['required', 'string', 'max:255'],
+            'items.*.chart_of_account_no_new' => ['nullable', 'string', 'max:6', 'exists:chart_of_accounts,account_no_new'],
             'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.harga' => ['required', 'numeric', 'min:0'],
             'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
@@ -159,6 +170,7 @@ class InvoiceController extends Controller
             $total += $subtotal;
 
             $itemsData[] = [
+                'chart_of_account_no_new' => $item['chart_of_account_no_new'] ?? null,
                 'nama_produk' => $item['nama_produk'],
                 'qty' => $qty,
                 'harga' => $harga,
@@ -288,5 +300,16 @@ class InvoiceController extends Controller
         return base64_encode(
             json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
+    }
+
+    private function chartOfAccounts()
+    {
+        return ChartOfAccount::query()
+            ->where(function ($query) {
+                $query->whereNull('is_header')
+                    ->orWhere('is_header', '!=', 'H');
+            })
+            ->orderBy('account_no_new')
+            ->get();
     }
 }

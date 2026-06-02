@@ -67,6 +67,7 @@
                 <tr>
                     <th class="invoice-col-no">No.</th>
                     <th class="invoice-col-product">Produk</th>
+                    <th>Akun</th>
                     <th class="invoice-col-qty">Qty</th>
                     <th class="invoice-col-price">Harga (Rp)</th>
                     <th class="invoice-col-subtotal">Subtotal (Rp)</th>
@@ -78,6 +79,7 @@
                     <tr>
                         <td class="text-center">{{ $i + 1 }}</td>
                         <td>{{ $item->nama_produk ?? '-' }}</td>
+                        <td>{{ $item->chartOfAccount?->account_no_new }}{{ $item->chartOfAccount ? ' - ' . $item->chartOfAccount->account_name : '' }}</td>
                         <td class="text-right">{{ $item->qty ?? 1 }}</td>
                         <td class="text-right">{{ number_format((float)($item->harga ?? 0), 0, ',', '.') }}</td>
                         <td class="text-right">{{ number_format((float)($item->subtotal ?? 0), 0, ',', '.') }}</td>
@@ -116,5 +118,4 @@
     </div>
 </body>
 </html>
-
 

@@ -12,7 +12,7 @@ class InvoicePdfController extends Controller
 {
     public function preview(Invoice $invoice)
     {
-        $invoice->loadMissing('items');
+        $invoice->loadMissing('items.chartOfAccount');
 
         return view('invoices.preview', [
             'invoice' => $invoice,
@@ -25,7 +25,7 @@ class InvoicePdfController extends Controller
         $fakturUrl = route('invoices.pdf', $invoice);
 
         // Eager load items agar tersedia di view.
-        $invoice->loadMissing('items');
+        $invoice->loadMissing('items.chartOfAccount');
 
         $qrCode = new QrCode(
             data: $fakturUrl,
@@ -51,7 +51,6 @@ class InvoicePdfController extends Controller
         return $pdf->download('faktur-' . $invoice->nomor . '.pdf');
     }
 }
-
 
 
 
