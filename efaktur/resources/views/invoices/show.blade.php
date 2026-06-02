@@ -55,7 +55,6 @@
                             <thead>
                                 <tr>
                                     <th>Produk</th>
-                                    <th>Akun</th>
                                     <th>Qty</th>
                                     <th>Harga</th>
                                     <th>Diskon</th>
@@ -66,12 +65,6 @@
                                 @foreach($invoice->items as $item)
                                     <tr>
                                         <td>{{ $item->nama_produk }}</td>
-                                        <td>
-                                            {{ $item->chartOfAccount?->account_no_new }}
-                                            @if($item->chartOfAccount)
-                                                - {{ $item->chartOfAccount->account_name }}
-                                            @endif
-                                        </td>
                                         <td>{{ $item->qty }}</td>
                                         <td>{{ number_format((float) $item->harga, 2, ',', '.') }}</td>
                                         <td>{{ number_format((float) $item->diskon, 2, ',', '.') }}</td>

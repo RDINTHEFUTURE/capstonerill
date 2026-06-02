@@ -136,4 +136,31 @@ button.logout-action:focus {
     outline-offset: 2px;
 }
 
+/* Detail rows for show pages: separate key labels from values */
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.details-row:last-child {
+    border-bottom: none;
+}
+
+.details-row .key {
+    font-weight: 700;
+    color: #495057;
+    min-width: 140px;
+}
+
+.details-row .value {
+    flex: 1;
+    text-align: right;
+    font-weight: 500;
+    color: #212529;
+}
+
 /* End of centralized button and modal rules */

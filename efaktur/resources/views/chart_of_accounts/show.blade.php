@@ -22,10 +22,10 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="details-row"><span class="key">Kode</span><div class="value">{{ $chartOfAccount->account_no_new }}</div></div>
-            <div class="details-row"><span class="key">Kode Lama 1</span><div class="value">{{ $chartOfAccount->account_no_old_1 ?: '-' }}</div></div>
-            <div class="details-row"><span class="key">Kode Lama 2</span><div class="value">{{ $chartOfAccount->account_no_old_2 ?: '-' }}</div></div>
-            <div class="details-row"><span class="key">Nama</span><div class="value">{{ $chartOfAccount->account_name }}</div></div>
+            <div class="details-row"><span class="key">Nomor Akun Baru</span><div class="value">{{ $chartOfAccount->account_no_new }}</div></div>
+            <div class="details-row"><span class="key">Akun Lama 1</span><div class="value">{{ $chartOfAccount->account_no_old_1 ?: '-' }}</div></div>
+            <div class="details-row"><span class="key">Akun Lama 2</span><div class="value">{{ $chartOfAccount->account_no_old_2 ?: '-' }}</div></div>
+            <div class="details-row"><span class="key">Nama Akun</span><div class="value">{{ $chartOfAccount->account_name }}</div></div>
             <div class="details-row"><span class="key">Header</span><div class="value">{{ $chartOfAccount->is_header ?: '-' }}</div></div>
             <div class="details-row"><span class="key">Tipe</span><div class="value">{{ $chartOfAccount->account_type ?: '-' }}</div></div>
         </div>
