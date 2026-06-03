@@ -138,7 +138,19 @@
                         </td>
                         <td class="signature-area">
                             <div>, </div>
-                            @if(!empty($invoice->qr_image))
+                            @php($qrFromOld = old('qr_image'))
+                            @php($qrDataUri = null)
+
+                            {{-- Jika ada upload QR baru saat submit (muncul sebagai old input), render juga di preview --}}
+                            @if(!empty($qrFromOld) && is_string($qrFromOld))
+                                @php($qrDataUri = $qrFromOld)
+                            @endif
+
+                            @if(!empty($qrDataUri))
+                                <div class="qr-placeholder">
+                                    <img src="{{ $qrDataUri }}" alt="QR Upload" style="max-width:100%; max-height:100%;" />
+                                </div>
+                            @elseif(!empty($invoice->qr_image))
                                 <div class="qr-placeholder">
                                     <img src="{{ $invoice->qr_image }}" alt="QR Invoice" style="max-width:100%; max-height:100%;" />
                                 </div>
