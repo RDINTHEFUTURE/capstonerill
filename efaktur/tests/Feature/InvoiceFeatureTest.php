@@ -24,9 +24,13 @@ class InvoiceFeatureTest extends TestCase
             'npwp_pembeli' => '09.876.543.2-111.000',
             'nama_pembeli' => 'PT Pembeli Makmur',
             'alamat_pembeli' => 'Jl. Pembeli No. 2',
-            'role_penandatangan' => 'Admin Supplier',
+'role_penandatangan' => 'Admin Supplier',
+            'signature_type' => 'qr',
             'signature_name' => 'Budi Santoso',
+            'qr_image' => null,
             'currency' => 'IDR',
+
+
             'items' => [
                 [
                     'nama_produk' => 'Produk A',
@@ -43,9 +47,25 @@ class InvoiceFeatureTest extends TestCase
             ],
         ]);
 
+        if ($response->getStatusCode() === 302 && str_contains((string)$response->headers->get('Location'), 'login')) {
+            // Session/auth redirect prevents invoice creation; fail with response for debugging.
+            $this->fail('Unexpected redirect to login during invoice creation. Status: ' . $response->getStatusCode());
+        }
+
+        $created = Invoice::where('nomor', 'INV-001')->first();
+        if (! $created) {
+            $this->fail('Invoice not created. Response status: '.$response->getStatusCode().'. Location: '.($response->headers->get('Location') ?? '-').'. Body: '.substr((string)$response->getContent(),0,400));
+        }
+
         $invoice = Invoice::with('items')->where('nomor', 'INV-001')->firstOrFail();
 
+        if (! $response->isRedirect()) {
+
+            $this->fail('Invoice create did not redirect as expected. Status: '.$response->getStatusCode().' Body: '.substr((string)$response->getContent(),0,300));
+        }
+
         $response->assertRedirect(route('invoices.show', $invoice));
+
         $this->assertSame('PT Penjual Sejahtera', $invoice->nama_penjual);
         $this->assertSame('01.234.567.8-999.000', $invoice->npwp_penjual);
         $this->assertEquals('240000.00', $invoice->total);

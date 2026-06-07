@@ -81,16 +81,25 @@
         <div class="col-md-4">
             <div class="card qr-wrap">
                 <div class="card-body text-center">
-                    <div class="qr-header">QR Stamp</div>
-                    @if(!empty($invoice->qr_image))
-                        <img src="{{ $invoice->qr_image }}" alt="QR Invoice" width="280" height="280">
-                        <div class="qr-note mt-2">QR dari DJP (diunggah oleh user).</div>
+                    @php($signatureType = $invoice->signature_type ?? 'qr')
+                    <div class="qr-header">{{ $signatureType === 'hand' ? 'Hand Signature' : 'QR Stamp' }}</div>
+
+                    <!-- Hand signature kept in DB, but not displayed in UI anymore -->
+                    @if($signatureType === 'hand')
+                        <div class="qr-placeholder" style="width:280px; height:140px; margin: 0 auto;" aria-hidden="true"></div>
+                        <div class="qr-note mt-2" style="visibility:hidden;">Tanda tangan digambar oleh user.</div>
                     @else
-                        <div class="qr-placeholder" style="width:280px; height:280px; margin: 0 auto;"></div>
-                        <div class="qr-note mt-2">QR belum diunggah — unggah saat membuat / mengedit invoice.</div>
+                        @if(!empty($invoice->qr_image))
+                            <img src="{{ $invoice->qr_image }}" alt="QR Invoice" width="280" height="280">
+                            <div class="qr-note mt-2">QR dari DJP (diunggah oleh user).</div>
+                        @else
+                            <div class="qr-placeholder" style="width:280px; height:280px; margin: 0 auto;"></div>
+                            <div class="qr-note mt-2">QR belum diunggah — unggah saat membuat / mengedit invoice.</div>
+                        @endif
                     @endif
                 </div>
             </div>
         </div>
+
     </div>
 @endsection

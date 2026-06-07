@@ -31,11 +31,21 @@ class InvoiceController extends Controller
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor'],
             'tanggal' => ['required', 'date'],
 
-            'pejabat' => ['nullable', 'string', 'max:255'],
-            'role_penandatangan' => ['nullable', 'string', 'max:255'],
+            'signature_type' => ['required', 'in:qr,hand'],
+
+            // Hand signature
+
+
             'signature_name' => ['nullable', 'string', 'max:255'],
             'signature_data' => ['nullable', 'string'],
+
+            // QR signature
             'qr_image' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
+
+
+            'pejabat' => ['nullable', 'string', 'max:255'],
+            'role_penandatangan' => ['nullable', 'string', 'max:255'],
+
             // Seller
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
             'nama_penjual' => ['nullable', 'string', 'max:255'],
@@ -56,8 +66,32 @@ class InvoiceController extends Controller
             'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
         ]);
 
+
+
+
+        // Enforce required fields based on selected signature type
+        if (($validated['signature_type'] ?? null) === 'qr') {
+            // QR Signature requires uploaded QR image (DJP)
+            $request->validate([
+                'qr_image' => ['required', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
+            ]);
+            $validated['signature_data'] = null;
+        }
+
+        if (($validated['signature_type'] ?? null) === 'hand') {
+            // Hand Signature requires drawn signature data
+            $request->validate([
+                'signature_data' => ['required', 'string'],
+            ]);
+            $validated['qr_image'] = null;
+        }
+
+
+
         $total = 0.0;
         $itemsData = [];
+
+
         foreach ($validated['items'] as $item) {
             $qty = (int) $item['qty'];
             $harga = (float) $item['harga'];
@@ -89,10 +123,12 @@ class InvoiceController extends Controller
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
             'role_penandatangan' => $validated['role_penandatangan'] ?? null,
+            'signature_type' => $validated['signature_type'],
             'signature_name' => $validated['signature_name'] ?? null,
             'signature_data' => $validated['signature_data'] ?? null,
 
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
+
             'nama_penjual' => $validated['nama_penjual'] ?? null,
             'alamat_penjual' => $validated['alamat_penjual'] ?? null,
             'npwp_pembeli' => $validated['npwp_pembeli'] ?? null,
@@ -144,11 +180,16 @@ class InvoiceController extends Controller
             'tanggal' => ['required', 'date'],
             'role_penandatangan' => ['nullable', 'string', 'max:255'],
             'pejabat' => ['nullable', 'string', 'max:255'],
+            'signature_type' => ['required', 'in:qr,hand'],
+
             'signature_name' => ['nullable', 'string', 'max:255'],
             'signature_data' => ['nullable', 'string'],
             'qr_image' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
 
+
+
             // Seller
+
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
             'nama_penjual' => ['nullable', 'string', 'max:255'],
             'alamat_penjual' => ['nullable', 'string', 'max:255'],
@@ -201,9 +242,11 @@ class InvoiceController extends Controller
             'tanggal' => $validated['tanggal'],
             'pejabat' => $validated['pejabat'] ?? null,
             'role_penandatangan' => $validated['role_penandatangan'] ?? null,
+            'signature_type' => $validated['signature_type'],
             'signature_name' => $validated['signature_name'] ?? null,
             'signature_data' => $validated['signature_data'] ?? null,
             'npwp_penjual' => $validated['npwp_penjual'] ?? null,
+
 
             'nama_penjual' => $validated['nama_penjual'] ?? null,
             'alamat_penjual' => $validated['alamat_penjual'] ?? null,

@@ -25,7 +25,15 @@ class ChartOfAccountFeatureTest extends TestCase
             'account_type' => 'Expense',
         ]);
 
+        if ($response->getStatusCode() === 419) {
+            fwrite(STDERR, "[DEBUG 419 chart-of-accounts.store]\n");
+            fwrite(STDERR, 'Location: ' . ($response->headers->get('Location') ?? '-') . "\n");
+            fwrite(STDERR, 'X-CSRF-TOKEN: ' . ($response->headers->get('X-CSRF-TOKEN') ?? '-') . "\n");
+            fwrite(STDERR, 'Body snippet: ' . substr((string) $response->getContent(), 0, 500) . "\n");
+        }
+
         $response->assertRedirect(route('chart-of-accounts.index'));
+
 
         $this->assertDatabaseHas('chart_of_accounts', [
             'account_no_new' => '9-9999',
@@ -56,7 +64,9 @@ class ChartOfAccountFeatureTest extends TestCase
             'nama_pembeli' => 'PT Pembeli Makmur',
             'alamat_pembeli' => 'Jl. Pembeli No. 2',
             'currency' => 'IDR',
+            'signature_type' => 'qr',
             'items' => [
+
                 [
                     'nama_produk' => 'Produk COA',
                     'chart_of_account_no_new' => '4-4000',

@@ -57,22 +57,39 @@
     <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
 
+    <!--
+    <label>Jenis Tanda Tangan</label>
+    <div class="signature-type-options" role="group" aria-label="Jenis Tanda Tangan">
+        <label class="signature-type-option">
+            <input type="radio" name="signature_type" value="qr" {{ old('signature_type', $invoice?->signature_type ?? 'qr') === 'qr' ? 'checked' : '' }}>
+            <span>QR Signature</span>
+        </label>
+        <label class="signature-type-option">
+            <input type="radio" name="signature_type" value="hand" {{ old('signature_type', $invoice?->signature_type ?? '') === 'hand' ? 'checked' : '' }}>
+            <span>Hand Signature</span>
+        </label>
+    </div>
+
+
     <input type="hidden" name="signature_data" id="signature_data" value="{{ old('signature_data', $invoice?->signature_data) }}">
 
-    <label>Upload QR Bukti Tanda Tangan Digital (DJP)</label>
-    <input type="file" name="qr_image" accept="image/png,image/jpeg">
-    <div class="mt-1" style="font-size:12px; color:#666;">Jika tidak diupload saat edit, QR sebelumnya akan tetap digunakan.</div>
+    <div id="qr-upload-wrapper">
+    -->
+        <label>Upload QR Bukti Tanda Tangan Digital (DJP)</label>
+        <input type="file" name="qr_image" accept="image/png,image/jpeg" {{ (old('signature_type', $invoice?->signature_type ?? 'qr') === 'hand') ? 'disabled' : '' }}>
+        <div class="mt-1" style="font-size:12px; color:#666;">Jika tidak diupload saat edit, QR sebelumnya akan tetap digunakan.</div>
 
-    @if(isset($invoice) && $invoice->qr_image)
-        <div style="margin-top:8px">
-            <label>Preview QR saat ini</label>
-            <div style="width:120px; height:120px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center;">
-                <img src="{{ $invoice->qr_image }}" alt="QR" style="max-width:100%; max-height:100%;" />
+        @if(isset($invoice) && $invoice->qr_image)
+            <div style="margin-top:8px" id="qr-preview-wrapper">
+                <label>Preview QR saat ini</label>
+                <div style="width:120px; height:120px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center;">
+                    <img src="{{ $invoice->qr_image }}" alt="QR" style="max-width:100%; max-height:100%;" />
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
+    </div>
 
-    <div id="signature-pad-wrapper">
+    <div id="hand-signature-wrapper" style="display: none;">
         <label>Signature Digital</label>
         <div class="signature-card">
             <canvas id="signature-canvas" width="280" height="140"></canvas>
@@ -89,6 +106,9 @@
         <input type="text" name="signature_name" id="signature_name" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
         @error('signature_name') <div class="error">{{ $message }}</div> @enderror
     </div>
+
+
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.0/dist/signature_pad.umd.min.js"></script>
@@ -195,6 +215,36 @@
                 backgroundColor: 'rgba(255, 255, 255, 0)',
                 penColor: 'rgb(17, 24, 39)',
             });
+
+            // Signature type gating
+            const typeRadios = form.querySelectorAll('input[name="signature_type"]');
+            const qrWrapper = document.getElementById('qr-upload-wrapper');
+            const handWrapper = document.getElementById('hand-signature-wrapper');
+            const qrInput = form.querySelector('input[name="qr_image"]');
+
+            function applySignatureType(){
+                const selected = form.querySelector('input[name="signature_type"]:checked')?.value;
+                const useHand = selected === 'hand';
+
+                if(qrWrapper) qrWrapper.style.display = useHand ? 'none' : 'block';
+                if(handWrapper) handWrapper.style.display = useHand ? 'block' : 'none';
+
+                if(qrInput) {
+                    qrInput.disabled = useHand;
+                    if(useHand) qrInput.value = '';
+                }
+
+                if(!useHand){
+                    // clear hand signature so backend doesn't persist wrong data
+                    signaturePad.clear();
+                    setSignatureData('');
+                }
+            }
+
+            typeRadios.forEach(r => r.addEventListener('change', applySignatureType));
+            applySignatureType();
+
+
 
             function resizeCanvas() {
                 const data = signaturePad.toDataURL();

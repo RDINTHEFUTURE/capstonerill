@@ -276,20 +276,29 @@
                     <td class="legal-notice">
                         Sesuai dengan ketentuan yang berlaku, Direktorat Jenderal Pajak mengatur bahwa Faktur Pajak ini telah ditandatangani secara elektronik sehingga tidak memerlukan tanda tangan basah pada Faktur Pajak ini.
                     </td>
-                    <td class="signature-area">
-                        <div>, </div>
-                        <div style="font-size:7.5pt; color:#333; margin-bottom:3px;">Bukti Tanda Tangan (QR)</div>
-                        @if(!empty($invoice->qr_image))
-                        <div class="qr-placeholder">
-                            <img src="{{ $invoice->qr_image }}" alt="QR Bukti" style="max-width:100%; max-height:100%;" />
-                        </div>
-                        @else
-                        <div class="qr-placeholder"></div>
-                        @endif
-                        <div style="font-weight: bold; min-height: 14px; margin-top: 5px;">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'Nama Penandatangan' }}</div>
+                        <td class="signature-area">
+                            <div>, </div>
 
-                        <div style="font-size: 7.5pt; color: #444444; border-top: 0.5px solid #999999; width: 85%; margin: 3px auto 0 auto; padding-top: 2px;">Nama Penandatangan</div>
-                    </td>
+                            @php($signatureType = $invoice->signature_type ?? 'qr')
+                            <div style="font-size:7.5pt; color:#333; margin-bottom:3px;">Bukti Tanda Tangan (QR)</div>
+
+                            <!-- Hand signature kept in DB, but not displayed in UI anymore -->
+                            @if($signatureType === 'hand')
+                                <div class="qr-placeholder" aria-hidden="true"></div>
+                            @else
+                                @if(!empty($invoice->qr_image))
+                                    <div class="qr-placeholder">
+                                        <img src="{{ $invoice->qr_image }}" alt="QR Bukti" style="max-width:100%; max-height:100%;" />
+                                    </div>
+                                @else
+                                    <div class="qr-placeholder"></div>
+                                @endif
+                            @endif
+
+                            <div style="font-weight: bold; min-height: 14px; margin-top: 5px;">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'Nama Penandatangan' }}</div>
+
+                            <div style="font-size: 7.5pt; color: #444444; border-top: 0.5px solid #999999; width: 85%; margin: 3px auto 0 auto; padding-top: 2px;">Nama Penandatangan</div>
+                        </td>
                 </tr>
             </table>
             <div class="warning-text">

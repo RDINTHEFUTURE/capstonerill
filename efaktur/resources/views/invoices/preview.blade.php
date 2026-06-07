@@ -138,25 +138,34 @@
                         </td>
                         <td class="signature-area">
                             <div>, </div>
-                            @php($qrFromOld = old('qr_image'))
-                            @php($qrDataUri = null)
+                            @php($signatureType = $invoice->signature_type ?? 'qr')
 
-                            {{-- Jika ada upload QR baru saat submit (muncul sebagai old input), render juga di preview --}}
-                            @if(!empty($qrFromOld) && is_string($qrFromOld))
-                                @php($qrDataUri = $qrFromOld)
-                            @endif
-
-                            @if(!empty($qrDataUri))
-                                <div class="qr-placeholder">
-                                    <img src="{{ $qrDataUri }}" alt="QR Upload" style="max-width:100%; max-height:100%;" />
-                                </div>
-                            @elseif(!empty($invoice->qr_image))
-                                <div class="qr-placeholder">
-                                    <img src="{{ $invoice->qr_image }}" alt="QR Invoice" style="max-width:100%; max-height:100%;" />
-                                </div>
+                            @if($signatureType === 'hand')
+                                <!-- Hand signature kept in DB, but not displayed in UI anymore -->
+                                <div class="qr-placeholder" aria-hidden="true"></div>
+                                <div style="visibility:hidden;">Hand signature</div>
                             @else
-                                <div class="qr-placeholder"></div>
+                                @php($qrFromOld = old('qr_image'))
+                                @php($qrDataUri = null)
+
+                                {{-- Jika ada upload QR baru saat submit (muncul sebagai old input), render juga di preview --}}
+                                @if(!empty($qrFromOld) && is_string($qrFromOld))
+                                    @php($qrDataUri = $qrFromOld)
+                                @endif
+
+                                @if(!empty($qrDataUri))
+                                    <div class="qr-placeholder">
+                                        <img src="{{ $qrDataUri }}" alt="QR Upload" style="max-width:100%; max-height:100%;" />
+                                    </div>
+                                @elseif(!empty($invoice->qr_image))
+                                    <div class="qr-placeholder">
+                                        <img src="{{ $invoice->qr_image }}" alt="QR Invoice" style="max-width:100%; max-height:100%;" />
+                                    </div>
+                                @else
+                                    <div class="qr-placeholder"></div>
+                                @endif
                             @endif
+
                             <div style="font-weight: bold; min-height: 14px; margin-top: 5px;">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'Nama Penandatangan' }}</div>
                             <div style="font-size: 7.5pt; color: #444444; border-top: 0.5px solid #999999; width: 85%; margin: 3px auto 0 auto; padding-top: 2px;">Nama Penandatangan</div>
                         </td>

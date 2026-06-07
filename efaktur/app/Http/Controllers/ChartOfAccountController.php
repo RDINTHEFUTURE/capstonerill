@@ -24,9 +24,12 @@ class ChartOfAccountController extends Controller
 
     public function store(Request $request)
     {
+
+
         $validated = $this->validateAccount($request);
 
         ChartOfAccount::create($validated);
+
 
         return redirect()
             ->route('chart-of-accounts.index')
