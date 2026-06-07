@@ -1,0 +1,229 @@
+body.invoice-preview-page {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.invoice-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn,
+button.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    text-decoration: none;
+    color: #ffffff;
+    background: #435ebe;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #6b7280;
+}
+
+.invoice-preview-panel {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.faktur-container {
+    background: #ffffff;
+    border: 1.5px solid #000000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #000000;
+}
+
+.faktur-title {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+    padding: 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5px solid #000000;
+}
+
+.serial-bar {
+    padding: 6px 8px;
+    border-bottom: 1.5px solid #000000;
+    font-size: 9pt;
+}
+
+.section-divider {
+    font-weight: bold;
+    font-size: 8.5pt;
+    padding: 4px 8px;
+    border-bottom: 1px solid #000000;
+    margin-top: 8px;
+}
+
+.identity-table,
+.items-table,
+.summary-table,
+.footer-grid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.identity-table td,
+.summary-table td,
+.footer-grid td {
+    padding: 4px 8px;
+    vertical-align: top;
+}
+
+.w-label { width: 35mm; }
+.w-colon { width: 3mm; text-align: center; }
+.w-value { width: calc(100% - 38mm); }
+
+.items-table th {
+    font-size: 8.5pt;
+    font-weight: normal;
+    text-align: center;
+    padding: 6px 4px;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    vertical-align: middle;
+}
+
+.items-table th:last-child {
+    border-right: none;
+}
+
+.items-table td {
+    padding: 6px 8px;
+    border-right: 1px solid #000000;
+    vertical-align: top;
+}
+
+.items-table td:last-child {
+    border-right: none;
+}
+
+.items-table td.code-cell {
+    text-align: center;
+}
+
+.items-table td.qty-cell,
+.items-table td.price-cell,
+.items-table td.subtotal-cell {
+    text-align: right;
+}
+
+.blank-row-height {
+    height: 80mm;
+}
+
+.summary-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #000000;
+}
+
+.summary-table tr:last-child td {
+    border-bottom: none;
+}
+
+.summary-label {
+    width: 135mm;
+    border-right: 1px solid #000000;
+}
+
+.summary-value {
+    width: 55mm;
+    text-align: right;
+}
+
+.footer-block {
+    width: 100%;
+    padding: 10px 8px;
+}
+
+.footer-grid td {
+    vertical-align: top;
+    padding: 0;
+}
+
+.legal-notice {
+    width: 125mm;
+    font-size: 8pt;
+    text-align: justify;
+    line-height: 1.4;
+    padding-right: 20px;
+}
+
+.signature-area {
+    width: 65mm;
+    text-align: center;
+    padding-left: 10px;
+}
+
+.qr-placeholder,
+.invoice-qr-box {
+    width: 25mm;
+    height: 25mm;
+    border: 1px dashed #999999;
+    margin: 8px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.invoice-qr-box img,
+.qr-placeholder img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.invoice-signature-image {
+    max-width: 100%;
+    max-height: 40mm;
+}
+
+.warning-text {
+    margin-top: 15px;
+    font-size: 7pt;
+    border-top: 1px dashed #000000;
+    padding-top: 5px;
+    text-align: justify;
+    line-height: 1.3;
+}
+
+.invoice-text-right {
+    text-align: right;
+}
+
+@media print {
+    body.invoice-preview-page {
+        background: #fff;
+        padding: 0;
+        margin: 0;
+    }
+
+    .invoice-toolbar {
+        display: none;
+    }
+
+    .invoice-preview-panel {
+        padding: 0;
+    }
+
+    .faktur-container {
+        box-shadow: none;
+        border-color: #000;
+    }
+}
+
+/* Button overrides moved to public/css/invoice-buttons.css */

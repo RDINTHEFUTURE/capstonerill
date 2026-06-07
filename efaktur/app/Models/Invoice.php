@@ -13,6 +13,9 @@ class Invoice extends Model
         'nomor',
         'tanggal',
 
+        // Signature
+        'signature_data',
+        'signature_name',
 
         // Identitas Penjual
         'npwp_penjual',
@@ -27,10 +30,11 @@ class Invoice extends Model
         'total',
         'currency',
         'qr_payload',
+        'qr_image',
 
         // Direktur / Pejabat
         'pejabat',
-        'admin_supplier_perusahaan',
+        'role_penandatangan',
     ];
 
 

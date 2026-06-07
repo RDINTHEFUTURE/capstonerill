@@ -1,19 +1,27 @@
-@props(['oldItems' => null])
+@props(['oldItems' => null, 'chartOfAccounts' => collect()])
 
 @php
     $items = $oldItems ?? [];
 @endphp
 
-    <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:16px;overflow-x:auto;">
-    <h3 style="margin:0 0 12px;">Produk</h3>
+<div class="card invoice-items-card">
+    <h3 class="section-title">Produk</h3>
 
-    <div id="items-container" style="width:100%; overflow-x:hidden;">
+    <div id="items-container" class="invoice-items-container">
         @if (count($items) === 0)
-            @php($i = 0)
-            <div class="item-row" style="display:grid;grid-template-columns: 2fr 1fr 1.5fr 1.5fr 0.8fr;gap:10px;align-items:end;margin-bottom:10px;">
+            <div class="item-row invoice-item-row">
                 <div>
                     <label>Nama Produk</label>
                     <input type="text" name="items[0][nama_produk]" class="item-nama" value="" maxlength="255" required>
+                </div>
+                <div>
+                    <label>Akun</label>
+                    <select name="items[0][chart_of_account_no_new]" class="item-account">
+                        <option value="">- Pilih Akun -</option>
+                        @foreach ($chartOfAccounts as $account)
+                            <option value="{{ $account->account_no_new }}">{{ $account->account_no_new }} - {{ $account->account_name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label>Qty</label>
@@ -31,14 +39,24 @@
                     <label>Subtotal</label>
                     <input type="number" name="items[0][subtotal]" class="item-subtotal" value="0" readonly>
                 </div>
-                <div style="grid-column: 1 / -1; display:none;" class="item-debug"></div>
             </div>
         @else
             @foreach ($items as $idx => $it)
-                <div class="item-row" style="display:grid;grid-template-columns: 2fr 1fr 1.5fr 1.5fr 0.8fr;gap:10px;align-items:end;margin-bottom:10px;">
+                <div class="item-row invoice-item-row">
                     <div>
                         <label>Nama Produk</label>
                         <input type="text" name="items[{{ $idx }}][nama_produk]" class="item-nama" value="{{ $it['nama_produk'] ?? '' }}" maxlength="255" required>
+                    </div>
+                    <div>
+                        <label>Akun</label>
+                        <select name="items[{{ $idx }}][chart_of_account_no_new]" class="item-account">
+                            <option value="">- Pilih Akun -</option>
+                            @foreach ($chartOfAccounts as $account)
+                                <option value="{{ $account->account_no_new }}" @selected(($it['chart_of_account_no_new'] ?? '') === $account->account_no_new)>
+                                    {{ $account->account_no_new }} - {{ $account->account_name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div>
                         <label>Qty</label>
@@ -61,8 +79,7 @@
         @endif
     </div>
 
-    <button type="button" class="btn" id="add-item" style="margin-top:8px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;">
+    <button type="button" class="btn invoice-btn-add" id="add-item">
         + Tambah Produk
     </button>
 </div>
-

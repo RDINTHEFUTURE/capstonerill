@@ -1,4 +1,4 @@
-@props(['invoice' => null])
+@props(['invoice' => null, 'chartOfAccounts' => collect()])
 
 <div>
     <label>Nomor</label>
@@ -9,7 +9,7 @@
     <input type="date" name="tanggal" value="{{ old('tanggal', $invoice?->tanggal?->format('Y-m-d')) }}" required>
     @error('tanggal') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Penjual</h3>
+    <h3 class="section-title">Penjual</h3>
 
     <label>NPWP Penjual</label>
     <input name="npwp_penjual" value="{{ old('npwp_penjual', $invoice?->npwp_penjual) }}" maxlength="32">
@@ -23,7 +23,7 @@
     <textarea name="alamat_penjual" rows="3" maxlength="255">{{ old('alamat_penjual', $invoice?->alamat_penjual) }}</textarea>
     @error('alamat_penjual') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Pembeli</h3>
+    <h3 class="section-title">Pembeli</h3>
 
     <label>NPWP Pembeli</label>
     <input name="npwp_pembeli" value="{{ old('npwp_pembeli', $invoice?->npwp_pembeli) }}" maxlength="32">
@@ -38,39 +38,80 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
-    @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? [])])
+    @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? []), 'chartOfAccounts' => $chartOfAccounts])
 
 
-    {{-- total tetap dihitung backend, tapi input ini dipakai untuk menampilkan angka (opsional) --}}
+    {{-- FIELD: total (backend-calculated) --}}
     <label>Total</label>
     <input name="total" id="invoice-total" type="number" step="0.01" value="{{ old('total', $invoice?->total ?? 0) }}" required readonly>
     @error('total') <div class="error">{{ $message }}</div> @enderror
 
     <!-- <h3 style="margin:16px 0 8px;">Role Penandatangan</h3> -->
 
-    <label>Role Penandatangan (contoh: Admin)</label>
+    <label>Pihak Penandatangan (contoh: Admin)</label>
     <input name="role_penandatangan" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
     @error('role_penandatangan') <div class="error">{{ $message }}</div> @enderror
 
-    <label>Nama Penandatangan (contoh: Budi)</label>
-    <input name="pejabat" value="{{ old('pejabat', $invoice?->pejabat ?? '') }}" maxlength="255">
-    @error('pejabat') <div class="error">{{ $message }}</div> @enderror
 
     <label>Mata Uang (currency)</label>
     <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
     @error('currency') <div class="error">{{ $message }}</div> @enderror
 
+    <!--
+    <label>Jenis Tanda Tangan</label>
+    <div class="signature-type-options" role="group" aria-label="Jenis Tanda Tangan">
+        <label class="signature-type-option">
+            <input type="radio" name="signature_type" value="qr" {{ old('signature_type', $invoice?->signature_type ?? 'qr') === 'qr' ? 'checked' : '' }}>
+            <span>QR Signature</span>
+        </label>
+        <label class="signature-type-option">
+            <input type="radio" name="signature_type" value="hand" {{ old('signature_type', $invoice?->signature_type ?? '') === 'hand' ? 'checked' : '' }}>
+            <span>Hand Signature</span>
+        </label>
+    </div>
 
-    <style>
-        /* Benahi overflow: pastikan kolom grid items muat di dalam card */
-        #items-container { max-width: 100%; width:100%; }
-        .item-row input { width: 100%; box-sizing: border-box; }
-        .item-row { grid-template-columns: 2.2fr 1.1fr 1.6fr 1.6fr 1fr !important; }
-        /* paksa grid item untuk tidak “keluar” */
-        .item-row > div { min-width: 0; }
-    </style>
+
+    <input type="hidden" name="signature_data" id="signature_data" value="{{ old('signature_data', $invoice?->signature_data) }}">
+
+    <div id="qr-upload-wrapper">
+    -->
+        <label>Upload QR Bukti Tanda Tangan Digital (DJP)</label>
+        <input type="file" name="qr_image" accept="image/png,image/jpeg" {{ (old('signature_type', $invoice?->signature_type ?? 'qr') === 'hand') ? 'disabled' : '' }}>
+        <div class="mt-1" style="font-size:12px; color:#666;">Jika tidak diupload saat edit, QR sebelumnya akan tetap digunakan.</div>
+
+        @if(isset($invoice) && $invoice->qr_image)
+            <div style="margin-top:8px" id="qr-preview-wrapper">
+                <label>Preview QR saat ini</label>
+                <div style="width:120px; height:120px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center;">
+                    <img src="{{ $invoice->qr_image }}" alt="QR" style="max-width:100%; max-height:100%;" />
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div id="hand-signature-wrapper" style="display: none;">
+        <label>Signature Digital</label>
+        <div class="signature-card">
+            <canvas id="signature-canvas" width="280" height="140"></canvas>
+            <div class="signature-pad-actions">
+                <button type="button" class="btn btn-secondary" id="clear-signature">Clear Signature</button>
+            </div>
+            <div class="signature-pad-info">Gunakan mouse atau sentuhan untuk menggambar tanda tangan. Kosongkan jika tidak ingin merubah tanda tangan saat edit.</div>
+        </div>
+        <div id="signature-preview-wrapper" class="invoice-signature-preview-wrapper">
+            <label>Preview Tanda Tangan</label>
+            <img id="signature-preview" src="" alt="Preview Tanda Tangan" class="invoice-signature-preview-image" />
+        </div>
+        <label class="signature-name-label">Nama Penandatangan</label>
+        <input type="text" name="signature_name" id="signature_name" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
+        @error('signature_name') <div class="error">{{ $message }}</div> @enderror
+    </div>
 
 
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.0/dist/signature_pad.umd.min.js"></script>
     <script>
         (function(){
             const container = document.getElementById('items-container');
@@ -158,7 +199,121 @@
             }
 
         })();
+
+        (function(){
+            const canvas = document.getElementById('signature-canvas');
+            const hiddenInput = document.getElementById('signature_data');
+            const clearButton = document.getElementById('clear-signature');
+            const previewWrapper = document.getElementById('signature-preview-wrapper');
+            const previewImage = document.getElementById('signature-preview');
+            const form = canvas?.closest('form');
+            const existingSignature = {!! json_encode(old('signature_data', $invoice?->signature_data)) !!} || '';
+
+            if(!canvas || !form || !hiddenInput) return;
+
+            const signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                penColor: 'rgb(17, 24, 39)',
+            });
+
+            // Signature type gating
+            const typeRadios = form.querySelectorAll('input[name="signature_type"]');
+            const qrWrapper = document.getElementById('qr-upload-wrapper');
+            const handWrapper = document.getElementById('hand-signature-wrapper');
+            const qrInput = form.querySelector('input[name="qr_image"]');
+
+            function applySignatureType(){
+                const selected = form.querySelector('input[name="signature_type"]:checked')?.value;
+                const useHand = selected === 'hand';
+
+                if(qrWrapper) qrWrapper.style.display = useHand ? 'none' : 'block';
+                if(handWrapper) handWrapper.style.display = useHand ? 'block' : 'none';
+
+                if(qrInput) {
+                    qrInput.disabled = useHand;
+                    if(useHand) qrInput.value = '';
+                }
+
+                if(!useHand){
+                    // clear hand signature so backend doesn't persist wrong data
+                    signaturePad.clear();
+                    setSignatureData('');
+                }
+            }
+
+            typeRadios.forEach(r => r.addEventListener('change', applySignatureType));
+            applySignatureType();
+
+
+
+            function resizeCanvas() {
+                const data = signaturePad.toDataURL();
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                const width = 280;
+                const height = 140;
+                const ctx = canvas.getContext('2d');
+
+                canvas.width = width * ratio;
+                canvas.height = height * ratio;
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.scale(ratio, ratio);
+
+                signaturePad.clear();
+                if (data && data !== 'data:,') {
+                    signaturePad.fromDataURL(data);
+                }
+            }
+
+            function updatePreview(data) {
+                if (!previewWrapper || !previewImage) return;
+                if (data) {
+                    previewImage.src = data;
+                    previewWrapper.style.display = 'block';
+                } else {
+                    previewImage.src = '';
+                    previewWrapper.style.display = 'none';
+                }
+            }
+
+            function setSignatureData(data) {
+                hiddenInput.value = data || '';
+                updatePreview(data);
+            }
+
+            function refreshSignatureData() {
+                if (signaturePad.isEmpty()) {
+                    setSignatureData('');
+                    return;
+                }
+                setSignatureData(signaturePad.toDataURL('image/png'));
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            if (existingSignature) {
+                signaturePad.fromDataURL(existingSignature);
+                setSignatureData(existingSignature);
+            } else {
+                setSignatureData('');
+            }
+
+            canvas.addEventListener('pointerup', refreshSignatureData);
+            canvas.addEventListener('pointercancel', refreshSignatureData);
+            clearButton.addEventListener('click', () => {
+                signaturePad.clear();
+                setSignatureData('');
+            });
+
+            form.addEventListener('submit', () => {
+                if (signaturePad.isEmpty()) {
+                    hiddenInput.value = '';
+                } else {
+                    hiddenInput.value = signaturePad.toDataURL('image/png');
+                }
+            });
+        })();
     </script>
 </div>
-
 

@@ -3,38 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
+// QR generation is disabled for now (DJP-provided QR). Removed Endroid imports.
 
 
 class InvoicePdfController extends Controller
 {
+    public function preview(Invoice $invoice)
+    {
+        $invoice->loadMissing('items.chartOfAccount');
+
+        return view('invoices.preview', [
+            'invoice' => $invoice,
+        ]);
+    }
+
     public function show(Invoice $invoice)
     {
-        // QR akan dirender sebagai data URI base64 supaya dompdf tidak melakukan request HTTP ke endpoint QR.
-        $fakturUrl = route('invoices.pdf', $invoice);
-
         // Eager load items agar tersedia di view.
-        $invoice->loadMissing('items');
-
-        $qrCode = new QrCode(
-            data: $fakturUrl,
-            encoding: new Encoding('UTF-8'),
-            errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::High,
-            size: 280,
-            margin: 10,
-        );
-
-
-        $writer = new PngWriter();
-        $result = $writer->write($qrCode);
-        $qrBase64 = base64_encode($result->getString());
+        $invoice->loadMissing('items.chartOfAccount');
 
         $pdf = app('dompdf.wrapper')
             ->loadView('invoices.cetakfaktur', [
                 'invoice' => $invoice,
-                'qrBase64' => $qrBase64,
             ])
             ->setPaper('a4', 'portrait')
             ->setOption('isRemoteEnabled', true);
@@ -42,7 +32,6 @@ class InvoicePdfController extends Controller
         return $pdf->download('faktur-' . $invoice->nomor . '.pdf');
     }
 }
-
 
 
 
