@@ -74,60 +74,77 @@
                 </tr>
             </table>
 
-            <table class="items-table">
+            @php
+                $items = $invoice->items ?? collect();
+                $rowCount = max(1, $items->count());
+                // Ensure the bottom summary grid starts on a stable row boundary across browsers/PDF renderers.
+                // If you need a fixed number of lines, set `$minItemLines`.
+                $minItemLines = 5;
+                $padCount = max(0, $minItemLines - $items->count());
+                $padRows = $padCount;
+            @endphp
+
+            <table class="faktur-grid">
                 <thead>
                     <tr>
-                        <th style="width: 12mm;">No.</th>
-                        <th style="width: 25mm;">Kode Barang/<br>Jasa</th>
-                        <th style="width: 98mm;">Nama Barang Kena Pajak / Jasa Kena Pajak</th>
-                        <th style="width: 55mm;">Harga Jual / Penggantian /<br>Uang Muka / Termin<br>(Rp)</th>
+                        <th class="col-no">No.</th>
+                        <th class="col-kode">Kode Barang/<br>Jasa</th>
+                        <th class="col-nama">Nama Barang Kena Pajak / Jasa Kena Pajak</th>
+                        <th class="col-harga">Harga Jual / Penggantian /<br>Uang Muka / Termin<br>(Rp)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @php($items = $invoice->items ?? collect())
                     @forelse($items as $i => $item)
                         <tr>
-                            <td class="code-cell">{{ $i + 1 }}</td>
+                            <td class="code-cell text-center">{{ $i + 1 }}</td>
                             <td class="code-cell"></td>
                             <td>{{ $item->nama_produk ?? '-' }}</td>
                             <td class="price-cell">{{ number_format((float)($item->harga ?? 0), 0, ',', '.') }}</td>
                         </tr>
                     @empty
-                        <tr class="blank-row-height">
-                            <td style="text-align: center;"></td>
-                            <td style="text-align: center;"></td>
+                        <tr>
+                            <td class="code-cell text-center"></td>
+                            <td class="code-cell"></td>
                             <td></td>
-                            <td style="text-align: right;"></td>
+                            <td class="price-cell"></td>
                         </tr>
                     @endforelse
-                </tbody>
-            </table>
 
-            <table class="summary-table">
-                <tr>
-                    <td class="summary-label">Harga Jual / Penggantian / Uang Muka / Termin</td>
-                    <td class="summary-value">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td class="summary-label">Dikurangi Potongan Harga</td>
-                    <td class="summary-value"></td>
-                </tr>
-                <tr>
-                    <td class="summary-label">Dikurangi Uang Muka yang telah diterima</td>
-                    <td class="summary-value"></td>
-                </tr>
-                <tr>
-                    <td class="summary-label">Dasar Pengenaan Pajak</td>
-                    <td class="summary-value">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td class="summary-label">Jumlah PPN (Pajak Pertambahan Nilai)</td>
-                    <td class="summary-value"></td>
-                </tr>
-                <tr>
-                    <td class="summary-label">Jumlah PPnBM (Pajak Penjualan atas Barang Mewah)</td>
-                    <td class="summary-value"></td>
-                </tr>
+                    @for($j = 0; $j < $padRows; $j++)
+                        <tr class="faktur-pad-row">
+                            <td class="code-cell text-center"></td>
+                            <td class="code-cell"></td>
+                            <td></td>
+                            <td class="price-cell"></td>
+                        </tr>
+                    @endfor
+
+                    {{-- Summary rows reuse the same 4-column grid so borders intersect with the item table exactly. --}}
+                    <tr>
+                        <td class="summary-label" colspan="3">Harga Jual / Penggantian / Uang Muka / Termin</td>
+                        <td class="summary-value">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label" colspan="3">Dikurangi Potongan Harga</td>
+                        <td class="summary-value"></td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label" colspan="3">Dikurangi Uang Muka yang telah diterima</td>
+                        <td class="summary-value"></td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label" colspan="3">Dasar Pengenaan Pajak</td>
+                        <td class="summary-value">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label" colspan="3">Jumlah PPN (Pajak Pertambahan Nilai)</td>
+                        <td class="summary-value"></td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label" colspan="3">Jumlah PPnBM (Pajak Penjualan atas Barang Mewah)</td>
+                        <td class="summary-value"></td>
+                    </tr>
+                </tbody>
             </table>
 
             <div class="footer-block">

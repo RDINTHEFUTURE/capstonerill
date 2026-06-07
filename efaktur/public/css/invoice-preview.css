@@ -71,80 +71,75 @@ button.btn {
 }
 
 .identity-table,
-.items-table,
-.summary-table,
+.faktur-grid,
 .footer-grid {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .identity-table td,
-.summary-table td,
-.footer-grid td {
+.footer-grid td,
+.faktur-grid td,
+.faktur-grid th {
     padding: 4px 8px;
-    vertical-align: top;
+    vertical-align: middle;
+    box-sizing: border-box;
 }
 
 .w-label { width: 35mm; }
 .w-colon { width: 3mm; text-align: center; }
 .w-value { width: calc(100% - 38mm); }
 
-.items-table th {
+.faktur-grid {
+    margin-top: 0;
+}
+
+.faktur-grid th {
     font-size: 8.5pt;
     font-weight: normal;
     text-align: center;
     padding: 6px 4px;
-    border-bottom: 1px solid #000000;
-    border-right: 1px solid #000000;
-    vertical-align: middle;
+    border: 1px solid #000000;
 }
 
-.items-table th:last-child {
-    border-right: none;
-}
-
-.items-table td {
+.faktur-grid td {
+    border: 1px solid #000000;
     padding: 6px 8px;
-    border-right: 1px solid #000000;
-    vertical-align: top;
 }
 
-.items-table td:last-child {
-    border-right: none;
-}
-
-.items-table td.code-cell {
+.faktur-grid td.code-cell {
     text-align: center;
 }
 
-.items-table td.qty-cell,
-.items-table td.price-cell,
-.items-table td.subtotal-cell {
+.faktur-grid td.price-cell {
     text-align: right;
 }
 
-.blank-row-height {
-    height: 80mm;
+.faktur-grid td.summary-label {
+    text-align: left;
 }
 
-.summary-table td {
-    padding: 5px 8px;
-    border-bottom: 1px solid #000000;
-}
-
-.summary-table tr:last-child td {
-    border-bottom: none;
-}
-
-.summary-label {
-    width: 135mm;
-    border-right: 1px solid #000000;
-}
-
-.summary-value {
-    width: 55mm;
+.faktur-grid td.summary-value {
     text-align: right;
 }
+
+.faktur-grid thead th.col-no { width: 12mm; }
+.faktur-grid thead th.col-kode { width: 25mm; }
+.faktur-grid thead th.col-nama { width: 98mm; }
+.faktur-grid thead th.col-harga { width: 55mm; }
+
+/* Ensure the column widths are enforced on body cells too */
+.faktur-grid td:nth-child(1) { width: 12mm; }
+.faktur-grid td:nth-child(2) { width: 25mm; }
+.faktur-grid td:nth-child(3) { width: 98mm; }
+.faktur-grid td:nth-child(4) { width: 55mm; }
+
+/* Summary rows should keep consistent cell vertical alignment (prevents border gaps) */
+.faktur-pad-row td {
+    color: transparent;
+}
+
 
 .footer-block {
     width: 100%;
