@@ -1,0 +1,166 @@
+/* Shared button overrides to make action buttons look identical across themes.
+   This file is loaded after Mazer/Bootstrap so it overrides theme-specific rules.
+   It avoids inline styles and uses class selectors so future Mazer updates remain compatible.
+*/
+
+/* Base action-button appearance (applies to .btn/.btn-primary/.btn-secondary etc.) */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary,
+button.btn {
+    background: #435ebe; /* Mazer primary color */
+    color: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+    padding: 10px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Keep small buttons sized consistently */
+.btn-sm,
+button.btn-sm {
+    padding: 6px 10px;
+    font-size: 0.875rem;
+}
+
+/* Outline variants: present the same visual weight but keep outline semantics */
+.btn-outline-primary,
+.btn-outline-secondary {
+    background: transparent;
+    color: #435ebe !important;
+    border: 1px solid #435ebe;
+    box-shadow: none;
+}
+
+/* Hover / focus / active states - match across themes */
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background: #435ebe;
+    color: #fff !important;
+}
+
+/* Disabled state */
+.btn:disabled,
+.btn.disabled,
+.btn[disabled] {
+    opacity: 0.65;
+    pointer-events: none;
+    filter: none;
+}
+
+/* Accessibility: ensure contrast for outline buttons when background is dark */
+body.dark .btn-outline-primary,
+body.dark .btn-outline-secondary {
+    color: #93b7ff !important;
+    border-color: #93b7ff;
+}
+
+/* Modal styling - theme-aware */
+.modal-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--bs-border-color);
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.modal-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--bs-border-color);
+    background-color: var(--bs-body-bg);
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.modal-body {
+    padding: 1.25rem;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.modal-title {
+    color: var(--bs-body-color);
+}
+
+.close {
+    background: none;
+    border: 0;
+    font-size: 1.25rem;
+    color: var(--bs-body-color);
+    cursor: pointer;
+}
+
+/* Logout action style - make it visually distinct and cautionary */
+.logout-action,
+button.logout-action {
+    color: #fff !important;
+    background: #c92a2a !important;
+    border: 1px solid #911111 !important;
+    box-shadow: 0 6px 16px rgba(201, 42, 42, 0.32);
+}
+
+.logout-action:hover,
+button.logout-action:hover {
+    background: #a11f1f !important;
+    border-color: #770f0f !important;
+}
+
+.logout-action:focus,
+button.logout-action:focus {
+    outline: 2px solid rgba(201, 42, 42, 0.5);
+    outline-offset: 2px;
+}
+
+/* Detail rows for show pages: separate key labels from values */
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.details-row:last-child {
+    border-bottom: none;
+}
+
+.details-row .key {
+    font-weight: 700;
+    color: #495057;
+    min-width: 140px;
+}
+
+.details-row .value {
+    flex: 1;
+    text-align: right;
+    font-weight: 500;
+    color: #212529;
+}
+
+/* End of centralized button and modal rules */

@@ -7,7 +7,7 @@
     <input type="date" name="tanggal" value="{{ old('tanggal', isset($invoice) ? $invoice->tanggal->format('Y-m-d') : '') }}" required>
     @error('tanggal') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Penjual</h3>
+    <h3 class="section-title">Penjual</h3>
 
     <label>NPWP Penjual</label>
     <input name="npwp_penjual" value="{{ old('npwp_penjual', $invoice->npwp_penjual ?? '') }}" maxlength="32">
@@ -21,7 +21,7 @@
     <textarea name="alamat_penjual" rows="3" maxlength="255">{{ old('alamat_penjual', $invoice->alamat_penjual ?? '') }}</textarea>
     @error('alamat_penjual') <div class="error">{{ $message }}</div> @enderror
 
-    <h3 style="margin:16px 0 8px;">Pembeli</h3>
+    <h3 class="section-title">Pembeli</h3>
 
     <label>NPWP Pembeli</label>
     <input name="npwp_pembeli" value="{{ old('npwp_pembeli', $invoice->npwp_pembeli ?? '') }}" maxlength="32">
@@ -36,7 +36,7 @@
     @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
 
 
-    <h3 style="margin:16px 0 8px;">Admin Supplier Perusahaan</h3>
+    <h3 class="section-title">Admin Supplier Perusahaan</h3>
 
     <label>Nama penandatangan</label>
 

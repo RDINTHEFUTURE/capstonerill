@@ -1,0 +1,13 @@
+/vendor/
+/node_modules/
+/.phpunit.cache/
+/.phpunit.result.cache
+
+*.log
+npm-debug.log
+yarn-error.log
+
+efaktur/cookies.txt
+efaktur/image.png
+efaktur/qr.png
+efaktur/test-faktur.pdf

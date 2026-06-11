@@ -1,72 +1,105 @@
-<!doctype html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Detail Invoice</title>
-    <style>
-        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; max-width: 1000px; }
-        .grid { display:grid; grid-template-columns: 1fr 320px; gap: 16px; margin-top: 12px; }
-        .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
-        .key { font-weight: 700; color:#111827; }
-        .value { margin-top: 6px; }
-        .btn { display: inline-block; padding: 10px 14px; background: #2563eb; color: #fff; text-decoration: none; border-radius: 8px; }
-        .btn-secondary { background: #6b7280; }
-        .qr-wrap { display:flex; flex-direction: column; align-items:center; gap: 10px; }
-        pre { white-space: pre-wrap; word-break: break-word; background:#f9fafb; padding:12px; border-radius:10px; border:1px solid #e5e7eb; }
-    </style>
-</head>
-<body>
-    <h1>Detail Invoice</h1>
+@extends('layouts.mazer')
 
-        <div style="display:flex; gap:10px; margin-top: 8px;">
-        <a class="btn btn-secondary" href="{{ route('invoices.index') }}">&larr; Kembali</a>
-        <a class="btn" href="{{ route('invoices.pdf', $invoice) }}">Cetak PDF</a>
-        <a class="btn" href="{{ route('invoices.edit', $invoice) }}">Edit</a>
+@section('title', 'Detail Invoice')
 
-        <form method="POST" action="{{ route('invoices.destroy', $invoice) }}" onsubmit="return confirm('Hapus invoice ini?');" style="margin:0;">
-            @csrf
-            @method('DELETE')
-            <button class="btn btn-secondary" type="submit" style="cursor:pointer; border:none;">Hapus</button>
-        </form>
-        <a class="btn" href="{{ route('invoices.create') }}">+ Invoice Baru</a>
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/invoice-show.css') }}">
+@endpush
+
+@section('content')
+    <div class="page-heading d-flex justify-content-between align-items-center">
+        <h3>Detail Invoice</h3>
+        <div>
+            <a class="btn btn-secondary" href="{{ route('invoices.index') }}">&larr; Kembali</a>
+            <a class="btn btn-primary" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
+            <a class="btn btn-outline-secondary" href="{{ route('invoices.edit', $invoice) }}">Edit</a>
+            <a class="btn btn-success" href="{{ route('invoices.create') }}">+ Invoice Baru</a>
+            <form method="POST" action="{{ route('invoices.destroy', $invoice) }}" onsubmit="return confirm('Hapus invoice ini?');" class="d-inline">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-danger" type="submit">Hapus</button>
+            </form>
+        </div>
     </div>
 
+    <div class="row mt-3">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="details-row"><span class="key">Nomor</span><div class="value">{{ $invoice->nomor }}</div></div>
+                    <div class="details-row"><span class="key">Tanggal</span><div class="value">{{ $invoice->tanggal->format('Y-m-d') }}</div></div>
+                    <div class="details-row"><span class="key">NPWP Penjual</span><div class="value">{{ $invoice->npwp_penjual }}</div></div>
+                    <div class="details-row"><span class="key">Nama Penjual</span><div class="value">{{ $invoice->nama_penjual }}</div></div>
+                    <div class="details-row"><span class="key">Alamat Penjual</span><div class="value">{{ $invoice->alamat_penjual }}</div></div>
 
+                    <div class="details-row"><span class="key">NPWP Pembeli</span><div class="value">{{ $invoice->npwp_pembeli }}</div></div>
+                    <div class="details-row"><span class="key">Nama Pembeli</span><div class="value">{{ $invoice->nama_pembeli }}</div></div>
+                    <div class="details-row"><span class="key">Alamat Pembeli</span><div class="value">{{ $invoice->alamat_pembeli }}</div></div>
 
-    <div class="grid">
-        <div class="card">
-            <div><span class="key">Nomor</span><div class="value">{{ $invoice->nomor }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Tanggal</span><div class="value">{{ $invoice->tanggal->format('Y-m-d') }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">NPWP Penjual</span><div class="value">{{ $invoice->npwp_penjual }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Nama Penjual</span><div class="value">{{ $invoice->nama_penjual }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Alamat Penjual</span><div class="value">{{ $invoice->alamat_penjual }}</div></div>
+                    <div class="details-row"><span class="key">Total</span><div class="value">{{ number_format((float)$invoice->total, 2, ',', '.') }} {{ $invoice->currency }}</div></div>
 
-            <div style="margin-top: 12px;"><span class="key">NPWP Pembeli</span><div class="value">{{ $invoice->npwp_pembeli }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Nama Pembeli</span><div class="value">{{ $invoice->nama_pembeli }}</div></div>
-            <div style="margin-top: 12px;"><span class="key">Alamat Pembeli</span><div class="value">{{ $invoice->alamat_pembeli }}</div></div>
+                    <div class="details-section">
+                        <div class="key">Data faktur tersimpan (base64 JSON)</div>
+                        <div class="details-value">
+                            <pre>{{ $invoice->qr_payload }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div style="margin-top: 12px;"><span class="key">Total</span><div class="value">{{ number_format((float)$invoice->total, 2, ',', '.') }} {{ $invoice->currency }}</div></div>
-
-            <div style="margin-top: 16px;">
-                <div class="key">Payload QR (base64 JSON)</div>
-                <div class="value" style="margin-top:8px;">
-                    <pre>{{ $invoice->qr_payload }}</pre>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="mb-3">Items</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Qty</th>
+                                    <th>Harga</th>
+                                    <th>Diskon</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($invoice->items as $item)
+                                    <tr>
+                                        <td>{{ $item->nama_produk }}</td>
+                                        <td>{{ $item->qty }}</td>
+                                        <td>{{ number_format((float) $item->harga, 2, ',', '.') }}</td>
+                                        <td>{{ number_format((float) $item->diskon, 2, ',', '.') }}</td>
+                                        <td>{{ number_format((float) $item->subtotal, 2, ',', '.') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card qr-wrap">
-            <div style="font-weight:700;">QR Code</div>
-            <img
-                src="{{ route('invoices.qr', $invoice) }}"
-                alt="QR Invoice"
-                width="280"
-                height="280"
-            >
-            <div style="font-size: 12px; color:#6b7280; text-align:center;">QR dibuat dari payload yang tersimpan di database.</div>
-        </div>
-    </div>
-</body>
-</html>
+        <div class="col-md-4">
+            <div class="card qr-wrap">
+                <div class="card-body text-center">
+                    @php($signatureType = $invoice->signature_type ?? 'qr')
+                    <div class="qr-header">{{ $signatureType === 'hand' ? 'Hand Signature' : 'QR Stamp' }}</div>
 
+                    <!-- Hand signature kept in DB, but not displayed in UI anymore -->
+                    @if($signatureType === 'hand')
+                        <div class="qr-placeholder" style="width:280px; height:140px; margin: 0 auto;" aria-hidden="true"></div>
+                        <div class="qr-note mt-2" style="visibility:hidden;">Tanda tangan digambar oleh user.</div>
+                    @else
+                        @if(!empty($invoice->qr_image))
+                            <img src="{{ $invoice->qr_image }}" alt="QR Invoice" width="280" height="280">
+                            <div class="qr-note mt-2">QR dari DJP (diunggah oleh user).</div>
+                        @else
+                            <div class="qr-placeholder" style="width:280px; height:280px; margin: 0 auto;"></div>
+                            <div class="qr-note mt-2">QR belum diunggah — unggah saat membuat / mengedit invoice.</div>
+                        @endif
+                    @endif
+                </div>
+            </div>
+        </div>
+
+    </div>
+@endsection

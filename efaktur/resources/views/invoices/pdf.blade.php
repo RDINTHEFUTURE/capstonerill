@@ -4,199 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Faktur Penjualan</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #000;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .faktur-container {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 10mm;
-            margin: 0 auto;
-            background: #fff;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        .title {
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: -1px;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 6px;
-            vertical-align: top;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-
-        .footer-section {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .qr-code {
-            width: 100px;
-            height: 100px;
-            border: 1px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            text-align: center;
-        }
-
-        .ttd-box {
-            text-align: center;
-            width: 250px;
-        }
-
-        /* Print/PDF layout */
-        @media print {
-            body { background: none; padding: 0; }
-            .faktur-container {
-                border: none;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/invoice-pdf.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/invoice-preview.css') }}">
 </head>
-<body>
-    <div class="faktur-container">
-        <div class="title">FAKTUR PENJUALAN</div>
+<body class="invoice-pdf-page">
 
-        <table>
+    <div class="invoice-faktur-container">
+        {{-- Reuse the same Faktur Pajak table model as preview to keep borders pixel-aligned in browser/print/PDF. --}}
+        <div class="faktur-title">Faktur Pajak</div>
+
+        <div class="serial-bar">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 55mm; font-weight: bold; padding: 0;">Kode dan Nomor Seri Faktur Pajak:</td>
+                    <td style="padding: 0;">{{ $invoice->nomor ?? '-' }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section-divider">Pengusaha Kena Pajak</div>
+        <table class="identity-table">
             <tr>
-                <td style="width: 30%; font-weight: bold;">Nomor Invoice:</td>
-                <td style="width: 70%; font-weight: bold;">{{ $invoice->nomor ?? '-' }}</td>
+                <td class="w-label">Nama</td>
+                <td class="w-colon">:</td>
+                <td class="w-value">{{ $invoice->nama_penjual ?? '-' }}</td>
             </tr>
             <tr>
-                <td style="width: 30%; font-weight: bold;">Tanggal:</td>
-                <td style="width: 70%; font-weight: bold;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</td>
+                <td class="w-label">Alamat</td>
+                <td class="w-colon">:</td>
+                <td class="w-value">{{ $invoice->alamat_penjual ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="w-label">NPWP</td>
+                <td class="w-colon">:</td>
+                <td class="w-value">{{ $invoice->npwp_penjual ?? '-' }}</td>
             </tr>
         </table>
 
-
-        <table>
+        <div class="section-divider">Pembeli Barang Kena Pajak / Penerima Jasa Kena Pajak</div>
+        <table class="identity-table">
             <tr>
-                <th colspan="2">PENJUAL</th>
-            </tr>
-
-            <tr>
-                <td style="width: 30%;">Nama:</td>
-                <td style="width: 70%;">{{ $invoice->nama_penjual ?? '-' }}</td>
+                <td class="w-label">Nama</td>
+                <td class="w-colon">:</td>
+                <td class="w-value">{{ $invoice->nama_pembeli ?? '-' }}</td>
             </tr>
             <tr>
-                <td>Alamat:</td>
-                <td>{{ $invoice->alamat_penjual ?? '-' }}</td>
+                <td class="w-label">Alamat</td>
+                <td class="w-colon">:</td>
+                <td class="w-value">{{ $invoice->alamat_pembeli ?? '-' }}</td>
             </tr>
             <tr>
-                <td>NPWP:</td>
-                <td>{{ $invoice->npwp_penjual ?? '-' }}</td>
+                <td class="w-label">NPWP</td>
+                <td class="w-colon">:</td>
+                <td class="w-value">{{ $invoice->npwp_pembeli ?? '-' }}</td>
             </tr>
-
+            <tr>
+                <td class="w-label">Nomor Paspor</td>
+                <td class="w-colon">:</td>
+                <td class="w-value"></td>
+            </tr>
+            <tr>
+                <td class="w-label">Identitas Lain</td>
+                <td class="w-colon">:</td>
+                <td class="w-value"></td>
+            </tr>
         </table>
 
-        <table>
-            <tr>
-                <th colspan="2">PEMBELI</th>
-            </tr>
+        @php
+            $items = $invoice->items ?? collect();
+            $minItemLines = 5;
+            $padCount = max(0, $minItemLines - $items->count());
+            $padRows = $padCount;
+        @endphp
 
-            <tr>
-                <td style="width: 30%;">Nama:</td>
-                <td style="width: 70%;">{{ $invoice->nama_pembeli ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td>Alamat:</td>
-                <td>{{ $invoice->alamat_pembeli ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td>NPWP / NIK:</td>
-                <td>{{ $invoice->npwp_pembeli ?? '-' }}</td>
-            </tr>
-
-        </table>
-
-        <table>
+        <table class="faktur-grid">
             <thead>
                 <tr>
-                    <th style="width: 5%;">No.</th>
-                    <th style="width: 45%;">Produk</th>
-                    <th style="width: 10%;">Qty</th>
-                    <th style="width: 20%;">Harga (Rp)</th>
-                    <th style="width: 20%;">Subtotal (Rp)</th>
+                    <th class="col-no">No.</th>
+                    <th class="col-kode">Kode Barang/<br>Jasa</th>
+                    <th class="col-nama">Nama Barang Kena Pajak / Jasa Kena Pajak</th>
+                    <th class="col-harga">Harga Jual / Penggantian /<br>Uang Muka / Termin<br>(Rp)</th>
                 </tr>
             </thead>
             <tbody>
-                @php($items = $invoice->items ?? collect())
-                @foreach($items as $i => $item)
+                @forelse($items as $i => $item)
                     <tr>
-                        <td class="text-center">{{ $i + 1 }}</td>
+                        <td class="code-cell text-center">{{ $i + 1 }}</td>
+                        <td class="code-cell"></td>
                         <td>{{ $item->nama_produk ?? '-' }}</td>
-                        <td class="text-right">{{ $item->qty ?? 1 }}</td>
-                        <td class="text-right">{{ number_format((float)($item->harga ?? 0), 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format((float)($item->subtotal ?? 0), 0, ',', '.') }}</td>
+                        <td class="price-cell">{{ number_format((float)($item->harga ?? 0), 0, ',', '.') }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td class="code-cell text-center"></td>
+                        <td class="code-cell"></td>
+                        <td></td>
+                        <td class="price-cell"></td>
+                    </tr>
+                @endforelse
+
+                @for($j = 0; $j < $padRows; $j++)
+                    <tr class="faktur-pad-row">
+                        <td class="code-cell text-center"></td>
+                        <td class="code-cell"></td>
+                        <td></td>
+                        <td class="price-cell"></td>
+                    </tr>
+                @endfor
+
+                {{-- Summary rows, same 4-column grid to make borders intersect reliably. --}}
+                <tr>
+                    <td class="summary-label" colspan="3">Harga Jual / Penggantian / Uang Muka / Termin</td>
+                    <td class="summary-value">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td class="summary-label" colspan="3">Dikurangi Potongan Harga</td>
+                    <td class="summary-value"></td>
+                </tr>
+                <tr>
+                    <td class="summary-label" colspan="3">Dikurangi Uang Muka yang telah diterima</td>
+                    <td class="summary-value"></td>
+                </tr>
+                <tr>
+                    <td class="summary-label" colspan="3">Dasar Pengenaan Pajak</td>
+                    <td class="summary-value">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td class="summary-label" colspan="3">Jumlah PPN (Pajak Pertambahan Nilai)</td>
+                    <td class="summary-value"></td>
+                </tr>
+                <tr>
+                    <td class="summary-label" colspan="3">Jumlah PPnBM (Pajak Penjualan atas Barang Mewah)</td>
+                    <td class="summary-value"></td>
+                </tr>
             </tbody>
         </table>
 
-        <table>
-            <tr>
-                <td style="width: 60%;">Total</td>
-                <td style="width: 40%;" class="text-right">{{ number_format((float)$invoice->total, 0, ',', '.') }}</td>
-            </tr>
-        </table>
+        <div class="footer-block">
+            <table class="footer-grid">
+                <tr>
+                    <td class="legal-notice">
+                        Sesuai dengan ketentuan yang berlaku, Direktorat Jenderal Pajak mengatur bahwa Faktur Pajak ini telah ditandatangani secara elektronik sehingga tidak memerlukan tanda tangan basah pada Faktur Pajak ini.
+                    </td>
+                    <td class="signature-area">
+                        <div>, </div>
 
+                        @php($signatureType = $invoice->signature_type ?? 'qr')
 
-        <div class="footer-section">
-            <div class="qr-code">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <div style="font-weight:bold; font-size:10px;">[ QR CODE INVOICE ]</div>
+                        @if($signatureType === 'hand')
+                            <div class="qr-placeholder" aria-hidden="true"></div>
+                            <div style="visibility:hidden;">Hand signature</div>
+                        @else
+                            @php($qrFromOld = old('qr_image'))
+                            @php($qrDataUri = null)
 
-                    <img
-                        src="{{ route('invoices.qr', $invoice) }}"
-                        alt="QR Invoice"
-                        style="width: 76px; height: 76px; object-fit: contain; border: none;"
-                    >
-                </div>
-            </div>
+                            @if(!empty($qrFromOld) && is_string($qrFromOld))
+                                @php($qrDataUri = $qrFromOld)
+                            @endif
 
-            <div class="ttd-box">
-                <div style="margin-bottom: 6px;">{{ $invoice->tanggal ? $invoice->tanggal->format('d M Y') : '-' }}</div>
-                <div>{{ $invoice->admin_supplier_perusahaan ?? 'Admin Supplier Perusahaan' }},</div>
+                            @if(!empty($qrDataUri))
+                                <div class="qr-placeholder">
+                                    <img src="{{ $qrDataUri }}" alt="QR Upload" style="max-width:100%; max-height:100%;" />
+                                </div>
+                            @elseif(!empty($invoice->qr_image))
+                                <div class="qr-placeholder">
+                                    <img src="{{ $invoice->qr_image }}" alt="QR Invoice" style="max-width:100%; max-height:100%;" />
+                                </div>
+                            @else
+                                <div class="qr-placeholder"></div>
+                            @endif
+                        @endif
 
-                <br><br><br>
-                <div style="text-decoration: underline; font-weight: bold;">{{ $invoice->pejabat ?? 'BUDI SANTOSO' }}</div>
-
+                        <div style="font-weight: bold; min-height: 14px; margin-top: 5px;">{{ $invoice->signature_name ?? $invoice->pejabat ?? 'Nama Penandatangan' }}</div>
+                        <div style="font-size: 7.5pt; color: #444444; border-top: 0.5px solid #999999; width: 85%; margin: 3px auto 0 auto; padding-top: 2px;">Nama Penandatangan</div>
+                    </td>
+                </tr>
+            </table>
+            <div class="warning-text">
+                PERINGATAN: PKP yang membuat Faktur Pajak yang tidak sesuai dengan keadaan yang sebenarnya dan/atau sesungguhnya sebagaimana dimaksud dalam Pasal 13 ayat (9) UU PPN dikenai sanksi sesuai dengan Pasal 14 ayat (4) UU KUP.
             </div>
         </div>
     </div>

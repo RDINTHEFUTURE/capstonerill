@@ -1,12 +1,13 @@
-# TODO - E-Faktur Laravel 12 + QR + MySQL
+# TODO - Fix Faktur Pajak Border Alignment
 
-- [ ] Update `efaktur/.env` ke MySQL: localhost:3306, database `capstoner`, user `root`, password `4321`
-- [x] Install library QR code via composer
-
-- [ ] Buat migration & model untuk tabel invoice/efaktur
-- [ ] Buat controller untuk CRUD invoice dan endpoint generate QR
-- [ ] Buat view Blade: list, create, detail (QR)
-- [ ] Update route web
-- [ ] Jalankan `php artisan migrate`
-- [ ] Smoke test: generate QR pada halaman detail
+- [ ] Read and identify current Faktur Pajak table markup/CSS sources (preview + pdf).
+- [ ] Refactor `efaktur/resources/views/invoices/preview.blade.php` Faktur Pajak layout:
+  - [ ] Replace separate items-table + summary-table with a single unified grid table.
+  - [ ] Enforce fixed column count per row; remove unnecessary colspan/rowspan.
+  - [ ] Ensure `border-collapse: collapse`, single-source border drawing, and consistent widths.
+  - [ ] Remove/avoid fixed “blank-row-height” hacks that cause row-height mismatch.
+- [ ] Refactor `efaktur/resources/views/invoices/pdf.blade.php` to match the same Faktur Pajak HTML/CSS structure as preview.
+- [ ] Audit and align CSS rules in `efaktur/public/css/invoice-preview.css` (and `invoice-pdf.css` if used).
+- [ ] Test rendering in browser preview, print preview, and generated PDF; compare border intersections.
+- [ ] Produce before/after summary and explain which HTML/CSS issues caused asymmetrical borders.
 

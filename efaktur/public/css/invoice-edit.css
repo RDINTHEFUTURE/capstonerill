@@ -1,0 +1,211 @@
+body.invoice-edit-page {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    margin: 24px;
+    max-width: 1100px;
+    width: min(1100px, 100%);
+}
+
+.btn,
+button.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: #435ebe;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+/* Button overrides moved to public/css/invoice-buttons.css */
+
+.btn-secondary {
+    background: #6b7280;
+}
+
+.card {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 12px;
+    padding: 16px;
+    max-width: 100%;
+    background: var(--bs-body-bg);
+    box-sizing: border-box;
+    color: var(--bs-body-color);
+}
+
+.section-title {
+    margin: 16px 0 8px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: var(--bs-body-color);
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    min-width: 0;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.error {
+    color: #dc2626;
+    margin-top: 8px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.form-actions-wrapper {
+    overflow: hidden;
+}
+
+.invoice-items-card {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    overflow-x: auto;
+    background: var(--bs-body-bg);
+    box-sizing: border-box;
+    color: var(--bs-body-color);
+}
+
+.invoice-items-container {
+    width: 100%;
+    overflow-x: hidden;
+    min-width: 0;
+}
+
+.invoice-item-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.5fr) minmax(0, 0.8fr);
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 10px;
+    min-width: 0;
+}
+
+.invoice-item-row > div {
+    min-width: 0;
+}
+
+.invoice-item-row input,
+.invoice-item-row textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.item-debug {
+    grid-column: 1 / -1;
+    display: none;
+}
+
+.invoice-btn-add {
+    margin-top: 8px;
+    background: #435ebe;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+
+    /* Tactile button feedback (sunken/going-in) */
+    transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease, background-color 160ms ease;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+}
+
+.invoice-btn-add:hover {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.22), 0 10px 24px rgba(37, 99, 235, 0.14);
+    background-color: #1d4ed8;
+}
+
+.invoice-btn-add:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 3px 14px rgba(0,0,0,0.28), 0 8px 18px rgba(37, 99, 235, 0.12);
+    background-color: #1e40af;
+}
+
+/* Dark theme: keep readability and deepen hover without becoming indistinguishable */
+body.dark .invoice-btn-add {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35);
+}
+
+body.dark .invoice-btn-add:hover {
+    box-shadow: inset 0 2px 12px rgba(0,0,0,0.45), 0 10px 24px rgba(15, 23, 42, 0.3);
+}
+
+body.dark .invoice-btn-add:active {
+    box-shadow: inset 0 3px 16px rgba(0,0,0,0.55), 0 8px 18px rgba(15, 23, 42, 0.25);
+}
+
+
+#signature-pad-wrapper {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 18px;
+}
+
+.signature-card {
+    width: 100%;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+    padding: 10px;
+    background: var(--bs-body-bg);
+    box-sizing: border-box;
+    color: var(--bs-body-color);
+}
+
+#signature-canvas {
+    width: 100%;
+    max-width: 280px;
+    height: 140px;
+    border: 1px dashed var(--bs-border-color);
+    display: block;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background: var(--bs-body-bg);
+    touch-action: none;
+}
+
+.invoice-signature-preview-wrapper {
+    display: none;
+    margin-top: 12px;
+}
+
+.invoice-signature-preview-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+    margin-top: 8px;
+    object-fit: contain;
+}
+
+.signature-pad-actions {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.signature-pad-info {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--bs-secondary-color);
+}
