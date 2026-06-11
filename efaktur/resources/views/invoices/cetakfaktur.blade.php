@@ -9,7 +9,6 @@
             size: A4 portrait;
             margin: 15mm 10mm 15mm 10mm;
         }
-        * {
             box-sizing: border-box;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
