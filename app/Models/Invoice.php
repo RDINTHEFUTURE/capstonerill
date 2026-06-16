@@ -32,6 +32,10 @@ class Invoice extends Model
         'qr_payload',
         'qr_image',
 
+        // Status
+        'status',
+        'paid_at',
+
         // Direktur / Pejabat
         'pejabat',
         'role_penandatangan',
@@ -42,8 +46,29 @@ class Invoice extends Model
 
     protected $casts = [
         'tanggal' => 'date',
+        'paid_at' => 'datetime',
         'total' => 'decimal:2',
     ];
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'paid';
+    }
+
+    public function isUnpaid(): bool
+    {
+        return $this->status === 'unpaid';
+    }
+
+    public function markAsPaid(): void
+    {
+        $this->update(['status' => 'paid', 'paid_at' => now()]);
+    }
+
+    public function markAsUnpaid(): void
+    {
+        $this->update(['status' => 'unpaid', 'paid_at' => null]);
+    }
 
     public function items()
     {

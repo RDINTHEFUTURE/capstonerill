@@ -80,6 +80,12 @@ body.invoice-cetak-page {
     text-align: center;
 }
 
+body.dark .invoice-table th,
+body[data-bs-theme="dark"] .invoice-table th {
+    background: #2a2d35;
+    color: #e0e0e0;
+}
+
 .invoice-summary-table td,
 .invoice-summary-table th {
     border: none;

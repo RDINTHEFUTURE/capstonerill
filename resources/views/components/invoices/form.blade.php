@@ -1,115 +1,137 @@
 @props(['invoice' => null, 'chartOfAccounts' => collect()])
 
 <div>
-    <label>Nomor</label>
-    <input name="nomor" value="{{ old('nomor', $invoice?->nomor) }}" required maxlength="255">
-    @error('nomor') <div class="error">{{ $message }}</div> @enderror
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Nomor</label>
+                <input name="nomor" class="form-control" value="{{ old('nomor', $invoice?->nomor) }}" required maxlength="255">
+                @error('nomor') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Tanggal</label>
+                <input type="date" name="tanggal" class="form-control" value="{{ old('tanggal', $invoice?->tanggal?->format('Y-m-d')) }}" required>
+                @error('tanggal') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+    </div>
 
-    <label>Tanggal</label>
-    <input type="date" name="tanggal" value="{{ old('tanggal', $invoice?->tanggal?->format('Y-m-d')) }}" required>
-    @error('tanggal') <div class="error">{{ $message }}</div> @enderror
+    <h4 class="mt-3 mb-3">Penjual</h4>
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">NPWP Penjual</label>
+                <input name="npwp_penjual" class="form-control" value="{{ old('npwp_penjual', $invoice?->npwp_penjual) }}" maxlength="32">
+                @error('npwp_penjual') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Nama Penjual</label>
+                <input name="nama_penjual" class="form-control" value="{{ old('nama_penjual', $invoice?->nama_penjual) }}" maxlength="255">
+                @error('nama_penjual') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Alamat Penjual</label>
+                <textarea name="alamat_penjual" class="form-control" rows="3" maxlength="255">{{ old('alamat_penjual', $invoice?->alamat_penjual) }}</textarea>
+                @error('alamat_penjual') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+    </div>
 
-    <h3 class="section-title">Penjual</h3>
-
-    <label>NPWP Penjual</label>
-    <input name="npwp_penjual" value="{{ old('npwp_penjual', $invoice?->npwp_penjual) }}" maxlength="32">
-    @error('npwp_penjual') <div class="error">{{ $message }}</div> @enderror
-
-    <label>Nama Penjual</label>
-    <input name="nama_penjual" value="{{ old('nama_penjual', $invoice?->nama_penjual) }}" maxlength="255">
-    @error('nama_penjual') <div class="error">{{ $message }}</div> @enderror
-
-    <label>Alamat Penjual</label>
-    <textarea name="alamat_penjual" rows="3" maxlength="255">{{ old('alamat_penjual', $invoice?->alamat_penjual) }}</textarea>
-    @error('alamat_penjual') <div class="error">{{ $message }}</div> @enderror
-
-    <h3 class="section-title">Pembeli</h3>
-
-    <label>NPWP Pembeli</label>
-    <input name="npwp_pembeli" value="{{ old('npwp_pembeli', $invoice?->npwp_pembeli) }}" maxlength="32">
-    @error('npwp_pembeli') <div class="error">{{ $message }}</div> @enderror
-
-    <label>Nama Pembeli</label>
-    <input name="nama_pembeli" value="{{ old('nama_pembeli', $invoice?->nama_pembeli) }}" maxlength="255">
-    @error('nama_pembeli') <div class="error">{{ $message }}</div> @enderror
-
-    <label>Alamat Pembeli</label>
-    <textarea name="alamat_pembeli" rows="3" maxlength="255">{{ old('alamat_pembeli', $invoice?->alamat_pembeli) }}</textarea>
-    @error('alamat_pembeli') <div class="error">{{ $message }}</div> @enderror
-
+    <h4 class="mt-3 mb-3">Pembeli</h4>
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">NPWP Pembeli</label>
+                <input name="npwp_pembeli" class="form-control" value="{{ old('npwp_pembeli', $invoice?->npwp_pembeli) }}" maxlength="32">
+                @error('npwp_pembeli') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Nama Pembeli</label>
+                <input name="nama_pembeli" class="form-control" value="{{ old('nama_pembeli', $invoice?->nama_pembeli) }}" maxlength="255">
+                @error('nama_pembeli') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Alamat Pembeli</label>
+                <textarea name="alamat_pembeli" class="form-control" rows="3" maxlength="255">{{ old('alamat_pembeli', $invoice?->alamat_pembeli) }}</textarea>
+                @error('alamat_pembeli') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+    </div>
 
     @include('invoices.components.items', ['oldItems' => old('items', $invoice?->items?->toArray() ?? []), 'chartOfAccounts' => $chartOfAccounts])
 
-
-    {{-- FIELD: total (backend-calculated) --}}
-    <label>Total</label>
-    <input name="total" id="invoice-total" type="number" step="0.01" value="{{ old('total', $invoice?->total ?? 0) }}" required readonly>
-    @error('total') <div class="error">{{ $message }}</div> @enderror
-
-    <!-- <h3 style="margin:16px 0 8px;">Role Penandatangan</h3> -->
-
-    <label>Pihak Penandatangan (contoh: Admin)</label>
-    <input name="role_penandatangan" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
-    @error('role_penandatangan') <div class="error">{{ $message }}</div> @enderror
-
-
-    <label>Mata Uang (currency)</label>
-    <input name="currency" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
-    @error('currency') <div class="error">{{ $message }}</div> @enderror
-
-    <!--
-    <label>Jenis Tanda Tangan</label>
-    <div class="signature-type-options" role="group" aria-label="Jenis Tanda Tangan">
-        <label class="signature-type-option">
-            <input type="radio" name="signature_type" value="qr" {{ old('signature_type', $invoice?->signature_type ?? 'qr') === 'qr' ? 'checked' : '' }}>
-            <span>QR Signature</span>
-        </label>
-        <label class="signature-type-option">
-            <input type="radio" name="signature_type" value="hand" {{ old('signature_type', $invoice?->signature_type ?? '') === 'hand' ? 'checked' : '' }}>
-            <span>Hand Signature</span>
-        </label>
-    </div>
-
-
-    <input type="hidden" name="signature_data" id="signature_data" value="{{ old('signature_data', $invoice?->signature_data) }}">
-
-    <div id="qr-upload-wrapper">
-    -->
-        <label>Upload QR Bukti Tanda Tangan Digital (DJP)</label>
-        <input type="file" name="qr_image" accept="image/png,image/jpeg" {{ (old('signature_type', $invoice?->signature_type ?? 'qr') === 'hand') ? 'disabled' : '' }}>
-        <div class="mt-1" style="font-size:12px; color:#666;">Jika tidak diupload saat edit, QR sebelumnya akan tetap digunakan.</div>
-
-        @if(isset($invoice) && $invoice->qr_image)
-            <div style="margin-top:8px" id="qr-preview-wrapper">
-                <label>Preview QR saat ini</label>
-                <div style="width:120px; height:120px; border:1px solid #ddd; display:flex; align-items:center; justify-content:center;">
-                    <img src="{{ $invoice->qr_image }}" alt="QR" style="max-width:100%; max-height:100%;" />
-                </div>
+    <div class="row mt-3">
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Total</label>
+                <input name="total" id="invoice-total" type="number" step="0.01" class="form-control" value="{{ old('total', $invoice?->total ?? 0) }}" required readonly>
+                @error('total') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
-        @endif
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Mata Uang</label>
+                <input name="currency" class="form-control" value="{{ old('currency', $invoice?->currency ?? 'IDR') }}" maxlength="3">
+                @error('currency') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Pihak Penandatangan</label>
+                <input name="role_penandatangan" class="form-control" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
+                @error('role_penandatangan') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Upload QR Bukti Tanda Tangan Digital (DJP)</label>
+                <input type="file" name="qr_image" class="form-control" accept="image/png,image/jpeg" {{ (old('signature_type', $invoice?->signature_type ?? 'qr') === 'hand') ? 'disabled' : '' }}>
+                <div class="form-text">Jika tidak diupload saat edit, QR sebelumnya akan tetap digunakan.</div>
+                @error('qr_image') <div class="text-danger small">{{ $message }}</div> @enderror
+
+                @if(isset($invoice) && $invoice->qr_image)
+                    <div class="mt-2" id="qr-preview-wrapper">
+                        <label class="form-label">Preview QR saat ini</label>
+                        <div style="width:120px; height:120px; border:1px solid var(--bs-border-color, #ddd); display:flex; align-items:center; justify-content:center;">
+                            <img src="{{ $invoice->qr_image }}" alt="QR" style="max-width:100%; max-height:100%;" />
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 
     <div id="hand-signature-wrapper" style="display: none;">
-        <label>Signature Digital</label>
-        <div class="signature-card">
-            <canvas id="signature-canvas" width="280" height="140"></canvas>
-            <div class="signature-pad-actions">
-                <button type="button" class="btn btn-secondary" id="clear-signature">Clear Signature</button>
+        <div class="form-group mb-3">
+            <label class="form-label">Signature Digital</label>
+            <div class="signature-card">
+                <canvas id="signature-canvas" width="280" height="140"></canvas>
+                <div class="signature-pad-actions">
+                    <button type="button" class="btn btn-secondary" id="clear-signature">Clear Signature</button>
+                </div>
+                <div class="signature-pad-info">Gunakan mouse atau sentuhan untuk menggambar tanda tangan. Kosongkan jika tidak ingin merubah tanda tangan saat edit.</div>
             </div>
-            <div class="signature-pad-info">Gunakan mouse atau sentuhan untuk menggambar tanda tangan. Kosongkan jika tidak ingin merubah tanda tangan saat edit.</div>
+            <div id="signature-preview-wrapper" class="invoice-signature-preview-wrapper">
+                <label class="form-label">Preview Tanda Tangan</label>
+                <img id="signature-preview" src="" alt="Preview Tanda Tangan" class="invoice-signature-preview-image" />
+            </div>
         </div>
-        <div id="signature-preview-wrapper" class="invoice-signature-preview-wrapper">
-            <label>Preview Tanda Tangan</label>
-            <img id="signature-preview" src="" alt="Preview Tanda Tangan" class="invoice-signature-preview-image" />
+        <div class="form-group mb-3">
+            <label class="form-label">Nama Penandatangan</label>
+            <input type="text" name="signature_name" id="signature_name" class="form-control" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
+            @error('signature_name') <div class="text-danger small">{{ $message }}</div> @enderror
         </div>
-        <label class="signature-name-label">Nama Penandatangan</label>
-        <input type="text" name="signature_name" id="signature_name" value="{{ old('signature_name', $invoice?->signature_name) }}" maxlength="255">
-        @error('signature_name') <div class="error">{{ $message }}</div> @enderror
     </div>
-
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.0/dist/signature_pad.umd.min.js"></script>
     <script>
@@ -188,6 +210,14 @@
                         const name = inp.getAttribute('name');
                         if(name){
                             inp.setAttribute('name', name.replace(/items\[\d+\]/, `items[${newIndex}]`));
+                        }
+                    });
+
+                    clone.querySelectorAll('select').forEach(sel => {
+                        sel.selectedIndex = 0;
+                        const name = sel.getAttribute('name');
+                        if(name){
+                            sel.setAttribute('name', name.replace(/items\[\d+\]/, `items[${newIndex}]`));
                         }
                     });
 
@@ -316,4 +346,3 @@
         })();
     </script>
 </div>
-

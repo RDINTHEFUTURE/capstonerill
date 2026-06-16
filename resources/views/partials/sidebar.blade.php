@@ -33,6 +33,12 @@
     <div class="sidebar-menu">
         <ul class="menu">
             <li class="sidebar-item">
+                <a href="{{ route('home') }}" class="sidebar-link">
+                    <i class="bi bi-house-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="{{ route('invoices.index') }}" class="sidebar-link">
                     <i class="bi bi-grid-fill"></i>
                     <span>Invoices</span>
@@ -42,6 +48,24 @@
                 <a href="{{ route('chart-of-accounts.index') }}" class="sidebar-link">
                     <i class="bi bi-list-columns-reverse"></i>
                     <span>Chart of Accounts</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('ledger.index') }}" class="sidebar-link">
+                    <i class="bi bi-journal-bookmark-fill"></i>
+                    <span>General Ledger</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('reports.sales') }}" class="sidebar-link">
+                    <i class="bi bi-bar-chart-fill"></i>
+                    <span>Sales Report</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('reports.import-form') }}" class="sidebar-link">
+                    <i class="bi bi-upload"></i>
+                    <span>Import Data</span>
                 </a>
             </li>
             <li class="sidebar-item">

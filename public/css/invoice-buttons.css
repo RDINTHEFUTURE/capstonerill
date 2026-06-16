@@ -143,7 +143,7 @@ button.logout-action:focus {
     align-items: center;
     gap: 1rem;
     padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.08));
 }
 
 .details-row:last-child {
@@ -152,7 +152,7 @@ button.logout-action:focus {
 
 .details-row .key {
     font-weight: 700;
-    color: #495057;
+    color: var(--bs-body-color, #495057);
     min-width: 140px;
 }
 
@@ -160,7 +160,22 @@ button.logout-action:focus {
     flex: 1;
     text-align: right;
     font-weight: 500;
-    color: #212529;
+    color: var(--bs-body-color, #212529);
+}
+
+body.dark .details-row,
+body[data-bs-theme="dark"] .details-row {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark .details-row .key,
+body[data-bs-theme="dark"] .details-row .key {
+    color: #e0e0e0;
+}
+
+body.dark .details-row .value,
+body[data-bs-theme="dark"] .details-row .value {
+    color: #e0e0e0;
 }
 
 /* End of centralized button and modal rules */

@@ -57,6 +57,14 @@ button.btn {
     padding: 10px;
     border-radius: 8px;
     margin-top: 12px;
+    color: #166534;
+}
+
+body.dark .success,
+body[data-bs-theme="dark"] .success {
+    background: #14532d;
+    border-color: #166534;
+    color: #bbf7d0;
 }
 
 .pagination-container {

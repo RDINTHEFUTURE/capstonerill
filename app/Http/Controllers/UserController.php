@@ -12,11 +12,21 @@ class UserController extends Controller
         abort_if(!auth()->check() || (!auth()->user()->isManager() && !auth()->user()->isSupervisor()), 403, 'Akses ditolak.');
     }
 
+    private function canManageUser(User $target): bool
+    {
+        $currentUser = auth()->user();
+        if ($target->id === $currentUser->id) {
+            return false;
+        }
+        return $currentUser->roleLevel() > $target->roleLevel();
+    }
+
     public function index()
     {
         $this->authorizeUser();
+        $currentUser = auth()->user();
         $users = User::query()->latest()->paginate(10);
-        return view('users.index', compact('users'));
+        return view('users.index', compact('users', 'currentUser'));
     }
 
     public function create()
@@ -75,19 +85,24 @@ class UserController extends Controller
         $this->authorizeUser();
 
         $currentUser = auth()->user();
+        $isSelf = $user->id === $currentUser->id;
         $availableRoles = [];
 
-        if ($currentUser->isManager()) {
+        if ($isSelf) {
+            $availableRoles = [];
+        } elseif ($currentUser->isManager()) {
             $availableRoles = [User::ROLE_SUPERVISOR, User::ROLE_STAFF];
         } elseif ($currentUser->isSupervisor()) {
             $availableRoles = [User::ROLE_STAFF];
         }
 
-        if ($currentUser->isSupervisor() && !$user->isStaff()) {
-            abort(403, 'Supervisor hanya dapat mengedit akun Staff.');
+        if (!$isSelf && !$this->canManageUser($user)) {
+            abort(403, 'Anda tidak memiliki akses untuk mengedit pengguna ini.');
         }
 
-        return view('users.edit', compact('user', 'availableRoles'));
+        $canChangePassword = $isSelf || $currentUser->roleLevel() > $user->roleLevel();
+
+        return view('users.edit', compact('user', 'availableRoles', 'isSelf', 'canChangePassword'));
     }
 
     public function update(Request $request, User $user)
@@ -95,37 +110,49 @@ class UserController extends Controller
         $this->authorizeUser();
 
         $currentUser = auth()->user();
+        $isSelf = $user->id === $currentUser->id;
 
-        if ($currentUser->isSupervisor() && !$user->isStaff()) {
-            abort(403, 'Supervisor hanya dapat mengedit akun Staff.');
+        if (!$isSelf && !$this->canManageUser($user)) {
+            abort(403, 'Anda tidak memiliki akses untuk mengedit pengguna ini.');
         }
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string'],
+            'role' => ['nullable', 'string'],
         ]);
-
-        if ($currentUser->isSupervisor()) {
-            if ($validated['role'] !== User::ROLE_STAFF) {
-                abort(403, 'Supervisor hanya dapat menetapkan akun Staff.');
-            }
-        } elseif ($currentUser->isManager()) {
-            if (!in_array($validated['role'], [User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
-                abort(403, 'Manager hanya dapat menetapkan akun Supervisor atau Staff.');
-            }
-        } else {
-            abort(403, 'Akses ditolak.');
-        }
 
         $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'role' => $validated['role'],
         ];
 
+        if (!$isSelf) {
+            if (empty($validated['role'])) {
+                abort(400, 'Role wajib diisi.');
+            }
+
+            if ($currentUser->isSupervisor()) {
+                if ($validated['role'] !== User::ROLE_STAFF) {
+                    abort(403, 'Supervisor hanya dapat menetapkan akun Staff.');
+                }
+            } elseif ($currentUser->isManager()) {
+                if (!in_array($validated['role'], [User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
+                    abort(403, 'Manager hanya dapat menetapkan akun Supervisor atau Staff.');
+                }
+            } else {
+                abort(403, 'Akses ditolak.');
+            }
+
+            $data['role'] = $validated['role'];
+        }
+
         if (!empty($validated['password'])) {
+            $canChangePassword = $isSelf || $currentUser->roleLevel() > $user->roleLevel();
+            if (!$canChangePassword) {
+                abort(403, 'Anda tidak memiliki akses untuk mengubah kata sandi pengguna ini.');
+            }
             $data['password'] = bcrypt($validated['password']);
         }
 
@@ -144,8 +171,8 @@ class UserController extends Controller
             abort(403, 'Tidak dapat menghapus akun sendiri.');
         }
 
-        if ($currentUser->isSupervisor() && !$user->isStaff()) {
-            abort(403, 'Supervisor hanya dapat menghapus akun Staff.');
+        if (!$this->canManageUser($user)) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus pengguna ini.');
         }
 
         $user->delete();

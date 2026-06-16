@@ -11,6 +11,17 @@
         <h3>Detail Invoice</h3>
         <div>
             <a class="btn btn-secondary" href="{{ route('invoices.index') }}">&larr; Kembali</a>
+            @if($invoice->isPaid())
+                <form method="POST" action="{{ route('invoices.mark-unpaid', $invoice) }}" class="d-inline">
+                    @csrf
+                    <button class="btn btn-warning" type="submit">Tandai Belum Lunas</button>
+                </form>
+            @else
+                <form method="POST" action="{{ route('invoices.mark-paid', $invoice) }}" class="d-inline">
+                    @csrf
+                    <button class="btn btn-success" type="submit">Tandai Lunas</button>
+                </form>
+            @endif
             <a class="btn btn-primary" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
             <a class="btn btn-outline-secondary" href="{{ route('invoices.edit', $invoice) }}">Edit</a>
             <a class="btn btn-success" href="{{ route('invoices.create') }}">+ Invoice Baru</a>
@@ -28,6 +39,16 @@
                 <div class="card-body">
                     <div class="details-row"><span class="key">Nomor</span><div class="value">{{ $invoice->nomor }}</div></div>
                     <div class="details-row"><span class="key">Tanggal</span><div class="value">{{ $invoice->tanggal->format('Y-m-d') }}</div></div>
+                    <div class="details-row"><span class="key">Status</span><div class="value">
+                        @if($invoice->isPaid())
+                            <span class="badge bg-success">Lunas</span>
+                            @if($invoice->paid_at)
+                                <small class="text-muted ms-1">({{ $invoice->paid_at->format('d M Y H:i') }})</small>
+                            @endif
+                        @else
+                            <span class="badge bg-warning text-dark">Belum Lunas</span>
+                        @endif
+                    </div></div>
                     <div class="details-row"><span class="key">NPWP Penjual</span><div class="value">{{ $invoice->npwp_penjual }}</div></div>
                     <div class="details-row"><span class="key">Nama Penjual</span><div class="value">{{ $invoice->nama_penjual }}</div></div>
                     <div class="details-row"><span class="key">Alamat Penjual</span><div class="value">{{ $invoice->alamat_penjual }}</div></div>
@@ -55,6 +76,7 @@
                             <thead>
                                 <tr>
                                     <th>Produk</th>
+                                    <th>Akun</th>
                                     <th>Qty</th>
                                     <th>Harga</th>
                                     <th>Diskon</th>
@@ -65,6 +87,7 @@
                                 @foreach($invoice->items as $item)
                                     <tr>
                                         <td>{{ $item->nama_produk }}</td>
+                                        <td>{{ $item->chartOfAccount ? $item->chartOfAccount->account_no_new . ' - ' . $item->chartOfAccount->account_name : '-' }}</td>
                                         <td>{{ $item->qty }}</td>
                                         <td>{{ number_format((float) $item->harga, 2, ',', '.') }}</td>
                                         <td>{{ number_format((float) $item->diskon, 2, ',', '.') }}</td>

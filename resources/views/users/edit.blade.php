@@ -1,10 +1,10 @@
 @extends('layouts.mazer')
 
-@section('title', 'Edit Pengguna')
+@section('title', $isSelf ? 'Edit Profil' : 'Edit Pengguna')
 
 @section('content')
     <div class="page-heading d-flex justify-content-between align-items-center">
-        <h3>Edit Pengguna</h3>
+        <h3>{{ $isSelf ? 'Edit Profil' : 'Edit Pengguna' }}</h3>
         <a class="btn btn-secondary" href="{{ route('users.index') }}">Kembali</a>
     </div>
 
@@ -39,6 +39,7 @@
                         </div>
                     </div>
 
+                    @if(!$isSelf && count($availableRoles) > 0)
                     <div class="col-md-6 col-12">
                         <div class="form-group mb-3">
                             <label for="role" class="form-label">Role</label>
@@ -50,7 +51,9 @@
                             </select>
                         </div>
                     </div>
+                    @endif
 
+                    @if($canChangePassword)
                     <div class="col-md-6 col-12">
                         <div class="form-group mb-3">
                             <label for="password" class="form-label">Kata Sandi Baru <small class="text-muted">(Kosongkan jika tidak ingin mengubah)</small></label>
@@ -64,6 +67,7 @@
                             <input type="password" id="password_confirmation" class="form-control" name="password_confirmation" placeholder="Ulangi kata sandi">
                         </div>
                     </div>
+                    @endif
 
                     <div class="col-12 mt-3">
                         <button type="submit" class="btn btn-primary me-1">Simpan Perubahan</button>

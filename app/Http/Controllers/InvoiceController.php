@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ChartOfAccount;
 use App\Models\Invoice;
+use App\Services\JournalService;
 use Illuminate\Http\Request;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -12,9 +13,32 @@ use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class InvoiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::query()->latest()->paginate(10);
+        $query = Invoice::query()->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor', 'like', "%{$search}%")
+                  ->orWhere('nama_penjual', 'like', "%{$search}%")
+                  ->orWhere('nama_pembeli', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('from')) {
+            $query->where('tanggal', '>=', $request->from);
+        }
+
+        if ($request->filled('to')) {
+            $query->where('tanggal', '<=', $request->to);
+        }
+
+        $invoices = $query->paginate(10)->withQueryString();
         return view('invoices.index', compact('invoices'));
     }
 
@@ -154,6 +178,9 @@ class InvoiceController extends Controller
             $invoice->items()->create($row);
         }
 
+        $journalService = new JournalService();
+        $journalService->postInvoice($invoice);
+
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice tersimpan dan payload QR dibuat.');
     }
@@ -275,6 +302,9 @@ class InvoiceController extends Controller
             $invoice->items()->create($row);
         }
 
+        $journalService = new JournalService();
+        $journalService->postInvoice($invoice);
+
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice diperbarui dan payload QR diupdate.');
     }
@@ -282,10 +312,25 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        $journalService = new JournalService();
+        $journalService->reverseInvoice($invoice);
+
         $invoice->delete();
 
         return redirect()->route('invoices.index')
             ->with('success', 'Invoice berhasil dihapus.');
+    }
+
+    public function markPaid(Invoice $invoice)
+    {
+        $invoice->markAsPaid();
+        return back()->with('success', 'Invoice ditandai sebagai lunas.');
+    }
+
+    public function markUnpaid(Invoice $invoice)
+    {
+        $invoice->markAsUnpaid();
+        return back()->with('success', 'Invoice ditandai sebagai belum lunas.');
     }
 
     public function qr(Invoice $invoice)

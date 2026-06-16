@@ -12,6 +12,35 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Akun yang Sedang Digunakan</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar avatar-lg bg-primary text-white d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; border-radius: 50%; font-size: 1.5rem; font-weight: bold;">
+                        {{ strtoupper(substr($currentUser->name, 0, 1)) }}
+                    </div>
+                    <div>
+                        <h5 class="mb-0">{{ $currentUser->name }}</h5>
+                        <span class="text-muted">{{ $currentUser->email }}</span>
+                        <div class="mt-1">
+                            @if($currentUser->isManager())
+                                <span class="badge bg-danger">{{ $currentUser->role }}</span>
+                            @elseif($currentUser->isSupervisor())
+                                <span class="badge bg-warning text-dark">{{ $currentUser->role }}</span>
+                            @else
+                                <span class="badge bg-success">{{ $currentUser->role }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ route('users.edit', $currentUser) }}" class="btn btn-outline-primary">Edit Profil</a>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -41,7 +70,7 @@
                                 </td>
                                 <td>{{ $user->created_at ? $user->created_at->format('d M Y H:i') : '-' }}</td>
                                 <td>
-                                    @if(auth()->user()->isManager() || (auth()->user()->isSupervisor() && $user->isStaff()))
+                                    @if($user->id !== $currentUser->id && $currentUser->roleLevel() > $user->roleLevel())
                                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                         <form method="POST" action="{{ route('users.destroy', $user) }}" class="d-inline" onsubmit="return confirm('Hapus pengguna ini?');">
                                             @csrf

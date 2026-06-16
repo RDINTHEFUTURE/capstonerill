@@ -7,17 +7,23 @@
         <h3>Detail Akun</h3>
         <div>
             <a class="btn btn-secondary" href="{{ route('chart-of-accounts.index') }}">Kembali</a>
-            <a class="btn btn-outline-secondary" href="{{ route('chart-of-accounts.edit', $chartOfAccount) }}">Edit</a>
-            <form method="POST" action="{{ route('chart-of-accounts.destroy', $chartOfAccount) }}" class="d-inline" onsubmit="return confirm('Hapus akun ini?');">
-                @csrf
-                @method('DELETE')
-                <button class="btn btn-danger" type="submit">Hapus</button>
-            </form>
+            @if($isManager)
+                <a class="btn btn-outline-secondary" href="{{ route('chart-of-accounts.edit', $chartOfAccount) }}">Edit</a>
+                <form method="POST" action="{{ route('chart-of-accounts.destroy', $chartOfAccount) }}" class="d-inline" onsubmit="return confirm('Hapus akun ini?');">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-danger" type="submit">Hapus</button>
+                </form>
+            @endif
         </div>
     </div>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     <div class="card">

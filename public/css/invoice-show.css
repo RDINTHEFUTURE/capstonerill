@@ -33,6 +33,11 @@ body.invoice-show-page {
     color: var(--bs-body-color);
 }
 
+body.dark .key,
+body[data-bs-theme="dark"] .key {
+    color: #e0e0e0;
+}
+
 .value {
     margin-top: 6px;
 }
@@ -69,19 +74,42 @@ button.btn {
 
 .qr-header {
     font-weight: 700;
+    color: var(--bs-body-color);
+}
+
+body.dark .qr-header,
+body[data-bs-theme="dark"] .qr-header {
+    color: #e0e0e0;
 }
 
 pre {
     white-space: pre-wrap;
     word-break: break-word;
-    background: #f9fafb;
+    background: var(--bs-tertiary-bg, #f9fafb);
     padding: 12px;
     border-radius: 10px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--bs-border-color, #e5e7eb);
+    color: var(--bs-body-color);
+}
+
+body.dark pre,
+body[data-bs-theme="dark"] pre {
+    background: #1a1d23;
+    border-color: #333;
+    color: #e0e0e0;
 }
 
 .details-row {
     margin-top: 12px;
+}
+
+.details-row .value {
+    color: var(--bs-body-color);
+}
+
+body.dark .details-row .value,
+body[data-bs-theme="dark"] .details-row .value {
+    color: #e0e0e0;
 }
 
 .details-section {
@@ -99,8 +127,9 @@ pre {
     text-align: center;
 }
 
-body.dark .qr-note {
-    color: var(--bs-secondary-color);
+body.dark .qr-note,
+body[data-bs-theme="dark"] .qr-note {
+    color: #b0b0b0;
 }
 
 

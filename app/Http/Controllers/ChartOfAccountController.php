@@ -3,33 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChartOfAccount;
+use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ChartOfAccountController extends Controller
 {
-    public function index()
+    private function authorizeManager(): void
     {
-        $accounts = ChartOfAccount::query()
-            ->orderBy('account_no_new')
-            ->paginate(20);
+        abort_if(!auth()->check() || !auth()->user()->isManager(), 403, 'Hanya Accounting Manager yang dapat mengelola Chart of Accounts.');
+    }
 
-        return view('chart_of_accounts.index', compact('accounts'));
+    public function index(Request $request)
+    {
+        $query = ChartOfAccount::query()->orderBy('account_no_new');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('account_no_new', 'like', "%{$search}%")
+                  ->orWhere('account_name', 'like', "%{$search}%");
+            });
+        }
+
+        $accounts = $query->paginate(20)->withQueryString();
+        $isManager = auth()->check() && auth()->user()->isManager();
+
+        return view('chart_of_accounts.index', compact('accounts', 'isManager'));
     }
 
     public function create()
     {
+        $this->authorizeManager();
         return view('chart_of_accounts.create');
     }
 
     public function store(Request $request)
     {
-
+        $this->authorizeManager();
 
         $validated = $this->validateAccount($request);
 
         ChartOfAccount::create($validated);
-
 
         return redirect()
             ->route('chart-of-accounts.index')
@@ -38,16 +53,20 @@ class ChartOfAccountController extends Controller
 
     public function show(ChartOfAccount $chartOfAccount)
     {
-        return view('chart_of_accounts.show', compact('chartOfAccount'));
+        $isManager = auth()->check() && auth()->user()->isManager();
+        return view('chart_of_accounts.show', compact('chartOfAccount', 'isManager'));
     }
 
     public function edit(ChartOfAccount $chartOfAccount)
     {
+        $this->authorizeManager();
         return view('chart_of_accounts.edit', compact('chartOfAccount'));
     }
 
     public function update(Request $request, ChartOfAccount $chartOfAccount)
     {
+        $this->authorizeManager();
+
         $validated = $this->validateAccount($request, $chartOfAccount);
 
         $chartOfAccount->update([
@@ -65,6 +84,13 @@ class ChartOfAccountController extends Controller
 
     public function destroy(ChartOfAccount $chartOfAccount)
     {
+        $this->authorizeManager();
+
+        $isUsed = InvoiceItem::where('chart_of_account_no_new', $chartOfAccount->account_no_new)->exists();
+        if ($isUsed) {
+            return back()->with('error', 'Akun ini tidak dapat dihapus karena masih digunakan di invoice.');
+        }
+
         $chartOfAccount->delete();
 
         return redirect()

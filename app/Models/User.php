@@ -65,4 +65,14 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_STAFF;
     }
+
+    public function roleLevel(): int
+    {
+        return match($this->role) {
+            self::ROLE_MANAGER => 3,
+            self::ROLE_SUPERVISOR => 2,
+            self::ROLE_STAFF => 1,
+            default => 0,
+        };
+    }
 }
