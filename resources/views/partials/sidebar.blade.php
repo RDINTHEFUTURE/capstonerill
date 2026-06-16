@@ -50,6 +50,14 @@
                     <span>Create Invoice</span>
                 </a>
             </li>
+            @if(auth()->check() && (auth()->user()->isManager() || auth()->user()->isSupervisor()))
+            <li class="sidebar-item">
+                <a href="{{ route('users.index') }}" class="sidebar-link">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Users</span>
+                </a>
+            </li>
+            @endif
             <li class="sidebar-item">
                 <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: inline; width: 100%;">
                     @csrf

@@ -8,6 +8,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', [HomeController::class, 'index']);
 
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::get('invoices/{invoice}/qr', [InvoiceController::class, 'qr'])->name('invoices.qr');
     Route::get('invoices/{invoice}/preview', [InvoicePdfController::class, 'preview'])->name('invoices.preview');
     Route::get('invoices/{invoice}/pdf', [InvoicePdfController::class, 'show'])->name('invoices.pdf');
+    Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });
 
 
