@@ -4,8 +4,8 @@
     <div class="row">
         <div class="col-md-6 col-12">
             <div class="form-group mb-3">
-                <label class="form-label">Nomor</label>
-                <input name="nomor" class="form-control" value="{{ old('nomor', $invoice?->nomor) }}" required maxlength="255">
+                <label class="form-label">Nomor Seri Faktur Pajak</label>
+                <input name="nomor" type="text" class="form-control" value="{{ old('nomor', $invoice?->nomor) }}" required maxlength="255">
                 @error('nomor') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
         </div>
@@ -90,6 +90,13 @@
                 <label class="form-label">Pihak Penandatangan</label>
                 <input name="role_penandatangan" class="form-control" value="{{ old('role_penandatangan', $invoice?->role_penandatangan ?? '') }}" maxlength="255">
                 @error('role_penandatangan') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group mb-3">
+                <label class="form-label">Catatan / Notes</label>
+                <textarea name="notes" class="form-control" rows="3" maxlength="1000">{{ old('notes', $invoice?->notes) }}</textarea>
+                @error('notes') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
         </div>
         <div class="col-md-6 col-12">

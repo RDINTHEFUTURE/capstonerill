@@ -42,6 +42,29 @@
         </div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Pendapatan per Bulan</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Status Pembayaran</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-8">
             <div class="card">
@@ -54,7 +77,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Nomor</th>
+                                    <th>Nomor Seri</th>
                                     <th>Tanggal</th>
                                     <th>Nama</th>
                                     <th>Total</th>
@@ -110,4 +133,47 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const monthlyData = @json($monthlyData);
+        const paidCount = {{ $paidCount }};
+        const unpaidCount = {{ $unpaidCount }};
+
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels: monthlyData.map(d => d.month),
+                datasets: [{
+                    label: 'Total',
+                    data: monthlyData.map(d => d.revenue),
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                }, {
+                    label: 'Lunas',
+                    data: monthlyData.map(d => d.paid),
+                    backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                }, {
+                    label: 'Belum Lunas',
+                    data: monthlyData.map(d => d.unpaid),
+                    backgroundColor: 'rgba(234, 179, 8, 0.8)',
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Lunas', 'Belum Lunas'],
+                datasets: [{
+                    data: [paidCount, unpaidCount],
+                    backgroundColor: ['#22c55e', '#eab308'],
+                }]
+            },
+            options: { responsive: true }
+        });
+    </script>
 @endsection

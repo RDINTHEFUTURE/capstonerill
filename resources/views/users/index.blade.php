@@ -26,7 +26,9 @@
                         <h5 class="mb-0">{{ $currentUser->name }}</h5>
                         <span class="text-muted">{{ $currentUser->email }}</span>
                         <div class="mt-1">
-                            @if($currentUser->isManager())
+                            @if($currentUser->isAdmin())
+                                <span class="badge bg-dark">{{ $currentUser->role }}</span>
+                            @elseif($currentUser->isManager())
                                 <span class="badge bg-danger">{{ $currentUser->role }}</span>
                             @elseif($currentUser->isSupervisor())
                                 <span class="badge bg-warning text-dark">{{ $currentUser->role }}</span>
@@ -60,7 +62,9 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    @if($user->isManager())
+                                    @if($user->isAdmin())
+                                        <span class="badge bg-dark">{{ $user->role }}</span>
+                                    @elseif($user->isManager())
                                         <span class="badge bg-danger">{{ $user->role }}</span>
                                     @elseif($user->isSupervisor())
                                         <span class="badge bg-warning text-dark">{{ $user->role }}</span>
@@ -70,7 +74,9 @@
                                 </td>
                                 <td>{{ $user->created_at ? $user->created_at->format('d M Y H:i') : '-' }}</td>
                                 <td>
-                                    @if($user->id !== $currentUser->id && $currentUser->roleLevel() > $user->roleLevel())
+                                    @if($user->id === $currentUser->id)
+                                        <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-primary">Edit Profil</a>
+                                    @elseif($currentUser->roleLevel() > $user->roleLevel())
                                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                         <form method="POST" action="{{ route('users.destroy', $user) }}" class="d-inline" onsubmit="return confirm('Hapus pengguna ini?');">
                                             @csrf

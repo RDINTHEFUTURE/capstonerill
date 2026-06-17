@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\ChartOfAccount;
 use App\Models\Invoice;
+use App\Models\ActivityLog;
 use App\Services\JournalService;
+use App\Services\InvoiceNumberService;
 use Illuminate\Http\Request;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -88,6 +90,7 @@ class InvoiceController extends Controller
             'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.harga' => ['required', 'numeric', 'min:0'],
             'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
+            'notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
 
@@ -161,6 +164,7 @@ class InvoiceController extends Controller
             'total' => $validated['total'],
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
+            'notes' => $validated['notes'] ?? null,
         ];
 
         // handle QR upload (DJP provided image)
@@ -180,6 +184,14 @@ class InvoiceController extends Controller
 
         $journalService = new JournalService();
         $journalService->postInvoice($invoice);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'created',
+            'subject_type' => Invoice::class,
+            'subject_id' => $invoice->id,
+            'description' => "Membuat invoice {$invoice->nomor}",
+        ]);
 
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice tersimpan dan payload QR dibuat.');
@@ -234,6 +246,7 @@ class InvoiceController extends Controller
             'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.harga' => ['required', 'numeric', 'min:0'],
             'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
+            'notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $total = 0.0;
@@ -283,6 +296,7 @@ class InvoiceController extends Controller
             'total' => $validated['total'],
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
+            'notes' => $validated['notes'] ?? null,
         ];
 
         if ($request->hasFile('qr_image')) {
@@ -305,6 +319,14 @@ class InvoiceController extends Controller
         $journalService = new JournalService();
         $journalService->postInvoice($invoice);
 
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'updated',
+            'subject_type' => Invoice::class,
+            'subject_id' => $invoice->id,
+            'description' => "Memperbarui invoice {$invoice->nomor}",
+        ]);
+
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice diperbarui dan payload QR diupdate.');
     }
@@ -315,7 +337,16 @@ class InvoiceController extends Controller
         $journalService = new JournalService();
         $journalService->reverseInvoice($invoice);
 
+        $nomor = $invoice->nomor;
         $invoice->delete();
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'deleted',
+            'subject_type' => Invoice::class,
+            'subject_id' => null,
+            'description' => "Menghapus invoice {$nomor}",
+        ]);
 
         return redirect()->route('invoices.index')
             ->with('success', 'Invoice berhasil dihapus.');
@@ -324,13 +355,110 @@ class InvoiceController extends Controller
     public function markPaid(Invoice $invoice)
     {
         $invoice->markAsPaid();
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'updated',
+            'subject_type' => Invoice::class,
+            'subject_id' => $invoice->id,
+            'description' => "Menandai invoice {$invoice->nomor} sebagai lunas",
+        ]);
+
         return back()->with('success', 'Invoice ditandai sebagai lunas.');
     }
 
     public function markUnpaid(Invoice $invoice)
     {
         $invoice->markAsUnpaid();
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'updated',
+            'subject_type' => Invoice::class,
+            'subject_id' => $invoice->id,
+            'description' => "Menandai invoice {$invoice->nomor} sebagai belum lunas",
+        ]);
+
         return back()->with('success', 'Invoice ditandai sebagai belum lunas.');
+    }
+
+    public function duplicate(Invoice $invoice)
+    {
+        $invoiceNumberService = new InvoiceNumberService();
+        $newNomor = $invoiceNumberService->generate();
+
+        $newInvoice = Invoice::create([
+            'nomor' => $newNomor,
+            'tanggal' => now(),
+            'pejabat' => $invoice->pejabat,
+            'role_penandatangan' => $invoice->role_penandatangan,
+            'signature_type' => 'qr',
+            'signature_name' => null,
+            'signature_data' => null,
+            'npwp_penjual' => $invoice->npwp_penjual,
+            'nama_penjual' => $invoice->nama_penjual,
+            'alamat_penjual' => $invoice->alamat_penjual,
+            'npwp_pembeli' => $invoice->npwp_pembeli,
+            'nama_pembeli' => $invoice->nama_pembeli,
+            'alamat_pembeli' => $invoice->alamat_pembeli,
+            'total' => $invoice->total,
+            'currency' => $invoice->currency,
+            'status' => 'unpaid',
+            'notes' => $invoice->notes,
+        ]);
+
+        foreach ($invoice->items as $item) {
+            $newInvoice->items()->create([
+                'nama_produk' => $item->nama_produk,
+                'qty' => $item->qty,
+                'harga' => $item->harga,
+                'diskon' => $item->diskon,
+                'subtotal' => $item->subtotal,
+                'chart_of_account_no_new' => $item->chart_of_account_no_new,
+            ]);
+        }
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'created',
+            'subject_type' => Invoice::class,
+            'subject_id' => $newInvoice->id,
+            'description' => " Menduplikasi invoice {$invoice->nomor} menjadi {$newNomor}",
+        ]);
+
+        return redirect()->route('invoices.edit', $newInvoice)
+            ->with('success', "Invoice berhasil diduplikasi sebagai {$newNomor}.");
+    }
+
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'ids' => ['required', 'array'],
+            'action' => ['required', 'in:paid,unpaid,delete'],
+        ]);
+
+        $invoices = Invoice::whereIn('id', $request->ids)->get();
+        $count = $invoices->count();
+
+        foreach ($invoices as $invoice) {
+            if ($request->action === 'paid') {
+                $invoice->markAsPaid();
+            } elseif ($request->action === 'unpaid') {
+                $invoice->markAsUnpaid();
+            } elseif ($request->action === 'delete') {
+                $journalService = new JournalService();
+                $journalService->reverseInvoice($invoice);
+                $invoice->delete();
+            }
+        }
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'bulk_' . $request->action,
+            'description' => "Bulk {$request->action} untuk {$count} invoice",
+        ]);
+
+        return back()->with('success', "{$count} invoice berhasil diproses.");
     }
 
     public function qr(Invoice $invoice)

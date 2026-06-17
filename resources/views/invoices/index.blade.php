@@ -53,22 +53,36 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Nomor</th>
-                        <th>Tanggal</th>
-                        <th>Nama</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @forelse ($invoices as $inv)
+            <form method="POST" action="{{ route('invoices.bulk-action') }}" id="bulk-form">
+                @csrf
+                <div class="d-flex gap-2 mb-3">
+                    <select name="action" class="form-select" style="width: auto;" required>
+                        <option value="">Pilih Aksi</option>
+                        <option value="paid">Tandai Lunas</option>
+                        <option value="unpaid">Tandai Belum Lunas</option>
+                        <option value="delete">Hapus</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('Proses terpilih?')">Terapkan</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <td>{{ $inv->nomor }}</td>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th>Nomor Seri</th>
+                            <th>Tanggal</th>
+                            <th>Nama</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse ($invoices as $inv)
+                            <tr>
+                                <td><input type="checkbox" name="ids[]" value="{{ $inv->id }}" class="invoice-checkbox"></td>
+                                <td>{{ $inv->nomor }}</td>
                             <td>{{ $inv->tanggal->format('Y-m-d') }}</td>
                             <td>{{ $inv->nama_penjual ?? '-' }}</td>
                             <td>{{ number_format((float)$inv->total, 2, ',', '.') }} {{ $inv->currency }}</td>
@@ -85,7 +99,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6">Belum ada data.</td></tr>
+                        <tr><td colspan="7">Belum ada data.</td></tr>
                     @endforelse
                     </tbody>
                 </table>
@@ -94,6 +108,15 @@
             <div class="mt-3">
                 {{ $invoices->onEachSide(1)->links('pagination::bootstrap-5') }}
             </div>
+            </form>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.getElementById('select-all')?.addEventListener('change', function() {
+            document.querySelectorAll('.invoice-checkbox').forEach(cb => cb.checked = this.checked);
+        });
+    </script>
+    @endpush
 @endsection

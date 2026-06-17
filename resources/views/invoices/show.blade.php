@@ -24,6 +24,7 @@
             @endif
             <a class="btn btn-primary" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
             <a class="btn btn-outline-secondary" href="{{ route('invoices.edit', $invoice) }}">Edit</a>
+            <a class="btn btn-outline-info" href="{{ route('invoices.duplicate', $invoice) }}">Duplikat</a>
             <a class="btn btn-success" href="{{ route('invoices.create') }}">+ Invoice Baru</a>
             <form method="POST" action="{{ route('invoices.destroy', $invoice) }}" onsubmit="return confirm('Hapus invoice ini?');" class="d-inline">
                 @csrf
@@ -37,7 +38,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <div class="details-row"><span class="key">Nomor</span><div class="value">{{ $invoice->nomor }}</div></div>
+                    <div class="details-row"><span class="key">Nomor Seri Faktur Pajak</span><div class="value">{{ $invoice->nomor }}</div></div>
                     <div class="details-row"><span class="key">Tanggal</span><div class="value">{{ $invoice->tanggal->format('Y-m-d') }}</div></div>
                     <div class="details-row"><span class="key">Status</span><div class="value">
                         @if($invoice->isPaid())
@@ -58,6 +59,10 @@
                     <div class="details-row"><span class="key">Alamat Pembeli</span><div class="value">{{ $invoice->alamat_pembeli }}</div></div>
 
                     <div class="details-row"><span class="key">Total</span><div class="value">{{ number_format((float)$invoice->total, 2, ',', '.') }} {{ $invoice->currency }}</div></div>
+
+                    @if($invoice->notes)
+                    <div class="details-row"><span class="key">Catatan</span><div class="value">{{ $invoice->notes }}</div></div>
+                    @endif
 
                     <div class="details-section">
                         <div class="key">Data faktur tersimpan (base64 JSON)</div>

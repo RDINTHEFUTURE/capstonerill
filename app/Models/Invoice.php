@@ -36,6 +36,9 @@ class Invoice extends Model
         'status',
         'paid_at',
 
+        // Notes
+        'notes',
+
         // Direktur / Pejabat
         'pejabat',
         'role_penandatangan',

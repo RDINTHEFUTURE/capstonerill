@@ -12,6 +12,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    public const ROLE_ADMIN = 'Accounting Admin';
     public const ROLE_MANAGER = 'Accounting Manager';
     public const ROLE_SUPERVISOR = 'Accounting Supervisor';
     public const ROLE_STAFF = 'Accounting Staff';
@@ -51,6 +52,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
     public function isManager(): bool
     {
         return $this->role === self::ROLE_MANAGER;
@@ -69,6 +75,7 @@ class User extends Authenticatable
     public function roleLevel(): int
     {
         return match($this->role) {
+            self::ROLE_ADMIN => 4,
             self::ROLE_MANAGER => 3,
             self::ROLE_SUPERVISOR => 2,
             self::ROLE_STAFF => 1,

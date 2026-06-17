@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     private function authorizeUser(): void
     {
-        abort_if(!auth()->check() || (!auth()->user()->isManager() && !auth()->user()->isSupervisor()), 403, 'Akses ditolak.');
+        abort_if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isManager() && !auth()->user()->isSupervisor()), 403, 'Akses ditolak.');
     }
 
     private function canManageUser(User $target): bool
@@ -36,7 +36,9 @@ class UserController extends Controller
         $currentUser = auth()->user();
         $availableRoles = [];
 
-        if ($currentUser->isManager()) {
+        if ($currentUser->isAdmin()) {
+            $availableRoles = [User::ROLE_ADMIN, User::ROLE_MANAGER, User::ROLE_SUPERVISOR, User::ROLE_STAFF];
+        } elseif ($currentUser->isManager()) {
             $availableRoles = [User::ROLE_SUPERVISOR, User::ROLE_STAFF];
         } elseif ($currentUser->isSupervisor()) {
             $availableRoles = [User::ROLE_STAFF];
@@ -66,6 +68,10 @@ class UserController extends Controller
             if (!in_array($validated['role'], [User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
                 abort(403, 'Manager hanya dapat membuat akun Supervisor atau Staff.');
             }
+        } elseif ($currentUser->isAdmin()) {
+            if (!in_array($validated['role'], [User::ROLE_ADMIN, User::ROLE_MANAGER, User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
+                abort(403, 'Role tidak valid.');
+            }
         } else {
             abort(403, 'Akses ditolak.');
         }
@@ -82,14 +88,19 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $this->authorizeUser();
-
         $currentUser = auth()->user();
         $isSelf = $user->id === $currentUser->id;
+
+        if (!$isSelf) {
+            $this->authorizeUser();
+        }
+
         $availableRoles = [];
 
         if ($isSelf) {
             $availableRoles = [];
+        } elseif ($currentUser->isAdmin()) {
+            $availableRoles = [User::ROLE_ADMIN, User::ROLE_MANAGER, User::ROLE_SUPERVISOR, User::ROLE_STAFF];
         } elseif ($currentUser->isManager()) {
             $availableRoles = [User::ROLE_SUPERVISOR, User::ROLE_STAFF];
         } elseif ($currentUser->isSupervisor()) {
@@ -107,10 +118,12 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $this->authorizeUser();
-
         $currentUser = auth()->user();
         $isSelf = $user->id === $currentUser->id;
+
+        if (!$isSelf) {
+            $this->authorizeUser();
+        }
 
         if (!$isSelf && !$this->canManageUser($user)) {
             abort(403, 'Anda tidak memiliki akses untuk mengedit pengguna ini.');
@@ -140,6 +153,10 @@ class UserController extends Controller
             } elseif ($currentUser->isManager()) {
                 if (!in_array($validated['role'], [User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
                     abort(403, 'Manager hanya dapat menetapkan akun Supervisor atau Staff.');
+                }
+            } elseif ($currentUser->isAdmin()) {
+                if (!in_array($validated['role'], [User::ROLE_ADMIN, User::ROLE_MANAGER, User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
+                    abort(403, 'Role tidak valid.');
                 }
             } else {
                 abort(403, 'Akses ditolak.');

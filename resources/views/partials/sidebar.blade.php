@@ -74,11 +74,27 @@
                     <span>Create Invoice</span>
                 </a>
             </li>
-            @if(auth()->check() && (auth()->user()->isManager() || auth()->user()->isSupervisor()))
+            @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager() || auth()->user()->isSupervisor()))
             <li class="sidebar-item">
                 <a href="{{ route('users.index') }}" class="sidebar-link">
                     <i class="bi bi-people-fill"></i>
                     <span>Users</span>
+                </a>
+            </li>
+            @endif
+            @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
+            <li class="sidebar-item">
+                <a href="{{ route('activity.index') }}" class="sidebar-link">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Activity Log</span>
+                </a>
+            </li>
+            @endif
+            @if(auth()->check() && auth()->user()->isAdmin())
+            <li class="sidebar-item">
+                <a href="{{ route('settings.company') }}" class="sidebar-link">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
                 </a>
             </li>
             @endif
