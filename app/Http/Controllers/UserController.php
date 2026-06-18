@@ -23,7 +23,6 @@ class UserController extends Controller
 
     public function index()
     {
-        $this->authorizeUser();
         $currentUser = auth()->user();
         $users = User::query()->latest()->paginate(10);
         return view('users.index', compact('users', 'currentUser'));
@@ -56,7 +55,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:4', 'confirmed'],
             'role' => ['required', 'string'],
         ]);
 
@@ -132,9 +131,17 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'current_password' => $isSelf ? ['required', 'string'] : ['nullable', 'string'],
+            'password' => ['nullable', 'string', 'min:4', 'confirmed'],
             'role' => ['nullable', 'string'],
         ]);
+
+        // Self-edit: always verify current password
+        if ($isSelf) {
+            if (!\Illuminate\Support\Facades\Hash::check($validated['current_password'], $user->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini salah.'])->withInput();
+            }
+        }
 
         $data = [
             'name' => $validated['name'],
@@ -166,10 +173,6 @@ class UserController extends Controller
         }
 
         if (!empty($validated['password'])) {
-            $canChangePassword = $isSelf || $currentUser->roleLevel() > $user->roleLevel();
-            if (!$canChangePassword) {
-                abort(403, 'Anda tidak memiliki akses untuk mengubah kata sandi pengguna ini.');
-            }
             $data['password'] = bcrypt($validated['password']);
         }
 

@@ -11,7 +11,7 @@ class ChartOfAccountController extends Controller
 {
     private function authorizeManager(): void
     {
-        abort_if(!auth()->check() || !auth()->user()->isManager(), 403, 'Hanya Accounting Manager yang dapat mengelola Chart of Accounts.');
+        abort_if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isManager()), 403, 'Hanya Admin atau Accounting Manager yang dapat mengelola Chart of Accounts.');
     }
 
     public function index(Request $request)
@@ -27,7 +27,7 @@ class ChartOfAccountController extends Controller
         }
 
         $accounts = $query->paginate(20)->withQueryString();
-        $isManager = auth()->check() && auth()->user()->isManager();
+        $isManager = auth()->check() && (auth()->user()->isManager() || auth()->user()->isAdmin());
 
         return view('chart_of_accounts.index', compact('accounts', 'isManager'));
     }
@@ -53,7 +53,7 @@ class ChartOfAccountController extends Controller
 
     public function show(ChartOfAccount $chartOfAccount)
     {
-        $isManager = auth()->check() && auth()->user()->isManager();
+        $isManager = auth()->check() && (auth()->user()->isManager() || auth()->user()->isAdmin());
         return view('chart_of_accounts.show', compact('chartOfAccount', 'isManager'));
     }
 

@@ -5,7 +5,9 @@
 @section('content')
     <div class="page-heading d-flex justify-content-between align-items-center">
         <h3>Daftar Pengguna</h3>
-        <a class="btn btn-primary" href="{{ route('users.create') }}">+ Buat Pengguna Baru</a>
+        @if($currentUser->isAdmin() || $currentUser->isManager() || $currentUser->isSupervisor())
+            <a class="btn btn-primary" href="{{ route('users.create') }}">+ Buat Pengguna Baru</a>
+        @endif
     </div>
 
     @if (session('success'))
@@ -60,7 +62,13 @@
                         @forelse ($users as $user)
                             <tr>
                                 <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if($user->id === $currentUser->id || $currentUser->roleLevel() > $user->roleLevel())
+                                        {{ $user->email }}
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @if($user->isAdmin())
                                         <span class="badge bg-dark">{{ $user->role }}</span>

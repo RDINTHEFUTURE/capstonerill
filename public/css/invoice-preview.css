@@ -41,9 +41,11 @@ button.btn {
     border: 1.5px solid #000000;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     padding: 12px;
-    width: 100%;
+    width: 190mm;
+    min-width: 190mm;
     box-sizing: border-box;
     color: #000000;
+    overflow-x: auto;
 }
 
 .faktur-title {
@@ -129,17 +131,14 @@ button.btn {
 .faktur-grid thead th.col-nama { width: 98mm; }
 .faktur-grid thead th.col-harga { width: 55mm; }
 
-/* Ensure the column widths are enforced on body cells too */
 .faktur-grid td:nth-child(1) { width: 12mm; }
 .faktur-grid td:nth-child(2) { width: 25mm; }
 .faktur-grid td:nth-child(3) { width: 98mm; }
 .faktur-grid td:nth-child(4) { width: 55mm; }
 
-/* Summary rows should keep consistent cell vertical alignment (prevents border gaps) */
 .faktur-pad-row td {
     color: transparent;
 }
-
 
 .footer-block {
     width: 100%;
@@ -201,6 +200,11 @@ button.btn {
 }
 
 @media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
     body.invoice-preview-page {
         background: #fff;
         padding: 0;
@@ -213,12 +217,15 @@ button.btn {
 
     .invoice-preview-panel {
         padding: 0;
+        max-width: none;
     }
 
     .faktur-container {
         box-shadow: none;
-        border-color: #000;
+        border: 1.5px solid #000;
+        width: 190mm;
+        min-width: 190mm;
+        margin: 0 auto;
+        overflow: visible;
     }
 }
-
-/* Button overrides moved to public/css/invoice-buttons.css */

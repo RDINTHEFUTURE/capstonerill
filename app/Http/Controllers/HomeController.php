@@ -18,6 +18,8 @@ class HomeController extends Controller
 
         $recentInvoices = Invoice::latest()->take(5)->get();
 
+        $unpaidInvoices = Invoice::where('status', 'unpaid')->latest()->take(5)->get();
+
         $monthlyData = Invoice::selectRaw('DATE_FORMAT(tanggal, "%Y-%m") as month')
             ->selectRaw('COUNT(*) as count')
             ->selectRaw('SUM(total) as revenue')
@@ -58,6 +60,7 @@ class HomeController extends Controller
             'unpaidCount',
             'totalInvoices',
             'recentInvoices',
+            'unpaidInvoices',
             'monthlyData',
             'topAccounts'
         ));

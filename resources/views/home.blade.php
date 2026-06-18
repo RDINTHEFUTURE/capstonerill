@@ -59,7 +59,63 @@
                     <h5 class="card-title mb-0">Status Pembayaran</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="statusChart" height="300"></canvas>
+                    <canvas id="statusChart" height="200"></canvas>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Ringkasan Pembayaran</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-success me-2" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
+                            <span>Lunas</span>
+                        </div>
+                        <span class="fw-bold">{{ $paidCount }} invoice</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-warning me-2" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
+                            <span>Belum Lunas</span>
+                        </div>
+                        <span class="fw-bold">{{ $unpaidCount }} invoice</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Tingkat Penagihan</span>
+                        <span class="fw-bold text-primary">{{ $totalInvoices > 0 ? round($paidCount / $totalInvoices * 100) : 0 }}%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Invoice Belum Lunas</h5>
+                    <a href="{{ route('invoices.index') }}" class="btn btn-sm btn-outline-warning">Lihat Semua</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nomor</th>
+                                    <th>Nama</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($unpaidInvoices as $inv)
+                                    <tr>
+                                        <td><a href="{{ route('invoices.show', $inv) }}">{{ $inv->nomor }}</a></td>
+                                        <td>{{ \Illuminate\Support\Str::limit($inv->nama_pembeli ?? '-', 15) }}</td>
+                                        <td class="text-end">{{ number_format((float)$inv->total, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="3" class="text-center text-muted">Semua invoice sudah lunas.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 @props(['invoice' => null, 'chartOfAccounts' => collect()])
 
 <div>
+    <input type="hidden" name="signature_type" value="{{ old('signature_type', $invoice?->signature_type ?? 'qr') }}">
     <div class="row">
         <div class="col-md-6 col-12">
             <div class="form-group mb-3">

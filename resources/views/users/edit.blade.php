@@ -53,11 +53,20 @@
                     </div>
                     @endif
 
+                    @if($isSelf)
+                    <div class="col-12">
+                        <div class="form-group mb-3">
+                            <label for="current_password" class="form-label">Password Saat Ini <small class="text-muted">(Wajib diisi untuk mengubah data apapun)</small></label>
+                            <input type="password" id="current_password" class="form-control" name="current_password" placeholder="Masukkan password saat ini" required>
+                        </div>
+                    </div>
+                    @endif
+
                     @if($canChangePassword)
                     <div class="col-md-6 col-12">
                         <div class="form-group mb-3">
                             <label for="password" class="form-label">Kata Sandi Baru <small class="text-muted">(Kosongkan jika tidak ingin mengubah)</small></label>
-                            <input type="password" id="password" class="form-control" name="password" placeholder="Min. 8 karakter">
+                            <input type="password" id="password" class="form-control" name="password" placeholder="Min. 4 karakter">
                         </div>
                     </div>
 

@@ -5,7 +5,7 @@
 @section('content')
     <div class="page-heading d-flex justify-content-between align-items-center">
         <h3>Chart of Accounts</h3>
-        @if($isManager)
+        @if($isManager || auth()->user()->isAdmin())
             <a class="btn btn-primary" href="{{ route('chart-of-accounts.create') }}">+ Akun Baru</a>
         @endif
     </div>

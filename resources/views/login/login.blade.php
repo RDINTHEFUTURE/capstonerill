@@ -233,7 +233,7 @@
           <label class="remember-me">
             <input type="checkbox" name="remember"> Ingat saya
           </label>
-          <a href="#" class="forgot-link">Lupa kata sandi?</a>
+          <a href="{{ route('forgot-password') }}" class="forgot-link">Lupa kata sandi?</a>
         </div>
         
         <button class="btn" type="submit">Masuk Sekarang</button>

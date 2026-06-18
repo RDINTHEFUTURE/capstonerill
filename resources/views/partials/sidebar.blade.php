@@ -2,7 +2,7 @@
     <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
-                <a href="{{ route('invoices.index') }}" style="font-weight: bold; color: var(--bs-body-color);">
+                <a href="{{ route('home') }}" style="font-weight: bold; color: var(--bs-body-color);">
                     <span class="sidebar-link" style="color: inherit;">E-Faktur Penjualan</span>
                 </a>
             </div>
@@ -32,72 +32,126 @@
     </div>
     <div class="sidebar-menu">
         <ul class="menu">
-            <li class="sidebar-item">
+            {{-- Dashboard --}}
+            <li class="sidebar-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <a href="{{ route('home') }}" class="sidebar-link">
                     <i class="bi bi-house-fill"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a href="{{ route('invoices.index') }}" class="sidebar-link">
+
+            {{-- Invoices --}}
+            <li class="sidebar-item has-sub {{ request()->routeIs('invoices.*') ? 'active open' : '' }}">
+                <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-invoices">
                     <i class="bi bi-grid-fill"></i>
                     <span>Invoices</span>
+                    <i class="bi bi-chevron-down float-end"></i>
                 </a>
+                <ul id="submenu-invoices" class="collapse {{ request()->routeIs('invoices.*') ? 'show' : '' }}">
+                    <li class="sidebar-item">
+                        <a href="{{ route('invoices.index') }}" class="sidebar-link {{ request()->routeIs('invoices.index') ? 'active' : '' }}">
+                            <i class="bi bi-list-ul"></i>
+                            <span>Daftar Invoice</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('invoices.create') }}" class="sidebar-link {{ request()->routeIs('invoices.create') ? 'active' : '' }}">
+                            <i class="bi bi-plus-circle"></i>
+                            <span>Buat Invoice</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="sidebar-item">
-                <a href="{{ route('chart-of-accounts.index') }}" class="sidebar-link">
-                    <i class="bi bi-list-columns-reverse"></i>
-                    <span>Chart of Accounts</span>
+
+            {{-- Accounting --}}
+            <li class="sidebar-item has-sub {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') ? 'active open' : '' }}">
+                <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-accounting">
+                    <i class="bi bi-calculator-fill"></i>
+                    <span>Accounting</span>
+                    <i class="bi bi-chevron-down float-end"></i>
                 </a>
+                <ul id="submenu-accounting" class="collapse {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') ? 'show' : '' }}">
+                    <li class="sidebar-item">
+                        <a href="{{ route('chart-of-accounts.index') }}" class="sidebar-link {{ request()->routeIs('chart-of-accounts.*') ? 'active' : '' }}">
+                            <i class="bi bi-list-columns-reverse"></i>
+                            <span>Chart of Accounts</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('ledger.index') }}" class="sidebar-link {{ request()->routeIs('ledger.*') ? 'active' : '' }}">
+                            <i class="bi bi-journal-bookmark-fill"></i>
+                            <span>General Ledger</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('reports.import-form') }}" class="sidebar-link {{ request()->routeIs('reports.import*') ? 'active' : '' }}">
+                            <i class="bi bi-upload"></i>
+                            <span>Import / Export</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="sidebar-item">
-                <a href="{{ route('ledger.index') }}" class="sidebar-link">
-                    <i class="bi bi-journal-bookmark-fill"></i>
-                    <span>General Ledger</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
+
+            {{-- Reports --}}
+            <li class="sidebar-item {{ request()->routeIs('reports.sales') ? 'active' : '' }}">
                 <a href="{{ route('reports.sales') }}" class="sidebar-link">
                     <i class="bi bi-bar-chart-fill"></i>
                     <span>Sales Report</span>
                 </a>
             </li>
-            <li class="sidebar-item">
-                <a href="{{ route('reports.import-form') }}" class="sidebar-link">
-                    <i class="bi bi-upload"></i>
-                    <span>Import Data</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="{{ route('invoices.create') }}" class="sidebar-link">
-                    <i class="bi bi-plus-circle"></i>
-                    <span>Create Invoice</span>
-                </a>
-            </li>
-            @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager() || auth()->user()->isSupervisor()))
-            <li class="sidebar-item">
+
+            {{-- Users --}}
+            <li class="sidebar-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                 <a href="{{ route('users.index') }}" class="sidebar-link">
                     <i class="bi bi-people-fill"></i>
                     <span>Users</span>
                 </a>
             </li>
-            @endif
-            @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
-            <li class="sidebar-item">
-                <a href="{{ route('activity.index') }}" class="sidebar-link">
-                    <i class="bi bi-clock-history"></i>
-                    <span>Activity Log</span>
+
+            {{-- Login Logs (all users) --}}
+            <li class="sidebar-item {{ request()->routeIs('activity.login-logs') ? 'active' : '' }}">
+                <a href="{{ route('activity.login-logs') }}" class="sidebar-link">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Login Logs</span>
                 </a>
             </li>
+
+            {{-- Administration (Admin/Manager only) --}}
+            @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
+            <li class="sidebar-item has-sub {{ request()->routeIs('activity.index') || request()->routeIs('admin.password-resets*') ? 'active open' : '' }}">
+                <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-admin">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <span>Administration</span>
+                    <i class="bi bi-chevron-down float-end"></i>
+                </a>
+                <ul id="submenu-admin" class="collapse {{ request()->routeIs('activity.index') || request()->routeIs('admin.password-resets*') ? 'show' : '' }}">
+                    <li class="sidebar-item">
+                        <a href="{{ route('activity.index') }}" class="sidebar-link {{ request()->routeIs('activity.index') ? 'active' : '' }}">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Activity Log</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.password-resets.index') }}" class="sidebar-link {{ request()->routeIs('admin.password-resets*') ? 'active' : '' }}">
+                            <i class="bi bi-key-fill"></i>
+                            <span>Password Resets</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             @endif
+
+            {{-- Settings (Admin only) --}}
             @if(auth()->check() && auth()->user()->isAdmin())
-            <li class="sidebar-item">
+            <li class="sidebar-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <a href="{{ route('settings.company') }}" class="sidebar-link">
                     <i class="bi bi-gear-fill"></i>
                     <span>Settings</span>
                 </a>
             </li>
             @endif
+
+            {{-- Logout --}}
             <li class="sidebar-item">
                 <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: inline; width: 100%;">
                     @csrf
@@ -109,27 +163,34 @@
             </li>
         </ul>
     </div>
-    <!-- Logout Confirmation Modal (Mazer-like) -->
-    <div id="logoutModal" class="modal" tabindex="-1" role="dialog" style="display:none;">
-        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:420px;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Konfirmasi Logout</h5>
-                    <button type="button" class="close" aria-label="Close" id="logoutModalClose">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted">Apakah Anda yakin ingin keluar dari sesi ini?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="logoutCancel">Batal</button>
-                    <button type="button" class="btn btn-danger" id="logoutConfirm">Keluar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <style>
-        /* Simple modal backdrop & visibility to mimic Mazer/Bootstrap centered modal */
+        .sidebar-menu {
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .sidebar-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+        .sidebar-menu .menu .has-sub > .sidebar-link .bi-chevron-down {
+            transition: transform 0.2s ease;
+        }
+        .sidebar-menu .menu .has-sub.active.open > .sidebar-link .bi-chevron-down {
+            transform: rotate(180deg);
+        }
+        .sidebar-menu .menu ul.collapse .sidebar-link {
+            padding-left: 2.5rem;
+            font-size: 0.875rem;
+        }
+        .sidebar-menu .menu ul.collapse .sidebar-link.active {
+            color: var(--bs-primary);
+            font-weight: 600;
+        }
         #logoutModal.modal { position: fixed; inset: 0; z-index: 1050; display: flex; align-items: center; justify-content: center; }
         #logoutModal .modal-dialog { margin: 0; }
         #logoutModal[style*="display:none"] { display: none !important; }
@@ -147,7 +208,6 @@
             var btnConfirm = document.getElementById('logoutConfirm');
             if (!logoutForm || !modal) return;
 
-            // Intercept form submit to show modal
             logoutForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 modal.classList.add('show');
@@ -162,15 +222,11 @@
             btnClose && btnClose.addEventListener('click', hideModal);
             btnCancel && btnCancel.addEventListener('click', hideModal);
 
-            // On confirm, actually submit the form
             btnConfirm && btnConfirm.addEventListener('click', function () {
-                // Remove the listener so we don't re-intercept
                 logoutForm.removeEventListener('submit', function(){});
-                // Submit the form
                 logoutForm.submit();
             });
 
-            // Allow closing modal with Escape key
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && modal.classList.contains('show')) {
                     hideModal();
@@ -178,4 +234,22 @@
             });
         })();
     </script>
+</div>
+
+<div id="logoutModal" class="modal" tabindex="-1" role="dialog" style="display:none;">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Konfirmasi Logout</h5>
+                <button type="button" class="close" aria-label="Close" id="logoutModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Apakah Anda yakin ingin keluar dari sesi ini?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="logoutCancel">Batal</button>
+                <button type="button" class="btn btn-danger" id="logoutConfirm">Keluar</button>
+            </div>
+        </div>
+    </div>
 </div>

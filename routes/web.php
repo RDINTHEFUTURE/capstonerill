@@ -13,12 +13,22 @@ use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CompanyProfileController;
+use App\Http\Controllers\LoginLogController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\PasswordRecoveryController;
+use App\Http\Controllers\Admin\PasswordResetController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('forgot-password');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'submit'])->name('forgot-password.submit');
+
+Route::get('/password-recovery/{token}', [PasswordRecoveryController::class, 'showForm'])->name('password-recovery.show');
+Route::post('/password-recovery/{token}', [PasswordRecoveryController::class, 'updatePassword'])->name('password-recovery.update');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -33,6 +43,10 @@ Route::middleware('auth')->group(function () {
     Route::post('invoices/bulk-action', [InvoiceController::class, 'bulkAction'])->name('invoices.bulk-action');
     Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
+    Route::get('activity/login-logs', [LoginLogController::class, 'index'])->name('activity.login-logs');
+    Route::get('admin/password-resets', [PasswordResetController::class, 'index'])->name('admin.password-resets.index');
+    Route::post('admin/password-resets/{passwordResetRequest}/approve', [PasswordResetController::class, 'approve'])->name('admin.password-resets.approve');
+    Route::post('admin/password-resets/{passwordResetRequest}/reject', [PasswordResetController::class, 'reject'])->name('admin.password-resets.reject');
     Route::get('settings/company', [CompanyProfileController::class, 'edit'])->name('settings.company');
     Route::put('settings/company', [CompanyProfileController::class, 'update'])->name('settings.company.update');
     Route::get('ledger', [LedgerController::class, 'index'])->name('ledger.index');
