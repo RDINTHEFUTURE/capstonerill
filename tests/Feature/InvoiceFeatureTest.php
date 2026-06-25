@@ -24,10 +24,10 @@ class InvoiceFeatureTest extends TestCase
             'npwp_pembeli' => '09.876.543.2-111.000',
             'nama_pembeli' => 'PT Pembeli Makmur',
             'alamat_pembeli' => 'Jl. Pembeli No. 2',
-'role_penandatangan' => 'Admin Supplier',
-            'signature_type' => 'qr',
+            'role_penandatangan' => 'Admin Supplier',
+            'signature_type' => 'hand',
+            'signature_data' => 'data:image/png;base64,fakedata',
             'signature_name' => 'Budi Santoso',
-            'qr_image' => null,
             'currency' => 'IDR',
 
 

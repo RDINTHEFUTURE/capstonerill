@@ -54,6 +54,7 @@
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Role</th>
+                            <th>Dibuat Oleh</th>
                             <th>Terdaftar Pada</th>
                             <th>Aksi</th>
                         </tr>
@@ -80,8 +81,16 @@
                                         <span class="badge bg-success">{{ $user->role }}</span>
                                     @endif
                                 </td>
+                                <td>
+                                    @if($user->creator)
+                                        {{ $user->creator->name }}
+                                    @else
+                                        <span class="text-muted">Sistem</span>
+                                    @endif
+                                </td>
                                 <td>{{ $user->created_at ? $user->created_at->format('d M Y H:i') : '-' }}</td>
                                 <td>
+                                    <a href="{{ route('users.profile', $user) }}" class="btn btn-sm btn-outline-info">Lihat Profil</a>
                                     @if($user->id === $currentUser->id)
                                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-primary">Edit Profil</a>
                                     @elseif($currentUser->roleLevel() > $user->roleLevel())
@@ -95,7 +104,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="text-center">Belum ada data pengguna.</td></tr>
+                            <tr><td colspan="6" class="text-center">Belum ada data pengguna.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

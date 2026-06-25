@@ -4,16 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'nomor',
         'tanggal',
 
-        // Signature
+        // Signature: one of 'qr' (DJP stamp) or 'hand' (drawn signature)
+        'signature_type',
         'signature_data',
         'signature_name',
 
@@ -42,10 +44,10 @@ class Invoice extends Model
         // Direktur / Pejabat
         'pejabat',
         'role_penandatangan',
+
+        // Audit: tracks which user created this invoice (immutable after creation)
+        'created_by',
     ];
-
-
-
 
     protected $casts = [
         'tanggal' => 'date',
@@ -76,6 +78,11 @@ class Invoice extends Model
     public function items()
     {
         return $this->hasMany(InvoiceItem::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }
 

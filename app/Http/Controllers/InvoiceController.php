@@ -59,9 +59,6 @@ class InvoiceController extends Controller
 
             'signature_type' => ['required', 'in:qr,hand'],
 
-            // Hand signature
-
-
             'signature_name' => ['nullable', 'string', 'max:255'],
             'signature_data' => ['nullable', 'string'],
 
@@ -96,9 +93,11 @@ class InvoiceController extends Controller
 
 
 
-        // Enforce required fields based on selected signature type
+        // Signature type determines which fields are required:
+        //   'qr'   → requires uploaded DJP QR image (Indonesian tax authority stamp)
+        //   'hand' → requires base64-encoded hand-drawn signature data
+        // These are mutually exclusive — only one signature method per invoice.
         if (($validated['signature_type'] ?? null) === 'qr') {
-            // QR Signature requires uploaded QR image (DJP)
             $request->validate([
                 'qr_image' => ['required', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
             ]);
@@ -106,7 +105,6 @@ class InvoiceController extends Controller
         }
 
         if (($validated['signature_type'] ?? null) === 'hand') {
-            // Hand Signature requires drawn signature data
             $request->validate([
                 'signature_data' => ['required', 'string'],
             ]);
@@ -118,7 +116,8 @@ class InvoiceController extends Controller
         $total = 0.0;
         $itemsData = [];
 
-
+        // Subtotal per item = (harga × qty) - diskon.
+        // Floor at 0 prevents negative subtotals when discount exceeds item value.
         foreach ($validated['items'] as $item) {
             $qty = (int) $item['qty'];
             $harga = (float) $item['harga'];
@@ -165,6 +164,7 @@ class InvoiceController extends Controller
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
             'notes' => $validated['notes'] ?? null,
+            'created_by' => auth()->id(),
         ];
 
         // handle QR upload (DJP provided image)
@@ -199,7 +199,7 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
-        $invoice->loadMissing('items.chartOfAccount');
+        $invoice->loadMissing('items.chartOfAccount', 'creator');
 
         return view('invoices.show', compact('invoice'));
     }
@@ -225,10 +225,7 @@ class InvoiceController extends Controller
             'signature_data' => ['nullable', 'string'],
             'qr_image' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg', 'max:5120'],
 
-
-
             // Seller
-
             'npwp_penjual' => ['nullable', 'string', 'max:32'],
             'nama_penjual' => ['nullable', 'string', 'max:255'],
             'alamat_penjual' => ['nullable', 'string', 'max:255'],
@@ -309,8 +306,7 @@ class InvoiceController extends Controller
 
         $invoice->update($invoiceData);
 
-
-        // refresh items
+        // Replace all items (simpler than diffing — items are lightweight)
         $invoice->items()->delete();
         foreach ($itemsData as $row) {
             $invoice->items()->create($row);
@@ -382,6 +378,11 @@ class InvoiceController extends Controller
         return back()->with('success', 'Invoice ditandai sebagai belum lunas.');
     }
 
+    /**
+     * Creates a copy of an invoice with a new number, today's date, and unpaid status.
+     * Signature and QR data are cleared — the duplicated invoice needs fresh
+     * signature approval. Journal entries are posted for the new invoice.
+     */
     public function duplicate(Invoice $invoice)
     {
         $invoiceNumberService = new InvoiceNumberService();
@@ -405,6 +406,7 @@ class InvoiceController extends Controller
             'currency' => $invoice->currency,
             'status' => 'unpaid',
             'notes' => $invoice->notes,
+            'created_by' => auth()->id(),
         ]);
 
         foreach ($invoice->items as $item) {
@@ -417,6 +419,9 @@ class InvoiceController extends Controller
                 'chart_of_account_no_new' => $item->chart_of_account_no_new,
             ]);
         }
+
+        $journalService = new JournalService();
+        $journalService->postInvoice($newInvoice);
 
         ActivityLog::create([
             'user_id' => auth()->id(),
@@ -461,11 +466,20 @@ class InvoiceController extends Controller
         return back()->with('success', "{$count} invoice berhasil diproses.");
     }
 
+    /**
+     * Returns the QR code image for an invoice.
+     *
+     * Priority order:
+     *   1. If a DJP-provided QR image was uploaded, return it directly
+     *      (base64-decoded from the stored data URI).
+     *   2. If no image exists, generate a QR code that links to the PDF URL
+     *      (legacy fallback for invoices created before QR upload was added).
+     */
     public function qr(Invoice $invoice)
     {
-        // Pastikan payload QR selalu ada dan sesuai data terbaru.
         $payload = $invoice->qr_payload;
         if (!$payload) {
+            // Regenerate payload if missing (handles legacy invoices)
             $payload = $this->buildQrPayload([
                 'nomor' => $invoice->nomor,
                 'tanggal' => $invoice->tanggal ? $invoice->tanggal->format('Y-m-d') : null,
@@ -485,7 +499,7 @@ class InvoiceController extends Controller
 
 
 
-        // Jika user sudah mengunggah QR (DJP), kembalikan file tersebut langsung.
+        // Return uploaded DJP QR image if available
         if (!empty($invoice->qr_image)) {
             $data = $invoice->qr_image;
             if (str_starts_with($data, 'data:')) {
@@ -499,7 +513,7 @@ class InvoiceController extends Controller
             }
         }
 
-        // Fallback: generate QR that links to the PDF (legacy behavior).
+        // Fallback: generate QR linking to the invoice PDF
         $fakturUrl = route('invoices.pdf', $invoice);
 
         $qrCode = new QrCode(
@@ -519,10 +533,13 @@ class InvoiceController extends Controller
     }
 
 
+    /**
+     * Builds the QR payload as base64-encoded JSON.
+     * Stored in the database for quick retrieval; decoded back to JSON
+     * when the QR image is rendered or the payload is inspected.
+     */
     private function buildQrPayload(array $data): string
     {
-        // Simpan di database sebagai base64(JSON) agar ringkas dan aman disimpan.
-        // Saat QR dirender, akan di-decode kembali menjadi JSON plain.
         $payload = [
             'app' => 'efaktur-laravel',
             'nomor' => $data['nomor'],

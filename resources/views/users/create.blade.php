@@ -53,7 +53,7 @@
                     <div class="col-md-6 col-12">
                         <div class="form-group mb-3">
                             <label for="password" class="form-label">Kata Sandi</label>
-                            <input type="password" id="password" class="form-control" name="password" placeholder="Min. 4 karakter" required>
+                                    <input type="password" id="password" class="form-control" name="password" placeholder="Min. 4 karakter" required>
                         </div>
                     </div>
 

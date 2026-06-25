@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\DB;
 
 class InvoiceNumberService
 {
+    /**
+     * Generates a unique sequential invoice number in the format INV-YYYY-NNNN.
+     *
+     * Uses lockForUpdate() to prevent race conditions: without the lock,
+     * two concurrent requests could read the same counter value and generate
+     * duplicate invoice numbers, violating the unique constraint.
+     */
     public function generate(): string
     {
         $year = date('Y');

@@ -48,6 +48,7 @@
                             <th>Waktu</th>
                             <th>Email</th>
                             <th>Status</th>
+                            <th>Alasan</th>
                             <th>IP Address</th>
                             <th>Perangkat</th>
                         </tr>
@@ -64,11 +65,12 @@
                                         <span class="badge bg-danger">Gagal</span>
                                     @endif
                                 </td>
+                                <td>{{ $log->reason ?? '-' }}</td>
                                 <td>{{ $log->ip_address ?? '-' }}</td>
                                 <td><small>{{ \Illuminate\Support\Str::limit($log->user_agent, 50) }}</small></td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="text-center">Belum ada riwayat login.</td></tr>
+                            <tr><td colspan="6" class="text-center">Belum ada riwayat login.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

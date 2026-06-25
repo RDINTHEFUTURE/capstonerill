@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-// QR generation is disabled for now (DJP-provided QR). Removed Endroid imports.
-
 
 class InvoicePdfController extends Controller
 {
@@ -17,9 +15,13 @@ class InvoicePdfController extends Controller
         ]);
     }
 
+    /**
+     * Generates a downloadable PDF of the Indonesian tax invoice (Faktur Pajak).
+     * isRemoteEnabled allows DomPDF to load external CSS/fonts from CDNs
+     * used in the cetakfaktur template.
+     */
     public function show(Invoice $invoice)
     {
-        // Eager load items agar tersedia di view.
         $invoice->loadMissing('items.chartOfAccount');
 
         $pdf = app('dompdf.wrapper')

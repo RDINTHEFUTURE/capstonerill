@@ -27,6 +27,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'created_by',
+        'avatar',
     ];
 
     /**
@@ -81,5 +83,15 @@ class User extends Authenticatable
             self::ROLE_STAFF => 1,
             default => 0,
         };
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function createdUsers()
+    {
+        return $this->hasMany(User::class, 'created_by');
     }
 }

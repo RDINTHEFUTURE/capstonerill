@@ -56,8 +56,15 @@ class LedgerController extends Controller
         $journalService = new JournalService();
         $balance = $journalService->getBalance($accountNo);
 
-        $totalDebit = $entries->sum('debit');
-        $totalCredit = $entries->sum('credit');
+        $totalsQuery = JournalEntry::forAccount($accountNo);
+        if ($request->filled('from')) {
+            $totalsQuery->where('date', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $totalsQuery->where('date', '<=', $request->to);
+        }
+        $totalDebit = (float) $totalsQuery->sum('debit');
+        $totalCredit = (float) $totalsQuery->sum('credit');
 
         return view('ledger.show', compact('account', 'entries', 'balance', 'totalDebit', 'totalCredit'));
     }

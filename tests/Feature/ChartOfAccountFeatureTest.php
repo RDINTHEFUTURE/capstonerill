@@ -14,7 +14,7 @@ class ChartOfAccountFeatureTest extends TestCase
 
     public function test_user_can_create_chart_of_account(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
 
         $response = $this->actingAs($user)->post(route('chart-of-accounts.store'), [
             'account_no_new' => '9-9999',
@@ -52,7 +52,7 @@ class ChartOfAccountFeatureTest extends TestCase
             'account_type' => 'Income',
         ]);
 
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
 
         $this->actingAs($user)->post(route('invoices.store'), [
             'nomor' => 'INV-COA-001',
@@ -64,7 +64,8 @@ class ChartOfAccountFeatureTest extends TestCase
             'nama_pembeli' => 'PT Pembeli Makmur',
             'alamat_pembeli' => 'Jl. Pembeli No. 2',
             'currency' => 'IDR',
-            'signature_type' => 'qr',
+            'signature_type' => 'hand',
+            'signature_data' => 'data:image/png;base64,fakedata',
             'items' => [
 
                 [

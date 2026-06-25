@@ -28,6 +28,7 @@
                 <a href="#" class="burger-btn d-block d-xl-none">
                     <i class="bi bi-justify fs-3"></i>
                 </a>
+                @include('partials.header')
             </header>
 
             <main class="page-content">

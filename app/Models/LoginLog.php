@@ -13,6 +13,7 @@ class LoginLog extends Model
         'user_id',
         'email',
         'success',
+        'reason',
         'ip_address',
         'user_agent',
         'logged_at',

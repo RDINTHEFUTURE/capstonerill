@@ -18,6 +18,7 @@ class ForgotPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+            'reason' => ['required', 'string', 'max:1000'],
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -32,6 +33,7 @@ class ForgotPasswordController extends Controller
             'token' => Str::random(64),
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
+            'reason' => $request->reason,
         ]);
 
         return redirect()->route('password-recovery.show', $resetRequest->token);

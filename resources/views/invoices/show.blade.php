@@ -50,6 +50,9 @@
                             <span class="badge bg-warning text-dark">Belum Lunas</span>
                         @endif
                     </div></div>
+                    @if($invoice->creator)
+                    <div class="details-row"><span class="key">Dibuat Oleh</span><div class="value">{{ $invoice->creator->name }}</div></div>
+                    @endif
                     <div class="details-row"><span class="key">NPWP Penjual</span><div class="value">{{ $invoice->npwp_penjual }}</div></div>
                     <div class="details-row"><span class="key">Nama Penjual</span><div class="value">{{ $invoice->nama_penjual }}</div></div>
                     <div class="details-row"><span class="key">Alamat Penjual</span><div class="value">{{ $invoice->alamat_penjual }}</div></div>

@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    /**
+     * Export/import restricted to Admin, Manager, and Supervisor.
+     * Staff should not bulk-download financial data or modify
+     * the chart of accounts via CSV import.
+     */
+    private function authorizeReport(): void
+    {
+        abort_if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isManager() && !auth()->user()->isSupervisor()), 403, 'Akses ditolak.');
+    }
+
     public function sales(Request $request)
     {
         $query = Invoice::query();
@@ -49,8 +59,14 @@ class ReportController extends Controller
         return view('reports.sales', compact('invoices', 'summary', 'monthlyData'));
     }
 
+    /**
+     * Streams CSV directly to the browser without buffering the entire file
+     * in memory — important for large datasets.
+     */
     public function exportInvoices(Request $request)
     {
+        $this->authorizeReport();
+
         $query = Invoice::query()->latest();
 
         if ($request->filled('from')) {
@@ -96,6 +112,8 @@ class ReportController extends Controller
 
     public function exportLedger()
     {
+        $this->authorizeReport();
+
         $journalService = new JournalService();
         $balances = $journalService->getAccountBalances();
 
@@ -128,6 +146,8 @@ class ReportController extends Controller
 
     public function exportTrialBalance()
     {
+        $this->authorizeReport();
+
         $journalService = new JournalService();
         $balances = $journalService->getAccountBalances();
 
@@ -175,8 +195,15 @@ class ReportController extends Controller
         return view('reports.import');
     }
 
+    /**
+     * Imports invoices from CSV. Duplicate invoice numbers are skipped
+     * (not overwritten) to prevent data loss. Imported invoices default
+     * to unpaid status with no seller/buyer details or QR data.
+     */
     public function importInvoices(Request $request)
     {
+        $this->authorizeReport();
+
         $request->validate([
             'csv_file' => ['required', 'file', 'mimes:csv,txt', 'max:5120'],
         ]);
@@ -232,8 +259,15 @@ class ReportController extends Controller
             ->with('errors', $errors);
     }
 
+    /**
+     * Imports chart of accounts from CSV. Uses updateOrCreate — existing
+     * accounts are updated with new data, new accounts are created.
+     * This is safe because account_no_new is the natural key.
+     */
     public function importChartOfAccounts(Request $request)
     {
+        $this->authorizeReport();
+
         $request->validate([
             'csv_file' => ['required', 'file', 'mimes:csv,txt', 'max:5120'],
         ]);
@@ -315,5 +349,34 @@ class ReportController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function trialBalance()
+    {
+        $journalService = new JournalService();
+        $balances = $journalService->getAccountBalances();
+
+        $accounts = collect();
+        $totalDebit = 0;
+        $totalCredit = 0;
+
+        foreach ($balances as $accountNo => $balance) {
+            $account = \App\Models\ChartOfAccount::find($accountNo);
+            if (!$account) continue;
+
+            $accounts->push([
+                'account_no' => $accountNo,
+                'account_name' => $account->account_name,
+                'account_type' => $account->account_type ?? '-',
+                'debit' => $balance['debit'],
+                'credit' => $balance['credit'],
+                'balance' => $balance['balance'],
+            ]);
+
+            $totalDebit += $balance['debit'];
+            $totalCredit += $balance['credit'];
+        }
+
+        return view('reports.trial-balance', compact('accounts', 'totalDebit', 'totalCredit'));
     }
 }

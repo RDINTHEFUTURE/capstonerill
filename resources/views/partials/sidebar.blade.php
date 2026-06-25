@@ -40,6 +40,14 @@
                 </a>
             </li>
 
+            {{-- Profile --}}
+            <li class="sidebar-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                <a href="{{ route('profile.show') }}" class="sidebar-link">
+                    <i class="bi bi-person-fill"></i>
+                    <span>Profil</span>
+                </a>
+            </li>
+
             {{-- Invoices --}}
             <li class="sidebar-item has-sub {{ request()->routeIs('invoices.*') ? 'active open' : '' }}">
                 <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-invoices">
@@ -64,13 +72,13 @@
             </li>
 
             {{-- Accounting --}}
-            <li class="sidebar-item has-sub {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') ? 'active open' : '' }}">
+            <li class="sidebar-item has-sub {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') || request()->routeIs('reports.trial-balance') ? 'active open' : '' }}">
                 <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-accounting">
                     <i class="bi bi-calculator-fill"></i>
                     <span>Accounting</span>
                     <i class="bi bi-chevron-down float-end"></i>
                 </a>
-                <ul id="submenu-accounting" class="collapse {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') ? 'show' : '' }}">
+                <ul id="submenu-accounting" class="collapse {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') || request()->routeIs('reports.trial-balance') ? 'show' : '' }}">
                     <li class="sidebar-item">
                         <a href="{{ route('chart-of-accounts.index') }}" class="sidebar-link {{ request()->routeIs('chart-of-accounts.*') ? 'active' : '' }}">
                             <i class="bi bi-list-columns-reverse"></i>
@@ -81,6 +89,12 @@
                         <a href="{{ route('ledger.index') }}" class="sidebar-link {{ request()->routeIs('ledger.*') ? 'active' : '' }}">
                             <i class="bi bi-journal-bookmark-fill"></i>
                             <span>General Ledger</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('reports.trial-balance') }}" class="sidebar-link {{ request()->routeIs('reports.trial-balance') ? 'active' : '' }}">
+                            <i class="bi bi-balance-scale"></i>
+                            <span>Neraca Saldo</span>
                         </a>
                     </li>
                     <li class="sidebar-item">
@@ -195,45 +209,9 @@
         #logoutModal .modal-dialog { margin: 0; }
         #logoutModal[style*="display:none"] { display: none !important; }
         #logoutModal.show { display:flex !important; }
-        #logoutModal::before { content: ''; position: absolute; inset: 0; background: rgba(15,23,42,0.6); }
+        #logoutModal::before { content: ''; position: absolute; inset: 0; background: rgba(15,23,42,0.6); pointer-events: none; }
         #logoutModal .modal-content { position: relative; z-index: 2; }
     </style>
-
-    <script>
-        (function () {
-            var logoutForm = document.getElementById('logout-form');
-            var modal = document.getElementById('logoutModal');
-            var btnClose = document.getElementById('logoutModalClose');
-            var btnCancel = document.getElementById('logoutCancel');
-            var btnConfirm = document.getElementById('logoutConfirm');
-            if (!logoutForm || !modal) return;
-
-            logoutForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                modal.classList.add('show');
-                modal.style.display = 'flex';
-            });
-
-            function hideModal() {
-                modal.classList.remove('show');
-                modal.style.display = 'none';
-            }
-
-            btnClose && btnClose.addEventListener('click', hideModal);
-            btnCancel && btnCancel.addEventListener('click', hideModal);
-
-            btnConfirm && btnConfirm.addEventListener('click', function () {
-                logoutForm.removeEventListener('submit', function(){});
-                logoutForm.submit();
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && modal.classList.contains('show')) {
-                    hideModal();
-                }
-            });
-        })();
-    </script>
 </div>
 
 <div id="logoutModal" class="modal" tabindex="-1" role="dialog" style="display:none;">
@@ -253,3 +231,42 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        var logoutForm = document.getElementById('logout-form');
+        var modal = document.getElementById('logoutModal');
+        if (!logoutForm || !modal) return;
+
+        logoutForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            modal.classList.add('show');
+            modal.style.display = 'flex';
+        });
+
+        if (modal._bound) return;
+        modal._bound = true;
+
+        var btnClose = document.getElementById('logoutModalClose');
+        var btnCancel = document.getElementById('logoutCancel');
+        var btnConfirm = document.getElementById('logoutConfirm');
+
+        function hideModal() {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+        }
+
+        btnClose && btnClose.addEventListener('click', hideModal);
+        btnCancel && btnCancel.addEventListener('click', hideModal);
+
+        btnConfirm && btnConfirm.addEventListener('click', function () {
+            logoutForm.submit();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                hideModal();
+            }
+        });
+    })();
+</script>

@@ -8,29 +8,25 @@ use Illuminate\Support\Facades\DB;
 
 class JournalService
 {
+    // Indonesian Chart of Accounts: 1-xxxx = Asset (Piutang/Receivable), 4-xxxx = Revenue
     const ACCOUNT_PIUTANG = '1-1131';
     const ACCOUNT_PENJUALAN = '4-1121';
 
+    /**
+     * Posts double-entry journal entries for a credit sale invoice.
+     *
+     * Business rule: Every credit sale creates exactly two balanced entries:
+     *   - Debit Piutang (Accounts Receivable) — the buyer owes this amount
+     *   - Credit Penjualan (Revenue) — income earned from the sale
+     *
+     * This method is idempotent: it reverses any existing entries for this
+     * invoice before posting, so it's safe to call on both create and update.
+     */
     public function postInvoice(Invoice $invoice): void
     {
         DB::transaction(function () use ($invoice) {
+            // Reverse first to prevent duplicate entries on update
             $this->reverseInvoice($invoice);
-
-            foreach ($invoice->items as $item) {
-                if (!$item->chart_of_account_no_new) {
-                    continue;
-                }
-
-                JournalEntry::create([
-                    'date' => $invoice->tanggal,
-                    'account_no' => $item->chart_of_account_no_new,
-                    'debit' => $item->subtotal,
-                    'credit' => 0,
-                    'reference_type' => Invoice::class,
-                    'reference_id' => $invoice->id,
-                    'description' => "Penjualan: {$item->nama_produk} (Invoice {$invoice->nomor})",
-                ]);
-            }
 
             $total = (float) $invoice->total;
 
@@ -56,6 +52,11 @@ class JournalService
         });
     }
 
+    /**
+     * Removes all journal entries for an invoice.
+     * Called before reposting to ensure idempotency — prevents double-counting
+     * when an invoice is edited or its total changes.
+     */
     public function reverseInvoice(Invoice $invoice): void
     {
         JournalEntry::where('reference_type', Invoice::class)
@@ -63,6 +64,10 @@ class JournalService
             ->delete();
     }
 
+    /**
+     * Returns the balance for a single account: debit - credit.
+     * COALESCE handles accounts that have no journal entries yet.
+     */
     public function getBalance(string $accountNo): float
     {
         $result = JournalEntry::where('account_no', $accountNo)
@@ -72,6 +77,10 @@ class JournalService
         return (float) ($result->balance ?? 0);
     }
 
+    /**
+     * Returns aggregated debit/credit/balance for every account that has entries.
+     * Used by the General Ledger and Trial Balance views.
+     */
     public function getAccountBalances(): array
     {
         $entries = JournalEntry::select('account_no')

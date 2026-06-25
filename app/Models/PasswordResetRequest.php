@@ -17,6 +17,7 @@ class PasswordResetRequest extends Model
         'token',
         'ip_address',
         'user_agent',
+        'reason',
         'approved_by',
         'approved_at',
     ];

@@ -7,11 +7,20 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    /**
+     * Only Admin, Manager, and Supervisor can manage user accounts.
+     * Staff-level users cannot create, edit, or delete other accounts.
+     */
     private function authorizeUser(): void
     {
         abort_if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isManager() && !auth()->user()->isSupervisor()), 403, 'Akses ditolak.');
     }
 
+    /**
+     * Role hierarchy rule: you can only manage users with a strictly lower
+     * role level. Prevents privilege escalation — e.g., a Manager cannot
+     * edit an Admin, and a Staff cannot edit anyone.
+     */
     private function canManageUser(User $target): bool
     {
         $currentUser = auth()->user();
@@ -59,11 +68,9 @@ class UserController extends Controller
             'role' => ['required', 'string'],
         ]);
 
+        // Role escalation prevention: each role can only assign roles
+        // strictly below their own level. Admin can assign all roles.
         if ($currentUser->isSupervisor()) {
-            if ($validated['role'] !== User::ROLE_STAFF) {
-                abort(403, 'Supervisor hanya dapat membuat akun Staff.');
-            }
-        } elseif ($currentUser->isManager()) {
             if (!in_array($validated['role'], [User::ROLE_SUPERVISOR, User::ROLE_STAFF])) {
                 abort(403, 'Manager hanya dapat membuat akun Supervisor atau Staff.');
             }
@@ -80,6 +87,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
             'role' => $validated['role'],
+            'created_by' => $currentUser->id,
         ]);
 
         return redirect()->route('users.index')->with('success', 'Akun berhasil dibuat.');
@@ -136,7 +144,8 @@ class UserController extends Controller
             'role' => ['nullable', 'string'],
         ]);
 
-        // Self-edit: always verify current password
+        // Self-edit requires current password to prevent session hijacking
+        // from changing account details without the user's knowledge.
         if ($isSelf) {
             if (!\Illuminate\Support\Facades\Hash::check($validated['current_password'], $user->password)) {
                 return back()->withErrors(['current_password' => 'Password saat ini salah.'])->withInput();
@@ -179,6 +188,11 @@ class UserController extends Controller
         $user->update($data);
 
         return redirect()->route('users.index')->with('success', 'Akun berhasil diperbarui.');
+    }
+
+    public function showProfile(User $user)
+    {
+        return view('users.profile', ['profileUser' => $user]);
     }
 
     public function destroy(User $user)

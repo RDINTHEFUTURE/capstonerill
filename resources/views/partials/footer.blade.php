@@ -1,7 +1,7 @@
 <footer>
     <div class="footer clearfix mb-0 text-muted">
         <div class="float-start">
-            <p>© {{ date('Y') }} {{ config('app.name', 'App') }}</p>
+            <p>© 2026 E-Faktur Penjualan made by Ravi Ahmad</p>
         </div>
     </div>
 </footer>

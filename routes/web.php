@@ -17,20 +17,29 @@ use App\Http\Controllers\LoginLogController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\PasswordRecoveryController;
 use App\Http\Controllers\Admin\PasswordResetController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:3,1')->name('register');
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('forgot-password');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'submit'])->name('forgot-password.submit');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'submit'])->middleware('throttle:3,1')->name('forgot-password.submit');
 
 Route::get('/password-recovery/{token}', [PasswordRecoveryController::class, 'showForm'])->name('password-recovery.show');
 Route::post('/password-recovery/{token}', [PasswordRecoveryController::class, 'updatePassword'])->name('password-recovery.update');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
+    Route::delete('/profile/avatar', [ProfileController::class, 'removeAvatar'])->name('profile.avatar.remove');
+    Route::get('/profile/avatar', fn () => redirect()->route('profile.show'))->name('profile.avatar');
+
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('chart-of-accounts', ChartOfAccountController::class);
     Route::resource('invoices', InvoiceController::class);
@@ -41,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('invoices/{invoice}/pdf', [InvoicePdfController::class, 'show'])->name('invoices.pdf');
     Route::get('invoices/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->name('invoices.duplicate');
     Route::post('invoices/bulk-action', [InvoiceController::class, 'bulkAction'])->name('invoices.bulk-action');
+    Route::get('users/{user}/profile', [UserController::class, 'showProfile'])->name('users.profile');
     Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
     Route::get('activity/login-logs', [LoginLogController::class, 'index'])->name('activity.login-logs');
@@ -55,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/export-invoices', [ReportController::class, 'exportInvoices'])->name('reports.export-invoices');
     Route::get('reports/export-ledger', [ReportController::class, 'exportLedger'])->name('reports.export-ledger');
     Route::get('reports/export-trial-balance', [ReportController::class, 'exportTrialBalance'])->name('reports.export-trial-balance');
+    Route::get('reports/trial-balance', [ReportController::class, 'trialBalance'])->name('reports.trial-balance');
     Route::get('reports/import', [ReportController::class, 'importForm'])->name('reports.import-form');
     Route::post('reports/import-invoices', [ReportController::class, 'importInvoices'])->name('reports.import-invoices');
     Route::post('reports/import-coa', [ReportController::class, 'importChartOfAccounts'])->name('reports.import-coa');

@@ -55,6 +55,10 @@
                 <label for="email">Alamat Email</label>
                 <input type="email" id="email" name="email" placeholder="nama@domain.com" value="{{ old('email') }}" required>
             </div>
+            <div class="form-group">
+                <label for="reason">Alasan Reset Password</label>
+                <textarea id="reason" name="reason" rows="3" placeholder="Jelaskan alasan Anda meminta reset password..." required style="width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:8px; font-size:14px; outline:none; resize:vertical;">{{ old('reason') }}</textarea>
+            </div>
             <button class="btn" type="submit">Kirim Permintaan</button>
         </form>
 

@@ -88,36 +88,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card mt-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Invoice Belum Lunas</h5>
-                    <a href="{{ route('invoices.index') }}" class="btn btn-sm btn-outline-warning">Lihat Semua</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Nomor</th>
-                                    <th>Nama</th>
-                                    <th class="text-end">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($unpaidInvoices as $inv)
-                                    <tr>
-                                        <td><a href="{{ route('invoices.show', $inv) }}">{{ $inv->nomor }}</a></td>
-                                        <td>{{ \Illuminate\Support\Str::limit($inv->nama_pembeli ?? '-', 15) }}</td>
-                                        <td class="text-end">{{ number_format((float)$inv->total, 0, ',', '.') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="3" class="text-center text-muted">Semua invoice sudah lunas.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 

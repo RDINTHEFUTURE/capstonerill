@@ -19,9 +19,11 @@
                         <tr>
                             <th>Pengguna</th>
                             <th>Email</th>
+                            <th>Alasan</th>
                             <th>IP Address</th>
                             <th>Perangkat</th>
                             <th>Status</th>
+                            <th>Dilakukan Oleh</th>
                             <th>Tanggal</th>
                             <th>Aksi</th>
                         </tr>
@@ -31,6 +33,7 @@
                             <tr>
                                 <td>{{ $req->user?->name ?? '-' }}</td>
                                 <td>{{ $req->user?->email ?? '-' }}</td>
+                                <td><small>{{ \Illuminate\Support\Str::limit($req->reason, 50) ?? '-' }}</small></td>
                                 <td>{{ $req->ip_address ?? '-' }}</td>
                                 <td><small>{{ \Illuminate\Support\Str::limit($req->user_agent, 40) ?? '-' }}</small></td>
                                 <td>
@@ -42,6 +45,7 @@
                                         <span class="badge bg-danger">Ditolak</span>
                                     @endif
                                 </td>
+                                <td>{{ $req->approver?->name ?? '-' }}</td>
                                 <td>{{ $req->created_at->format('d M Y H:i') }}</td>
                                 <td>
                                     @if($req->isPending())
@@ -58,12 +62,12 @@
                                             Link: <code>{{ route('password-recovery.show', $req->token) }}</code>
                                         </span>
                                     @else
-                                        <span class="text-muted">Ditolak oleh {{ $req->approver?->name ?? '-' }}</span>
+                                        <span class="text-muted">Ditolak</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="7" class="text-center">Belum ada permintaan.</td></tr>
+                            <tr><td colspan="9" class="text-center">Belum ada permintaan.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
