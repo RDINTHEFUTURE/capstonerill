@@ -9,4 +9,61 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --animate-slideUp: slideUp 0.5s ease-out;
+    --animate-slideDown: slideDown 0.2s ease-out;
+    --animate-fadeIn: fadeIn 0.4s ease-out;
+    --animate-scaleIn: scaleIn 0.3s ease-out;
+    --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Global transition base layer */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary,
+button.btn {
+  transition: all 0.2s ease-out !important;
+}
+
+.card {
+  transition: all 0.2s ease-out !important;
+}
+
+.table tbody tr {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-link {
+  transition: all 0.2s ease-out;
+}
+
+.form-control,
+.form-select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }

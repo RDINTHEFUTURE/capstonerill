@@ -203,44 +203,45 @@
 </head>
 <body>
 
-  <div class="container">
-    
+    <div class="container motion-safe:animate-scaleIn">
+
     <div class="login-section">
       <form method="POST" action="{{ route('login.post') }}">
         @csrf
         <h1>Selamat Datang</h1>
         <p>Silakan masukkan akun Anda untuk melanjutkan</p>
-        
+
         @if ($errors->any())
-          <div class="alert alert-danger" role="alert">
+          <div class="alert alert-danger motion-safe:animate-slideDown" role="alert">
             @foreach ($errors->all() as $error)
               <div>{{ $error }}</div>
             @endforeach
           </div>
         @endif
-        
+
         <div class="form-group">
           <label for="email">Alamat Email</label>
-          <input type="email" id="email" name="email" placeholder="nama@domain.com" value="{{ old('email') }}" required>
+          <input type="email" id="email" name="email" placeholder="nama@domain.com" value="{{ old('email') }}" required class="focus:ring-2 focus:ring-accent-navy/30 focus:border-accent-navy">
         </div>
-        
+
         <div class="form-group">
           <label for="password">Kata Sandi</label>
-          <input type="password" id="password" name="password" placeholder="••••••••" required>
+          <input type="password" id="password" name="password" placeholder="••••••••" required class="focus:ring-2 focus:ring-accent-navy/30 focus:border-accent-navy">
         </div>
-        
+
         <div class="form-options">
           <label class="remember-me">
             <input type="checkbox" name="remember"> Ingat saya
           </label>
-          <a href="{{ route('forgot-password') }}" class="forgot-link">Lupa kata sandi?</a>
+          <a href="{{ route('forgot-password') }}" class="forgot-link hover:underline transition-all duration-200">Lupa kata sandi?</a>
         </div>
-        
-        <button class="btn" type="submit">Masuk Sekarang</button>
+
+        <button class="btn hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all duration-200" type="submit">Masuk Sekarang</button>
       </form>
     </div>
 
     <div class="navy-panel">
+      <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full motion-safe:animate-float"></div>
       <h1>E-Faktur Penjualan</h1>
       <p>Kelola penerbitan E-Faktur penjualan Anda dengan mudah dan sesuai regulasi. Rekam transaksi, validasi secara otomatis, serta lacak status approval dalam satu portal terintegrasi.</p>
     </div>

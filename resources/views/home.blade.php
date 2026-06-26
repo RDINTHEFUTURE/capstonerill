@@ -3,13 +3,13 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="page-heading">
+    <div class="page-heading motion-safe:animate-slideUp">
         <h3>Dashboard</h3>
     </div>
 
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card">
+            <div class="card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 ease-out">
                 <div class="card-body text-center">
                     <h6 class="text-muted">Total Invoice</h6>
                     <h3>{{ $totalInvoices }}</h3>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 ease-out">
                 <div class="card-body text-center">
                     <h6 class="text-muted">Total Pendapatan</h6>
                     <h3>{{ number_format($totalRevenue, 0, ',', '.') }}</h3>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 ease-out">
                 <div class="card-body text-center">
                     <h6 class="text-muted">Lunas</h6>
                     <h3 class="text-success">{{ $paidCount }}</h3>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card">
+            <div class="card hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 ease-out">
                 <div class="card-body text-center">
                     <h6 class="text-muted">Belum Lunas</h6>
                     <h3 class="text-warning">{{ $unpaidCount }}</h3>
@@ -44,7 +44,7 @@
 
     <div class="row mb-4">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card hover:shadow-md transition-shadow duration-200">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Pendapatan per Bulan</h5>
                 </div>
@@ -54,7 +54,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <div class="card hover:shadow-md transition-shadow duration-200">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Status Pembayaran</h5>
                 </div>
@@ -62,21 +62,21 @@
                     <canvas id="statusChart" height="200"></canvas>
                 </div>
             </div>
-            <div class="card mt-4">
+            <div class="card mt-4 hover:shadow-md transition-shadow duration-200">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Ringkasan Pembayaran</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
-                            <span class="badge bg-success me-2" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
+                            <span class="badge bg-success me-2 animate-pulse" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
                             <span>Lunas</span>
                         </div>
                         <span class="fw-bold">{{ $paidCount }} invoice</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
-                            <span class="badge bg-warning me-2" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
+                            <span class="badge bg-warning me-2 animate-pulse" style="width:12px;height:12px;border-radius:50%;display:inline-block;"></span>
                             <span>Belum Lunas</span>
                         </div>
                         <span class="fw-bold">{{ $unpaidCount }} invoice</span>
@@ -94,10 +94,10 @@
 
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card hover:shadow-md transition-shadow duration-200">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Invoice Terbaru</h5>
-                    <a href="{{ route('invoices.index') }}" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+                    <a href="{{ route('invoices.index') }}" class="btn btn-sm btn-outline-primary hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200">Lihat Semua</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -113,8 +113,8 @@
                             </thead>
                             <tbody>
                                 @forelse($recentInvoices as $inv)
-                                    <tr>
-                                        <td><a href="{{ route('invoices.show', $inv) }}">{{ $inv->nomor }}</a></td>
+                                    <tr class="transition-colors duration-150 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20">
+                                        <td><a href="{{ route('invoices.show', $inv) }}" class="hover:text-indigo-600 transition-colors duration-150">{{ $inv->nomor }}</a></td>
                                         <td>{{ $inv->tanggal->format('d M Y') }}</td>
                                         <td>{{ $inv->nama_pembeli ?? '-' }}</td>
                                         <td>{{ number_format((float)$inv->total, 0, ',', '.') }}</td>
@@ -122,7 +122,7 @@
                                             @if($inv->isPaid())
                                                 <span class="badge bg-success">Lunas</span>
                                             @else
-                                                <span class="badge bg-warning text-dark">Belum Lunas</span>
+                                                <span class="badge bg-warning text-dark animate-pulse">Belum Lunas</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -137,13 +137,13 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card">
+            <div class="card hover:shadow-md transition-shadow duration-200">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Saldo Akun Teratas</h5>
                 </div>
                 <div class="card-body">
                     @forelse($topAccounts as $item)
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/30">
                             <div>
                                 <small class="text-muted">{{ $item['account']->account_no_new }}</small>
                                 <div>{{ $item['account']->account_name }}</div>

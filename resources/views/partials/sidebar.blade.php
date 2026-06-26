@@ -68,6 +68,14 @@
                             <span>Buat Invoice</span>
                         </a>
                     </li>
+                    @if(auth()->check() && auth()->user()->roleLevel() >= 2)
+                    <li class="sidebar-item">
+                        <a href="{{ route('invoices.index', ['approval_status' => 'pending_review']) }}" class="sidebar-link">
+                            <i class="bi bi-clipboard-check"></i>
+                            <span>Review Queue</span>
+                        </a>
+                    </li>
+                    @endif
                 </ul>
             </li>
 
@@ -205,12 +213,30 @@
             color: var(--bs-primary);
             font-weight: 600;
         }
+        .sidebar-link {
+            transition: all 0.2s ease-out;
+        }
+        .sidebar-link:hover {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--bs-primary);
+        }
+        .sidebar-item.active > .sidebar-link {
+            border-left: 3px solid var(--bs-primary);
+            padding-left: calc(1rem - 3px);
+        }
         #logoutModal.modal { position: fixed; inset: 0; z-index: 1050; display: flex; align-items: center; justify-content: center; }
         #logoutModal .modal-dialog { margin: 0; }
         #logoutModal[style*="display:none"] { display: none !important; }
         #logoutModal.show { display:flex !important; }
         #logoutModal::before { content: ''; position: absolute; inset: 0; background: rgba(15,23,42,0.6); pointer-events: none; }
         #logoutModal .modal-content { position: relative; z-index: 2; }
+        #logoutModal.show .modal-content {
+            animation: scaleIn 0.2s ease-out;
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </div>
 

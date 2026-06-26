@@ -23,7 +23,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:3,1')->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:3,1')->middleware('auth')->name('register');
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('forgot-password');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'submit'])->middleware('throttle:3,1')->name('forgot-password.submit');
@@ -43,6 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('chart-of-accounts', ChartOfAccountController::class);
     Route::resource('invoices', InvoiceController::class);
+    Route::get('invoices/{invoice}/review', [InvoiceController::class, 'review'])->name('invoices.review')->middleware('role:2');
+    Route::post('invoices/{invoice}/approve', [InvoiceController::class, 'approve'])->name('invoices.approve')->middleware('role:2');
+    Route::post('invoices/{invoice}/reject', [InvoiceController::class, 'reject'])->name('invoices.reject')->middleware('role:2');
     Route::post('invoices/{invoice}/mark-paid', [InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
     Route::post('invoices/{invoice}/mark-unpaid', [InvoiceController::class, 'markUnpaid'])->name('invoices.mark-unpaid');
     Route::get('invoices/{invoice}/qr', [InvoiceController::class, 'qr'])->name('invoices.qr');

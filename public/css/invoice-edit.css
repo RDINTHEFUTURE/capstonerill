@@ -50,6 +50,11 @@ body.invoice-edit-page {
     background: var(--bs-body-bg);
     box-sizing: border-box;
     color: var(--bs-body-color);
+    transition: all 0.2s ease-out;
+}
+
+.signature-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 #signature-canvas {
@@ -62,6 +67,11 @@ body.invoice-edit-page {
     box-sizing: border-box;
     background: var(--bs-body-bg);
     touch-action: none;
+    transition: border-color 0.2s ease;
+}
+
+#signature-canvas:hover {
+    border-color: var(--bs-primary);
 }
 
 .invoice-signature-preview-wrapper {
@@ -77,6 +87,11 @@ body.invoice-edit-page {
     border-radius: 8px;
     margin-top: 8px;
     object-fit: contain;
+    transition: transform 0.2s ease-out;
+}
+
+.invoice-signature-preview-image:hover {
+    transform: scale(1.02);
 }
 
 .signature-pad-actions {

@@ -5,11 +5,11 @@
     <div class="page-meta d-flex align-items-center gap-3">
         @auth
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle hover:opacity-80 transition-opacity duration-200" data-bs-toggle="dropdown">
                     @if(auth()->user()->avatar)
-                        <img src="{{ auth()->user()->avatar }}" alt="Avatar" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;">
+                        <img src="{{ auth()->user()->avatar }}" alt="Avatar" class="rounded-circle transition-all duration-200 hover:ring-2 hover:ring-indigo-400/50" style="width:36px;height:36px;object-fit:cover;">
                     @else
-                        <div class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;font-size:14px;font-weight:600;">
+                        <div class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center transition-all duration-200 hover:ring-2 hover:ring-indigo-400/50" style="width:36px;height:36px;font-size:14px;font-weight:600;">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
                     @endif
@@ -20,13 +20,13 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item" href="{{ route('profile.show') }}">
+                        <a class="dropdown-item transition-colors duration-150 hover:bg-slate-100 dark:hover:bg-slate-700" href="{{ route('profile.show') }}">
                             <i class="bi bi-person me-2"></i>Profil Saya
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <button type="button" class="dropdown-item text-danger header-logout-btn">
+                        <button type="button" class="dropdown-item text-danger header-logout-btn transition-colors duration-150 hover:bg-red-50 dark:hover:bg-red-900/20">
                             <i class="bi bi-box-arrow-right me-2"></i>Logout
                         </button>
                     </li>

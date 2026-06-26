@@ -23,6 +23,19 @@ th {
     background: var(--bs-tertiary-bg);
 }
 
+.table tbody tr {
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.04);
+}
+
+body.dark .table tbody tr:hover,
+body[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.08);
+}
+
 .row {
     display: flex;
     justify-content: space-between;
@@ -41,6 +54,18 @@ button.btn {
     border-radius: 8px;
     border: none;
     cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+
+.btn:hover,
+button.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+}
+
+.btn:active,
+button.btn:active {
+    transform: scale(0.95);
 }
 
 .btn-secondary {

@@ -25,6 +25,18 @@ button.btn {
     color: #ffffff;
     background: #435ebe;
     cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+
+.btn:hover,
+button.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+}
+
+.btn:active,
+button.btn:active {
+    transform: scale(0.95);
 }
 
 .btn-secondary {

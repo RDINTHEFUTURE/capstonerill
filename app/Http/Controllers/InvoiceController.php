@@ -8,6 +8,7 @@ use App\Models\ActivityLog;
 use App\Services\JournalService;
 use App\Services\InvoiceNumberService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
@@ -30,6 +31,10 @@ class InvoiceController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        if ($request->filled('approval_status')) {
+            $query->where('approval_status', $request->approval_status);
         }
 
         if ($request->filled('from')) {
@@ -165,6 +170,7 @@ class InvoiceController extends Controller
             'qr_payload' => $payload,
             'notes' => $validated['notes'] ?? null,
             'created_by' => auth()->id(),
+            'approval_status' => Invoice::APPROVAL_PENDING,
         ];
 
         // handle QR upload (DJP provided image)
@@ -206,6 +212,14 @@ class InvoiceController extends Controller
 
     public function edit(Invoice $invoice)
     {
+        if (!$invoice->isPendingReview() && !$invoice->isRevisionNeeded()) {
+            abort(403, 'Invoice hanya bisa diedit saat status revisi atau menunggu review.');
+        }
+
+        if ($invoice->created_by !== auth()->id() && $invoice->approval_status !== Invoice::APPROVAL_REVISION) {
+            abort(403, 'Hanya pembuat invoice yang bisa mengedit.');
+        }
+
         $invoice->loadMissing('items.chartOfAccount');
         $chartOfAccounts = $this->chartOfAccounts();
 
@@ -214,6 +228,14 @@ class InvoiceController extends Controller
 
     public function update(Request $request, Invoice $invoice)
     {
+        if (!$invoice->isPendingReview() && !$invoice->isRevisionNeeded()) {
+            abort(403, 'Invoice hanya bisa diedit saat status revisi atau menunggu review.');
+        }
+
+        if ($invoice->created_by !== auth()->id() && $invoice->approval_status !== Invoice::APPROVAL_REVISION) {
+            abort(403, 'Hanya pembuat invoice yang bisa mengedit.');
+        }
+
         $validated = $request->validate([
             'nomor' => ['required', 'string', 'max:255', 'unique:invoices,nomor,' . $invoice->id],
             'tanggal' => ['required', 'date'],
@@ -294,6 +316,8 @@ class InvoiceController extends Controller
             'currency' => $validated['currency'] ?? 'IDR',
             'qr_payload' => $payload,
             'notes' => $validated['notes'] ?? null,
+            'approval_status' => Invoice::APPROVAL_PENDING,
+            'revision_notes' => null,
         ];
 
         if ($request->hasFile('qr_image')) {
@@ -330,6 +354,14 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        if (!$invoice->isPendingReview() && !$invoice->isRevisionNeeded()) {
+            abort(403, 'Invoice hanya bisa dihapus saat status revisi atau menunggu review.');
+        }
+
+        if ($invoice->created_by !== auth()->id() && $invoice->approval_status !== Invoice::APPROVAL_REVISION) {
+            abort(403, 'Hanya pembuat invoice yang bisa menghapus.');
+        }
+
         $journalService = new JournalService();
         $journalService->reverseInvoice($invoice);
 
@@ -378,6 +410,71 @@ class InvoiceController extends Controller
         return back()->with('success', 'Invoice ditandai sebagai belum lunas.');
     }
 
+    public function review(Invoice $invoice)
+    {
+        if (!$invoice->isPendingReview()) {
+            abort(403, 'Invoice tidak dalam status menunggu review.');
+        }
+
+        $invoice->loadMissing('items.chartOfAccount', 'creator');
+
+        return view('invoices.review', compact('invoice'));
+    }
+
+    public function approve(Invoice $invoice)
+    {
+        if (!$invoice->isPendingReview()) {
+            abort(403, 'Invoice tidak dalam status menunggu review.');
+        }
+
+        $invoice->update([
+            'approval_status' => Invoice::APPROVAL_APPROVED,
+            'reviewed_by' => auth()->id(),
+            'reviewed_at' => now(),
+            'revision_notes' => null,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'approved',
+            'subject_type' => Invoice::class,
+            'subject_id' => $invoice->id,
+            'description' => "Menyetujui invoice {$invoice->nomor}",
+        ]);
+
+        return redirect()->route('invoices.show', $invoice)
+            ->with('success', 'Invoice berhasil disetujui.');
+    }
+
+    public function reject(Request $request, Invoice $invoice)
+    {
+        if (!$invoice->isPendingReview()) {
+            abort(403, 'Invoice tidak dalam status menunggu review.');
+        }
+
+        $validated = $request->validate([
+            'revision_notes' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $invoice->update([
+            'approval_status' => Invoice::APPROVAL_REVISION,
+            'reviewed_by' => auth()->id(),
+            'reviewed_at' => now(),
+            'revision_notes' => $validated['revision_notes'],
+        ]);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'rejected',
+            'subject_type' => Invoice::class,
+            'subject_id' => $invoice->id,
+            'description' => "Menolak invoice {$invoice->nomor}: {$validated['revision_notes']}",
+        ]);
+
+        return redirect()->route('invoices.show', $invoice)
+            ->with('success', 'Invoice dikembalikan untuk revisi.');
+    }
+
     /**
      * Creates a copy of an invoice with a new number, today's date, and unpaid status.
      * Signature and QR data are cleared — the duplicated invoice needs fresh
@@ -407,6 +504,7 @@ class InvoiceController extends Controller
             'status' => 'unpaid',
             'notes' => $invoice->notes,
             'created_by' => auth()->id(),
+            'approval_status' => Invoice::APPROVAL_PENDING,
         ]);
 
         foreach ($invoice->items as $item) {

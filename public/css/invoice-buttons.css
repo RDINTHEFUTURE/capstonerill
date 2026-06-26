@@ -10,16 +10,49 @@
 .btn-outline-primary,
 .btn-outline-secondary,
 button.btn {
-    background: #435ebe; /* Mazer primary color */
+    background: #435ebe;
+    /* Mazer primary color */
     color: #ffffff !important;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
     padding: 10px 14px;
     border-radius: 8px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease-out;
+}
+
+/* Hover / focus / active states - match across themes */
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+}
+
+.btn:active,
+.btn-primary:active {
+    transform: scale(0.95);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.btn:focus-visible,
+.btn-primary:focus-visible {
+    outline: 2px solid rgba(67, 94, 190, 0.5);
+    outline-offset: 2px;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background: #435ebe;
+    color: #fff !important;
 }
 
 /* Keep small buttons sized consistently */
@@ -36,24 +69,6 @@ button.btn-sm {
     color: #435ebe !important;
     border: 1px solid #435ebe;
     box-shadow: none;
-}
-
-/* Hover / focus / active states - match across themes */
-.btn:hover,
-.btn:focus,
-.btn:active,
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
-    filter: brightness(0.95);
-    transform: translateY(-1px);
-}
-
-.btn-outline-primary:hover,
-.btn-outline-primary:focus,
-.btn-outline-primary:active {
-    background: #435ebe;
-    color: #fff !important;
 }
 
 /* Disabled state */
@@ -101,6 +116,7 @@ body.dark .btn-outline-secondary {
     background-color: var(--bs-body-bg);
     border: 1px solid var(--bs-border-color);
     color: var(--bs-body-color);
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 .modal-title {
@@ -115,23 +131,25 @@ body.dark .btn-outline-secondary {
     cursor: pointer;
 }
 
-/* Logout action style - make it visually distinct and cautionary */
+/* Logout action style - matches sidebar links by default, red on hover/focus */
 .logout-action,
 button.logout-action {
-    color: #fff !important;
-    background: #c92a2a !important;
-    border: 1px solid #911111 !important;
-    box-shadow: 0 6px 16px rgba(201, 42, 42, 0.32);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease-out;
 }
 
 .logout-action:hover,
 button.logout-action:hover {
-    background: #a11f1f !important;
-    border-color: #770f0f !important;
+    background: hsl(0, 65%, 65%) !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 16px rgba(201, 42, 42, 0.32);
 }
 
 .logout-action:focus,
-button.logout-action:focus {
+button.logout-action:active {
+    background: #a11f1f !important;
     outline: 2px solid rgba(201, 42, 42, 0.5);
     outline-offset: 2px;
 }

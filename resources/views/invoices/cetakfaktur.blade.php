@@ -9,9 +9,8 @@
             size: A4 portrait;
             margin: 15mm 10mm 15mm 10mm;
         }
+        *, *::before, *::after {
             box-sizing: border-box;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
         }
         body {
             font-family: Arial, sans-serif;
@@ -20,9 +19,11 @@
             margin: 0;
             padding: 0;
             line-height: 1.3;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         .faktur-container {
-            width: 190mm;
+            width: 186mm;
             border: 1.5px solid #000000;
             margin: 0 auto;
             background-color: #ffffff;
@@ -55,6 +56,7 @@
         .footer-grid {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
         .identity-table td,
         .summary-table td,
@@ -62,9 +64,9 @@
             padding: 4px 8px;
             vertical-align: top;
         }
-        .w-label { width: 35mm; }
-        .w-colon { width: 3mm; text-align: center; }
-        .w-value { width: calc(100% - 38mm); }
+        .w-label { width: 20%; }
+        .w-colon { width: 3%; text-align: center; }
+        .w-value { width: 77%; }
         .items-table th {
             font-size: 8.5pt;
             font-weight: normal;
@@ -96,19 +98,25 @@
         .blank-row-height {
             height: 80mm;
         }
+        .summary-table {
+            margin-top: 0;
+        }
         .summary-table td {
             padding: 5px 8px;
             border-bottom: 1px solid #000000;
+        }
+        .summary-table tr:first-child td {
+            border-top: 1px solid #000000;
         }
         .summary-table tr:last-child td {
             border-bottom: none;
         }
         .summary-label {
-            width: 135mm;
+            width: 72%;
             border-right: 1px solid #000000;
         }
         .summary-value {
-            width: 55mm;
+            width: 28%;
             text-align: right;
         }
         .footer-block {
@@ -120,14 +128,14 @@
             padding: 0;
         }
         .legal-notice {
-            width: 125mm;
+            width: 65%;
             font-size: 8pt;
             text-align: justify;
             line-height: 1.4;
             padding-right: 20px;
         }
         .signature-area {
-            width: 65mm;
+            width: 35%;
             text-align: center;
             padding-left: 10px;
         }
@@ -164,7 +172,7 @@
         <div class="serial-bar">
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                    <td style="width: 55mm; font-weight: bold; padding: 0;">Kode dan Nomor Seri Faktur Pajak:</td>
+                    <td style="width: 35%; font-weight: bold; padding: 0;">Kode dan Nomor Seri Faktur Pajak:</td>
                     <td style="padding: 0;">{{ $invoice->nomor ?? '-' }}</td>
                 </tr>
             </table>
@@ -218,10 +226,10 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 12mm;">No.</th>
-                    <th style="width: 25mm;">Kode Barang/<br>Jasa</th>
-                    <th style="width: 98mm;">Nama Barang Kena Pajak / Jasa Kena Pajak</th>
-                    <th style="width: 55mm;">Harga Jual / Penggantian /<br>Uang Muka / Termin<br>(Rp)</th>
+                    <th style="width: 5%;">No.</th>
+                    <th style="width: 15%;">Kode Barang/<br>Jasa</th>
+                    <th style="width: 50%;">Nama Barang Kena Pajak / Jasa Kena Pajak</th>
+                    <th style="width: 30%;">Harga Jual / Penggantian /<br>Uang Muka / Termin<br>(Rp)</th>
                 </tr>
             </thead>
             <tbody>

@@ -73,6 +73,11 @@ body.invoice-create-page {
     padding: 10px;
     background: var(--bs-body-bg);
     box-sizing: border-box;
+    transition: all 0.2s ease-out;
+}
+
+.signature-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 body.dark .signature-card {
@@ -90,10 +95,19 @@ body.dark .signature-card {
     box-sizing: border-box;
     background: transparent;
     touch-action: none;
+    transition: border-color 0.2s ease;
+}
+
+#signature-canvas:hover {
+    border-color: rgba(0,0,0,0.5);
 }
 
 body.dark #signature-canvas {
     border-color: rgba(255,255,255,0.35);
+}
+
+body.dark #signature-canvas:hover {
+    border-color: rgba(255,255,255,0.5);
 }
 
 .invoice-signature-preview-wrapper {
@@ -109,6 +123,11 @@ body.dark #signature-canvas {
     border-radius: 8px;
     margin-top: 8px;
     object-fit: contain;
+    transition: transform 0.2s ease-out;
+}
+
+.invoice-signature-preview-image:hover {
+    transform: scale(1.02);
 }
 
 .signature-pad-actions {
