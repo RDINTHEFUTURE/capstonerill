@@ -67,3 +67,176 @@ button.btn {
 .form-select {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+/* ========================
+   SIDEBAR 3-MODE TOGGLE
+   ======================== */
+
+/* Sidebar width transition */
+.sidebar-wrapper {
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+/* Full mode - default (256px) */
+.sidebar-wrapper[data-mode="full"],
+.sidebar-wrapper:not([data-mode]) {
+  width: 256px;
+}
+
+/* Focus mode - icon only (80px) */
+.sidebar-wrapper[data-mode="focus"] {
+  width: 80px;
+}
+
+/* Custom mode - full width, advanced hidden */
+.sidebar-wrapper[data-mode="custom"] {
+  width: 256px;
+}
+
+/* Text labels - smooth hide/show */
+.sidebar-link span {
+  transition: opacity 0.2s ease-out, width 0.2s ease-out;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Focus mode: hide text labels */
+.sidebar-wrapper[data-mode="focus"] .sidebar-link span {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+/* Focus mode: center icons, remove padding */
+.sidebar-wrapper[data-mode="focus"] .sidebar-link {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  gap: 0;
+}
+
+/* Focus mode: hide chevron arrows */
+.sidebar-wrapper[data-mode="focus"] .bi-chevron-down {
+  display: none;
+}
+
+/* Focus mode: hide submenu collapse areas */
+.sidebar-wrapper[data-mode="focus"] .sidebar-menu .menu ul.collapse .sidebar-link span {
+  opacity: 0;
+  width: 0;
+}
+
+/* Focus mode: collapse submenus by default */
+.sidebar-wrapper[data-mode="focus"] .sidebar-menu .menu ul.collapse {
+  display: none !important;
+}
+
+/* Focus mode: show submenu on hover (tooltip-like) */
+.sidebar-wrapper[data-mode="focus"] .sidebar-item.has-sub:hover > .sidebar-link {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* Focus mode: active item border adjustment */
+.sidebar-wrapper[data-mode="focus"] .sidebar-item.active > .sidebar-link {
+  border-left: 3px solid var(--bs-primary);
+  padding-left: calc(0.5rem - 3px);
+}
+
+/* Custom mode: fade out advanced items */
+.sidebar-wrapper[data-mode="custom"] [data-advanced] {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  border: none;
+  transition: opacity 0.3s ease-out, max-height 0.3s ease-out, padding 0.3s ease-out, margin 0.3s ease-out;
+}
+
+/* Custom mode: also hide the li element */
+.sidebar-wrapper[data-mode="custom"] li[data-advanced] {
+  display: none;
+}
+
+/* ========================
+   MODE TOGGLE BUTTONS
+   ======================== */
+
+.sidebar-mode-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin: 8px 0 12px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.mode-btn i {
+  font-size: 14px;
+  transition: transform 0.2s ease-out;
+}
+
+.mode-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mode-btn:hover i {
+  transform: scale(1.1);
+}
+
+.mode-btn.active {
+  background: var(--bs-primary, #435ebe);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(67, 94, 190, 0.4);
+}
+
+.mode-btn:active {
+  transform: scale(0.95);
+}
+
+.mode-label {
+  transition: opacity 0.2s ease-out, width 0.2s ease-out;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Focus mode: hide mode labels */
+.sidebar-wrapper[data-mode="focus"] .mode-label {
+  opacity: 0;
+  width: 0;
+}
+
+/* Focus mode: make toggle compact */
+.sidebar-wrapper[data-mode="focus"] .sidebar-mode-toggle {
+  padding: 4px 2px;
+}
+
+.sidebar-wrapper[data-mode="focus"] .mode-btn {
+  padding: 6px 2px;
+}
+
+/* Focus mode: center the toggle */
+.sidebar-wrapper[data-mode="focus"] .sidebar-mode-toggle {
+  justify-content: center;
+}

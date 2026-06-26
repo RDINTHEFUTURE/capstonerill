@@ -1,4 +1,4 @@
-<div class="sidebar-wrapper active">
+<div class="sidebar-wrapper active" data-mode="full">
     <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo">
@@ -29,6 +29,22 @@
                 <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
             </div>
         </div>
+    </div>
+
+    <!-- 3-Mode Toggle: Full / Focus / Custom -->
+    <div class="sidebar-mode-toggle" data-mode-group>
+        <button type="button" data-mode="full" class="mode-btn active" title="Full Mode — Icons and text labels">
+            <i class="bi bi-layout-sidebar"></i>
+            <span class="mode-label">Full</span>
+        </button>
+        <button type="button" data-mode="focus" class="mode-btn" title="Focus Mode — Icon-only sidebar">
+            <i class="bi bi-layout-sidebar-inset"></i>
+            <span class="mode-label">Focus</span>
+        </button>
+        <button type="button" data-mode="custom" class="mode-btn" title="Custom Mode — Core links only">
+            <i class="bi bi-grid-3x3-gap"></i>
+            <span class="mode-label">Custom</span>
+        </button>
     </div>
     <div class="sidebar-menu">
         <ul class="menu">
@@ -130,17 +146,17 @@
                 </a>
             </li>
 
-            {{-- Login Logs (all users) --}}
-            <li class="sidebar-item {{ request()->routeIs('activity.login-logs') ? 'active' : '' }}">
+            {{-- Login Logs (all users) — Hidden in Custom Mode --}}
+            <li class="sidebar-item {{ request()->routeIs('activity.login-logs') ? 'active' : '' }}" data-advanced>
                 <a href="{{ route('activity.login-logs') }}" class="sidebar-link">
                     <i class="bi bi-box-arrow-in-right"></i>
                     <span>Login Logs</span>
                 </a>
             </li>
 
-            {{-- Administration (Admin/Manager only) --}}
+            {{-- Administration (Admin/Manager only) — Hidden in Custom Mode --}}
             @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
-            <li class="sidebar-item has-sub {{ request()->routeIs('activity.index') || request()->routeIs('admin.password-resets*') ? 'active open' : '' }}">
+            <li class="sidebar-item has-sub {{ request()->routeIs('activity.index') || request()->routeIs('admin.password-resets*') ? 'active open' : '' }}" data-advanced>
                 <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-admin">
                     <i class="bi bi-shield-lock-fill"></i>
                     <span>Administration</span>
@@ -163,9 +179,9 @@
             </li>
             @endif
 
-            {{-- Settings (Admin only) --}}
+            {{-- Settings (Admin only) — Hidden in Custom Mode --}}
             @if(auth()->check() && auth()->user()->isAdmin())
-            <li class="sidebar-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+            <li class="sidebar-item {{ request()->routeIs('settings.*') ? 'active' : '' }}" data-advanced>
                 <a href="{{ route('settings.company') }}" class="sidebar-link">
                     <i class="bi bi-gear-fill"></i>
                     <span>Settings</span>
@@ -294,5 +310,39 @@
                 hideModal();
             }
         });
+    })();
+
+    /* ========================
+       SIDEBAR MODE TOGGLE
+       ======================== */
+    (function () {
+        var wrapper = document.querySelector('.sidebar-wrapper');
+        var buttons = document.querySelectorAll('[data-mode]');
+        var STORAGE_KEY = 'sidebar-mode';
+
+        if (!wrapper || !buttons.length) return;
+
+        // Load saved mode or default to 'full'
+        var savedMode = localStorage.getItem(STORAGE_KEY) || 'full';
+        setMode(savedMode);
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var mode = btn.getAttribute('data-mode');
+                setMode(mode);
+                localStorage.setItem(STORAGE_KEY, mode);
+            });
+        });
+
+        function setMode(mode) {
+            wrapper.setAttribute('data-mode', mode);
+            buttons.forEach(function (b) {
+                if (b.getAttribute('data-mode') === mode) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+        }
     })();
 </script>
