@@ -242,7 +242,7 @@
 
     <div class="navy-panel">
       <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full motion-safe:animate-float"></div>
-      <h1>E-Faktur Penjualan</h1>
+      <h1>Manajemen E-Faktur Penjualan</h1>
       <p>Kelola penerbitan E-Faktur penjualan Anda dengan mudah dan sesuai regulasi. Rekam transaksi, validasi secara otomatis, serta lacak status approval dalam satu portal terintegrasi.</p>
     </div>
 

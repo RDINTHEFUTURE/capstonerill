@@ -1,4 +1,4 @@
-# E-Faktur Penjualan
+# Manajemen E-Faktur Penjualan
 
 Laravel 12 application for authenticated invoice CRUD, invoice items, QR generation, invoice preview, and PDF export.
 

@@ -1,4 +1,4 @@
-# Application Documentation: E-Faktur Penjualan
+# Application Documentation: Manajemen E-Faktur Penjualan
 
 ## 1. Executive Summary
 

@@ -23,7 +23,7 @@
                 </form>
             @endif
             @if($invoice->isPendingReview() && auth()->user()->roleLevel() >= 2)
-                <a class="btn btn-info hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.review', $inv) }}">Review Invoice</a>
+                <a class="btn btn-info hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.review', $invoice) }}">Review Invoice</a>
             @endif
             <a class="btn btn-primary hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
             @if($invoice->isPendingReview() || $invoice->isRevisionNeeded())
