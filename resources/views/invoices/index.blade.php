@@ -83,6 +83,7 @@
                             <th>Tanggal</th>
                             <th>Nama</th>
                             <th>Total</th>
+                            <th>Dibuat Oleh</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -95,6 +96,7 @@
                             <td>{{ $inv->tanggal->format('Y-m-d') }}</td>
                             <td>{{ $inv->nama_penjual ?? '-' }}</td>
                             <td>{{ number_format((float)$inv->total, 2, ',', '.') }} {{ $inv->currency }}</td>
+                            <td>{{ $inv->creator->name ?? '-' }}</td>
                             <td>
                                 @if($inv->isPaid())
                                     <span class="badge bg-success">Lunas</span>
@@ -120,7 +122,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7">Belum ada data.</td></tr>
+                        <tr><td colspan="8">Belum ada data.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

@@ -45,7 +45,7 @@ class InvoiceController extends Controller
             $query->where('tanggal', '<=', $request->to);
         }
 
-        $invoices = $query->paginate(10)->withQueryString();
+        $invoices = $query->with('creator')->paginate(10)->withQueryString();
         return view('invoices.index', compact('invoices'));
     }
 
