@@ -29,7 +29,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_DATABASE=capstoner
 DB_USERNAME=root
-DB_PASSWORD=4321
+DB_PASSWORD=your_password_here
 ```
 
 ## Verification
