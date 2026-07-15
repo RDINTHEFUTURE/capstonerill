@@ -144,52 +144,6 @@ class ReportController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function exportTrialBalance()
-    {
-        $this->authorizeReport();
-
-        $journalService = new JournalService();
-        $balances = $journalService->getAccountBalances();
-
-        $filename = 'trial_balance_' . now()->format('Y-m-d_His') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-        ];
-
-        $callback = function () use ($balances) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['Kode Akun', 'Nama Akun', 'Tipe', 'Debit', 'Kredit', 'Saldo']);
-
-            $totalDebit = 0;
-            $totalCredit = 0;
-
-            foreach ($balances as $accountNo => $balance) {
-                $account = \App\Models\ChartOfAccount::find($accountNo);
-                if (!$account) continue;
-
-                fputcsv($file, [
-                    $accountNo,
-                    $account->account_name,
-                    $account->account_type ?? '-',
-                    $balance['debit'],
-                    $balance['credit'],
-                    $balance['balance'],
-                ]);
-
-                $totalDebit += $balance['debit'];
-                $totalCredit += $balance['credit'];
-            }
-
-            fputcsv($file, []);
-            fputcsv($file, ['', '', 'TOTAL', $totalDebit, $totalCredit, $totalDebit - $totalCredit]);
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
     public function importForm()
     {
         return view('reports.import');
@@ -351,32 +305,4 @@ class ReportController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function trialBalance()
-    {
-        $journalService = new JournalService();
-        $balances = $journalService->getAccountBalances();
-
-        $accounts = collect();
-        $totalDebit = 0;
-        $totalCredit = 0;
-
-        foreach ($balances as $accountNo => $balance) {
-            $account = \App\Models\ChartOfAccount::find($accountNo);
-            if (!$account) continue;
-
-            $accounts->push([
-                'account_no' => $accountNo,
-                'account_name' => $account->account_name,
-                'account_type' => $account->account_type ?? '-',
-                'debit' => $balance['debit'],
-                'credit' => $balance['credit'],
-                'balance' => $balance['balance'],
-            ]);
-
-            $totalDebit += $balance['debit'];
-            $totalCredit += $balance['credit'];
-        }
-
-        return view('reports.trial-balance', compact('accounts', 'totalDebit', 'totalCredit'));
-    }
 }

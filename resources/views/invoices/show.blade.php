@@ -1,4 +1,4 @@
-@extends('layouts.mazer')
+﻿@extends('layouts.mazer')
 
 @section('title', 'Detail Invoice')
 
@@ -25,7 +25,9 @@
             @if($invoice->isPendingReview() && auth()->user()->roleLevel() >= 2)
                 <a class="btn btn-info hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.review', $invoice) }}">Review Invoice</a>
             @endif
-            <a class="btn btn-primary hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
+            @if($invoice->isApproved())
+                <a class="btn btn-primary hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.preview', $invoice) }}">Preview Faktur</a>
+            @endif
             @if($invoice->isPendingReview() || $invoice->isRevisionNeeded())
                 <a class="btn btn-outline-secondary hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-200" href="{{ route('invoices.edit', $invoice) }}">Edit</a>
             @endif
@@ -152,7 +154,7 @@
                             <div class="qr-note mt-2">QR dari DJP (diunggah oleh user).</div>
                         @else
                             <div class="qr-placeholder" style="width:280px; height:280px; margin: 0 auto;"></div>
-                            <div class="qr-note mt-2">QR belum diunggah — unggah saat membuat / mengedit invoice.</div>
+                            <div class="qr-note mt-2">QR belum diunggah â€” unggah saat membuat / mengedit invoice.</div>
                         @endif
                     @endif
                 </div>

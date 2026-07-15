@@ -1,4 +1,4 @@
-@extends('layouts.mazer')
+﻿@extends('layouts.mazer')
 
 @section('title', 'Daftar Invoice')
 
@@ -82,6 +82,7 @@
                             <th>Nomor Seri</th>
                             <th>Tanggal</th>
                             <th>Nama</th>
+                            <th>Catatan</th>
                             <th>Total</th>
                             <th>Dibuat Oleh</th>
                             <th>Status</th>
@@ -95,6 +96,7 @@
                                 <td>{{ $inv->nomor }}</td>
                             <td>{{ $inv->tanggal->format('Y-m-d') }}</td>
                             <td>{{ $inv->nama_penjual ?? '-' }}</td>
+                            <td>{{ Str::limit($inv->notes, 50) ?? '-' }}</td>
                             <td>{{ number_format((float)$inv->total, 2, ',', '.') }} {{ $inv->currency }}</td>
                             <td>{{ $inv->creator->name ?? '-' }}</td>
                             <td>
@@ -122,7 +124,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8">Belum ada data.</td></tr>
+                        <tr><td colspan="9">Belum ada data.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

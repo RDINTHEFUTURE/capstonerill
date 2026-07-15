@@ -5,7 +5,7 @@
 @section('content')
     <div class="page-heading d-flex justify-content-between align-items-center">
         <h3>General Ledger</h3>
-        <a class="btn btn-success" href="{{ route('reports.export-trial-balance') }}">Export CSV</a>
+        <a class="btn btn-success" href="{{ route('reports.export-ledger') }}">Export CSV</a>
     </div>
 
     @if (session('success'))

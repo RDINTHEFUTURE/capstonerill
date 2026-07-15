@@ -80,13 +80,13 @@
             </li>
 
             {{-- Accounting --}}
-            <li class="sidebar-item has-sub {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') || request()->routeIs('reports.trial-balance') ? 'active open' : '' }}">
+            <li class="sidebar-item has-sub {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') ? 'active open' : '' }}">
                 <a href="#" class="sidebar-link" data-bs-toggle="collapse" data-bs-target="#submenu-accounting">
                     <i class="bi bi-calculator-fill"></i>
                     <span>Accounting</span>
                     <i class="bi bi-chevron-down float-end"></i>
                 </a>
-                <ul id="submenu-accounting" class="collapse {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') || request()->routeIs('reports.trial-balance') ? 'show' : '' }}">
+                <ul id="submenu-accounting" class="collapse {{ request()->routeIs('chart-of-accounts.*') || request()->routeIs('ledger.*') || request()->routeIs('reports.import*') ? 'show' : '' }}">
                     <li class="sidebar-item">
                         <a href="{{ route('chart-of-accounts.index') }}" class="sidebar-link {{ request()->routeIs('chart-of-accounts.*') ? 'active' : '' }}">
                             <i class="bi bi-list-columns-reverse"></i>
@@ -97,12 +97,6 @@
                         <a href="{{ route('ledger.index') }}" class="sidebar-link {{ request()->routeIs('ledger.*') ? 'active' : '' }}">
                             <i class="bi bi-journal-bookmark-fill"></i>
                             <span>General Ledger</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="{{ route('reports.trial-balance') }}" class="sidebar-link {{ request()->routeIs('reports.trial-balance') ? 'active' : '' }}">
-                            <i class="bi bi-balance-scale"></i>
-                            <span>Neraca Saldo</span>
                         </a>
                     </li>
                     <li class="sidebar-item">

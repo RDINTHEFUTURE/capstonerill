@@ -559,8 +559,6 @@ This application has **no REST API**. All routes are web routes returning Blade 
 | GET | `/reports/sales` | ReportController@sales | Sales report | Yes | No |
 | GET | `/reports/export-invoices` | ReportController@exportInvoices | Export CSV | Yes*** | No |
 | GET | `/reports/export-ledger` | ReportController@exportLedger | Export ledger CSV | Yes*** | No |
-| GET | `/reports/export-trial-balance` | ReportController@exportTrialBalance | Export trial balance CSV | Yes*** | No |
-| GET | `/reports/trial-balance` | ReportController@trialBalance | Trial balance view | Yes | No |
 | GET | `/reports/import` | ReportController@importForm | Import form | Yes*** | No |
 | POST | `/reports/import-invoices` | ReportController@importInvoices | Import invoices CSV | Yes*** | No |
 | POST | `/reports/import-coa` | ReportController@importChartOfAccounts | Import COA CSV | Yes*** | No |
@@ -680,14 +678,6 @@ This application has **no REST API**. All routes are web routes returning Blade 
 - Columns: Date, Description, Debit, Credit
 - Running balance display
 - Total debit/credit for filtered period
-
-### Page: Trial Balance (`/reports/trial-balance`)
-**Route:** `GET /reports/trial-balance` (name: `reports.trial-balance`)
-**View:** `reports/trial-balance.blade.php`
-**Components:**
-- Account list with debit, credit, and balance columns
-- Total row showing debits, credits, and difference
-- Export CSV button
 
 ### Page: Sales Report (`/reports/sales`)
 **Route:** `GET /reports/sales` (name: `reports.sales`)
@@ -818,20 +808,7 @@ This application has **no REST API**. All routes are web routes returning Blade 
 
 ---
 
-### Feature: Trial Balance
 
-**Objective:** Verify that total debits equal total credits across all accounts.
-
-**User Flow:**
-1. User views trial balance showing all accounts with their debit, credit, and balance
-2. Total row shows aggregate debits, credits, and difference
-3. Can export to CSV
-
-**Business Rules:**
-- Total difference should be zero if books are balanced
-- Includes account_type from ChartOfAccount
-
-**Related Files:** `ReportController.php`, `JournalService.php`
 
 ---
 

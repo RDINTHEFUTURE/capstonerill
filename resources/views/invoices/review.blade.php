@@ -1,4 +1,4 @@
-@extends('layouts.mazer')
+﻿@extends('layouts.mazer')
 
 @section('title', 'Review Invoice')
 
@@ -131,12 +131,18 @@
 
             <div class="card mt-3">
                 <div class="card-body">
-                    <a class="btn btn-outline-primary w-100 mb-2" href="{{ route('invoices.preview', $invoice) }}">
-                        <i class="bi bi-eye"></i> Preview Faktur
-                    </a>
-                    <a class="btn btn-outline-secondary w-100" href="{{ route('invoices.pdf', $invoice) }}">
-                        <i class="bi bi-download"></i> Download PDF
-                    </a>
+                    @if($invoice->isApproved())
+                        <a class="btn btn-outline-primary w-100 mb-2" href="{{ route('invoices.preview', $invoice) }}">
+                            <i class="bi bi-eye"></i> Preview Faktur
+                        </a>
+                        <a class="btn btn-outline-secondary w-100" href="{{ route('invoices.pdf', $invoice) }}">
+                            <i class="bi bi-download"></i> Download PDF
+                        </a>
+                    @else
+                        <p class="text-muted text-center mb-0">
+                            <i class="bi bi-info-circle"></i> PDF hanya tersedia setelah invoice disetujui
+                        </p>
+                    @endif
                 </div>
             </div>
         </div>

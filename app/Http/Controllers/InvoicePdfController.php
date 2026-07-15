@@ -8,6 +8,10 @@ class InvoicePdfController extends Controller
 {
     public function preview(Invoice $invoice)
     {
+        if (!$invoice->isApproved()) {
+            abort(403, 'Hanya invoice yang sudah disetujui yang bisa di-preview.');
+        }
+
         $invoice->loadMissing('items.chartOfAccount');
 
         return view('invoices.preview', [
@@ -22,6 +26,10 @@ class InvoicePdfController extends Controller
      */
     public function show(Invoice $invoice)
     {
+        if (!$invoice->isApproved()) {
+            abort(403, 'Hanya invoice yang sudah disetujui yang bisa diunduh.');
+        }
+
         $invoice->loadMissing('items.chartOfAccount');
 
         $pdf = app('dompdf.wrapper')
@@ -34,8 +42,3 @@ class InvoicePdfController extends Controller
         return $pdf->download('faktur-' . $invoice->nomor . '.pdf');
     }
 }
-
-
-
-
-

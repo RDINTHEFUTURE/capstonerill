@@ -67,8 +67,6 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('reports/export-invoices', [ReportController::class, 'exportInvoices'])->name('reports.export-invoices');
     Route::get('reports/export-ledger', [ReportController::class, 'exportLedger'])->name('reports.export-ledger');
-    Route::get('reports/export-trial-balance', [ReportController::class, 'exportTrialBalance'])->name('reports.export-trial-balance');
-    Route::get('reports/trial-balance', [ReportController::class, 'trialBalance'])->name('reports.trial-balance');
     Route::get('reports/import', [ReportController::class, 'importForm'])->name('reports.import-form');
     Route::post('reports/import-invoices', [ReportController::class, 'importInvoices'])->name('reports.import-invoices');
     Route::post('reports/import-coa', [ReportController::class, 'importChartOfAccounts'])->name('reports.import-coa');

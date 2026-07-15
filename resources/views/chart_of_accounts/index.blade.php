@@ -59,6 +59,7 @@
                                 <td>{{ $account->account_type ?: '-' }}</td>
                                 <td>
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('chart-of-accounts.show', $account) }}">Detail</a>
+                                    <a class="btn btn-sm btn-outline-success" href="{{ route('ledger.show', $account->account_no_new) }}">Saldo</a>
                                     @if($isManager)
                                         <a class="btn btn-sm btn-outline-secondary" href="{{ route('chart-of-accounts.edit', $account) }}">Edit</a>
                                     @endif
